@@ -1,11 +1,38 @@
 <!DOCTYPE html>
-
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title></title>
-    </head>
-    <body>
-        
-    </body>
+ <head>
+     <meta charset="utf-8" />
+     <title>Create Account</title>
+         <script>
+          function login(name, pass) { 
+              //document.write(name + pass + nick);
+              if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                  xmlhttp = new XMLHttpRequest();
+              }
+              else {// code for IE6, IE5
+                  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+              }
+              xmlhttp.onreadystatechange = function () {
+                  if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                      document.getElementById("result").innerHTML = xmlhttp.responseText;
+                  }
+              }
+              var str = "?username=" + name + "&password=" + pass;
+              xmlhttp.open("GET", "Login.php"+str, true);
+              xmlhttp.send();
+          }
+    </script>
+ </head>
+<body>
+	<section class="loginform cf">
+		<form name="login" accept-charset="utf-8">
+		    <p><label for="username">Username: </label>
+		    <input type="text" name="username" id="username" placeholder="Name" required></p>
+		    <p><label for="password">Password: </label>
+		    <input type="password" name="password" id="password" placeholder="password" required></p>
+		    <p><input type="button" value="Login" onclick="login(this.form.username.value, this.form.password.value)"></p>
+            <p id="result"></p>
+		</form>
+	</section>
+</body>
 </html>
