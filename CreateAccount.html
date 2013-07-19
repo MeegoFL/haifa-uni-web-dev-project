@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+     <meta charset="utf-8" />
+     <title>Create Account</title>
+     <link rel="stylesheet" href="normalize.css">
+	 <link rel="stylesheet" href="style.css">
+      <script>
+         function addUser(str)
+         {
+         if (str=="")
+           {
+           document.getElementById("txtHint").innerHTML="";
+           return;
+           } 
+         if (window.XMLHttpRequest)
+           {// code for IE7+, Firefox, Chrome, Opera, Safari
+           xmlhttp=new XMLHttpRequest();
+           }
+         else
+           {// code for IE6, IE5
+           xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+           }
+         xmlhttp.onreadystatechange=function()
+           {
+           if (xmlhttp.readyState==4 && xmlhttp.status==200)
+             {
+             document.getElementById("txtHint").innerHTML=xmlhttp.responseText;
+             }
+           }
+         xmlhttp.open("GET","UserManagment.php?q="+str,true);
+         xmlhttp.send();
+         }
+ </script>
+ </head>
+<body>
+	<section class="loginform cf">
+		<form name="login" action="UserManagment.php" method="get" accept-charset="utf-8">
+			<ul>
+				<li>
+					<label for="username">Username: </label>
+					<input type="text" name="username" placeholder="Name" required>
+				</li>
+				<li>
+					<label for="password">Password: </label>
+					<input type="password" name="password" placeholder="password" required>
+                </li>
+                <li>
+					<label for="nickname">NickName: </label>
+					<input type="text" name="nickname" placeholder="Nick" required>
+                </li>
+				<li>
+					<input type="submit" value="Login">
+				</li>
+			</ul>
+		</form>
+	</section>
+</body>
+</html>
