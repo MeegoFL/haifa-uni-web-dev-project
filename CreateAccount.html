@@ -3,8 +3,6 @@
  <head>
      <meta charset="utf-8" />
      <title>Create Account</title>
-     <link rel="stylesheet" href="normalize.css">
-	 <link rel="stylesheet" href="style.css">
       <script>
          function addUser(str)
          {
@@ -35,24 +33,14 @@
  </head>
 <body>
 	<section class="loginform cf">
-		<form name="login" action="UserManagment.php" method="get" accept-charset="utf-8">
-			<ul>
-				<li>
-					<label for="username">Username: </label>
-					<input type="text" name="username" placeholder="Name" required>
-				</li>
-				<li>
-					<label for="password">Password: </label>
-					<input type="password" name="password" placeholder="password" required>
-                </li>
-                <li>
-					<label for="nickname">NickName: </label>
-					<input type="text" name="nickname" placeholder="Nick" required>
-                </li>
-				<li>
-					<input type="submit" value="Login">
-				</li>
-			</ul>
+		<form name="login" accept-charset="utf-8">
+		    <p><label for="username">Username: </label>
+		    <input type="text" name="username" placeholder="Name" required></p>
+		    <p><label for="password">Password: </label>
+		    <input type="password" name="password" placeholder="password" required></p>
+		    <p><label for="nickname">NickName: </label>
+		    <input type="text" name="nickname" placeholder="Nick" required></p>
+		    <p><input type="submit" value="Submit" onclick="addUser('1')"></p>
 		</form>
 	</section>
 </body>
