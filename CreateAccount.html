@@ -3,44 +3,37 @@
  <head>
      <meta charset="utf-8" />
      <title>Create Account</title>
-      <script>
-         function addUser(str)
-         {
-         if (str=="")
-           {
-           document.getElementById("txtHint").innerHTML="";
-           return;
-           } 
-         if (window.XMLHttpRequest)
-           {// code for IE7+, Firefox, Chrome, Opera, Safari
-           xmlhttp=new XMLHttpRequest();
-           }
-         else
-           {// code for IE6, IE5
-           xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-           }
-         xmlhttp.onreadystatechange=function()
-           {
-           if (xmlhttp.readyState==4 && xmlhttp.status==200)
-             {
-             document.getElementById("txtHint").innerHTML=xmlhttp.responseText;
-             }
-           }
-         xmlhttp.open("GET","UserManagment.php?q="+str,true);
-         xmlhttp.send();
-         }
- </script>
+         <script>
+          function addUser(name, pass, nick) { 
+              //document.write(name + pass + nick);
+              if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                  xmlhttp = new XMLHttpRequest();
+              }
+              else {// code for IE6, IE5
+                  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+              }
+              xmlhttp.onreadystatechange = function () {
+                  if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                      document.getElementById("result").innerHTML = xmlhttp.responseText;
+                  }
+              }
+              var str = "?username=" + name + "&password=" + pass + "&nickname=" + nick;
+              xmlhttp.open("GET", "CreateAccount.php"+str, true);
+              xmlhttp.send();
+          }
+    </script>
  </head>
 <body>
 	<section class="loginform cf">
 		<form name="login" accept-charset="utf-8">
 		    <p><label for="username">Username: </label>
-		    <input type="text" name="username" placeholder="Name" required></p>
+		    <input type="text" name="username" id="username" placeholder="Name" required></p>
 		    <p><label for="password">Password: </label>
-		    <input type="password" name="password" placeholder="password" required></p>
+		    <input type="password" name="password" id="password" placeholder="password" required></p>
 		    <p><label for="nickname">NickName: </label>
-		    <input type="text" name="nickname" placeholder="Nick" required></p>
-		    <p><input type="submit" value="Submit" onclick="addUser('1')"></p>
+		    <input type="text" name="nickname" id="nickname" placeholder="Nick" required></p>
+		    <p><input type="button" value="Submit" onclick="addUser(this.form.username.value, this.form.password.value, this.form.nickname.value)"></p>
+            <p id="result"></p>
 		</form>
 	</section>
 </body>
