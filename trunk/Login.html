@@ -2,36 +2,55 @@
 <html lang="en">
  <head>
      <meta charset="utf-8" />
-     <title>Create Account</title>
+     <title>Login</title>
          <script>
-          function login(name, pass) { 
-              //document.write(name + pass + nick);
-              if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-                  xmlhttp = new XMLHttpRequest();
-              }
-              else {// code for IE6, IE5
-                  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-              }
-              xmlhttp.onreadystatechange = function () {
-                  if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                      document.getElementById("result").innerHTML = xmlhttp.responseText;
-                  }
-              }
-              var str = "?username=" + name + "&password=" + pass;
-              xmlhttp.open("GET", "Login.php"+str, true);
-              xmlhttp.send();
-          }
+             function Login(name, pass) {
+                 // Initialize missingvalue flag and clean error messages
+                 missingValue = 0;
+                 document.getElementById("result").innerHTML = "";
+                 document.getElementById("missingName").innerHTML = "";
+                 document.getElementById("missingPass").innerHTML = "";
+                 
+                 // Check for each of the fields if missing value and print error
+                 if (name == "") {
+                     document.getElementById("missingName").innerHTML = " This is a required field";
+                     missingValue = 1;
+                 }
+                 if (pass == "") {
+                     document.getElementById("missingPass").innerHTML = " This is a required field";
+                     missingValue = 1;
+                 }
+                 
+                 // If there was a missing value return and do no action
+                 if (missingValue == 1) return;
+
+                 // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
+                 xmlhttp = new XMLHttpRequest();
+                 
+                 // Wait for response
+                 xmlhttp.onreadystatechange = function () {
+                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                         document.getElementById("result").innerHTML = xmlhttp.responseText;
+                     }
+                 }
+                 
+                 // Ready the values and POST the request
+                 var str = "?username=" + name + "&password=" + pass;
+                 xmlhttp.open("POST", "Login.php" + str, true);
+                 xmlhttp.send();
+             }
     </script>
  </head>
 <body>
-	<section class="loginform cf">
+	<h1>Please enter following details to Login</h1>
+    <section class="loginform cf">
 		<form name="login" accept-charset="utf-8">
-		    <p><label for="username">Username: </label>
-		    <input type="text" name="username" id="username" placeholder="Name" required></p>
-		    <p><label for="password">Password: </label>
-		    <input type="password" name="password" id="password" placeholder="password" required></p>
-		    <p><input type="button" value="Login" onclick="login(this.form.username.value, this.form.password.value)"></p>
-            <p id="result"></p>
+		    <div><label for="username">Username: </label>
+		    <input type="text" name="username" id="username" placeholder="" required><b style="color:red" id="missingName"></b></div>
+		    <div><label for="password">Password: </label>
+		    <input type="password" name="password" id="password" placeholder="" required><b style="color:red" id="missingPass"></b></div>
+		    <div><input type="button" value="Login" onclick="Login(this.form.username.value, this.form.password.value)"></div>
+            <div id="result"></div>
 		</form>
 	</section>
 </body>
