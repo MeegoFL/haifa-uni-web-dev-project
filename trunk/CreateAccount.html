@@ -2,38 +2,61 @@
 <html lang="en">
  <head>
      <meta charset="utf-8" />
-     <title>Create Account</title>
+     <title>Register</title>
          <script>
              function addUser(name, pass, nick) {
-                 //document.write(name + pass + nick);
-                 if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-                     xmlhttp = new XMLHttpRequest();
+                 // Initialize missingvalue flag and clean error messages
+                 missingValue = 0;
+                 document.getElementById("missingName").innerHTML = "";
+                 document.getElementById("missingPass").innerHTML = "";
+                 document.getElementById("missingNick").innerHTML = "";
+                 
+                 // Check for each of the fields if missing value and print error
+                 if (name == "") {
+                     document.getElementById("missingName").innerHTML = " This is a required field";
+                     missingValue = 1;
                  }
-                 else {// code for IE6, IE5
-                     xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                 if (pass == "") {
+                     document.getElementById("missingPass").innerHTML = " This is a required field";
+                     missingValue = 1;
                  }
+                 if (nick == "") {
+                     document.getElementById("missingNick").innerHTML = " This is a required field";
+                     missingValue = 1;
+                 }
+                 
+                 // If there was a missing value return and do no action
+                 if (missingValue == 1) return;
+
+                 // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
+                 xmlhttp = new XMLHttpRequest();
+                 
+                 // Wait for response
                  xmlhttp.onreadystatechange = function () {
                      if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                          document.getElementById("result").innerHTML = xmlhttp.responseText;
                      }
                  }
+                 
+                 // Ready the values and POST the request
                  var str = "?username=" + name + "&password=" + pass + "&nickname=" + nick;
-                 xmlhttp.open("GET", "CreateAccount.php"+str, true);
+                 xmlhttp.open("POST", "CreateAccount.php" + str, true);
                  xmlhttp.send();
              }
     </script>
  </head>
 <body>
-	<section class="loginform cf">
+	<h1>Please enter following details to register</h1>
+    <section class="loginform cf">
 		<form name="login" accept-charset="utf-8">
-		    <p><label for="username">Username: </label>
-		    <input type="text" name="username" id="username" placeholder="Name" required></p>
-		    <p><label for="password">Password: </label>
-		    <input type="password" name="password" id="password" placeholder="password" required></p>
-		    <p><label for="nickname">NickName: </label>
-		    <input type="text" name="nickname" id="nickname" placeholder="Nick" required></p>
-		    <p><input type="button" value="Submit" onclick="addUser(this.form.username.value, this.form.password.value, this.form.nickname.value)"></p>
-            <div id="result"><b>Person info will be listed here.</b></div>
+		    <div><label for="username">Username: </label>
+		    <input type="text" name="username" id="username" placeholder="" required><b style="color:red" id="missingName"></b></div>
+		    <div><label for="password">Password: </label>
+		    <input type="password" name="password" id="password" placeholder="" required><b style="color:red" id="missingPass"></b></div>
+		    <div><label for="nickname">Nickname: </label>
+		    <input type="text" name="nickname" id="nickname" placeholder="" required><b style="color:red" id="missingNick"></b></div>
+		    <div><input type="button" value="Submit" onclick="addUser(this.form.username.value, this.form.password.value, this.form.nickname.value)"></div>
+            <div id="result"></div>
 		</form>
 	</section>
 </body>
