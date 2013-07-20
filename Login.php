@@ -1,42 +1,40 @@
 <?php
- $username=$_GET["username"];
- $password=$_GET["password"];
+ // Get the values and check for XSS or SQL injection
+ preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["username"]) ? $username = $_REQUEST["username"] : exit('XSS is detected!');
+ preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["password"]) ? $password = md5($_REQUEST["password"]) : exit('XSS is detected!');
 
-<script type="text/javascript">
-window.alert("You message goes here!")
-</script>
+ // Connect to Database
+ $mysqli = new mysqli("localhost", "root", "12345", "test");
+ if ($mysqli->connect_errno) 
+ {
+     echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
+ }
 
- $con = mysqli_connect('localhost','root','12345','test');
- if (!$con)
-   {
-   die('Could not connect: ' . mysqli_error($con));
-   }
+ // Check if username exists
+ $result = $mysqli->query("SELECT * FROM users WHERE username = '$username'");
+ 
+ // If username doesn't exist return error
+ if($result->num_rows == 0) 
+ {
+     echo "<p style=\"color:red\">User Name not found please Register</p>";
+ } 
+ 
+ // Get user password and compare
+ else 
+ {
+     $result->data_seek(0);
+     $row = $result->fetch_assoc();
 
- mysqli_select_db($con,"test");
- $sql="SELECT * FROM user WHERE id = '".$q."'";
-
- $result = mysqli_query($con,$sql);
-
- echo "<table border='1'>
- <tr>
- <th>Firstname</th>
- <th>Lastname</th>
- <th>Age</th>
- <th>Hometown</th>
- <th>Job</th>
- </tr>";
-
- while($row = mysql_fetch_array($result))
-   {
-   echo "<tr>";
-   echo "<td>" . $row['FirstName'] . "</td>";
-   echo "<td>" . $row['LastName'] . "</td>";
-   echo "<td>" . $row['Age'] . "</td>";
-   echo "<td>" . $row['Hometown'] . "</td>";
-   echo "<td>" . $row['Job'] . "</td>";
-   echo "</tr>";
-   }
- echo "</table>";
-
- mysqli_close($con);
+     // Compare password and output error if wrong
+     if ($password != $row['password'])
+     {
+         echo "<p style=\"color:red\">WRONG PASSWORD</p>";
+     }
+     else
+     {
+         // Need to find how to redirect to Lobby.html
+         header('Location: Lobby.html', true, 200);
+         exit;
+     }
+ }
  ?>
