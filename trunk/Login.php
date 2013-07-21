@@ -33,7 +33,8 @@
      else
      {
          // Need to find how to redirect to Lobby.html
-         header('Location: Lobby.html', true, 200);
+         setcookie("ArcomageCookie", $row['username'], $row['password']);
+         echo "Location:Lobby.html";
          exit;
      }
  }
