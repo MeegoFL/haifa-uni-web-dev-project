@@ -33,9 +33,19 @@
      else
      {
          // Need to find how to redirect to Lobby.html
-         setcookie("ArcomageCookie", $row['username'], $row['password']);
-         echo "Location:Lobby.html";
-         exit;
+    //set cookie:
+        $username = $row['username'];
+		$expiration = time() + 7200; // 2 hours
+        //generate cookie:
+            $key = hash_hmac( 'md5', $username . $expiration, 'TalRan' );
+	        $hash = hash_hmac( 'md5', $username . $expiration, $key );
+	        $cookie = $username . '|' . $expiration . '|' . $hash;
+	    //if ( !setcookie( "ArcomageCookie", $cookie, $expiration, COOKIE_PATH, COOKIE_DOMAIN, false, true ) ) {
+        if ( !setcookie( "ArcomageCookie", $cookie, $expiration ) ) {
+		    exit('Error: Unable to set cookie');
+	    }
+        echo "Location:Lobby.html";
+        exit;
      }
  }
  ?>
