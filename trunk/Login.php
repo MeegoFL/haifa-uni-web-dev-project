@@ -41,7 +41,8 @@
 	        $hash = hash_hmac( 'md5', $username . $expiration, $key );
 	        $cookie = $username . '|' . $expiration . '|' . $hash;
 	    //if ( !setcookie( "ArcomageCookie", $cookie, $expiration, COOKIE_PATH, COOKIE_DOMAIN, false, true ) ) {
-        if ( !setcookie( "ArcomageCookie", $cookie, $expiration ) ) {
+            //TODO: need the rest of the parameters?
+        if ( !setcookie( 'ArcomageCookie', $cookie, $expiration ) ) {
 		    exit('Error: Unable to set cookie');
 	    }
         echo "Location:Lobby.html";
