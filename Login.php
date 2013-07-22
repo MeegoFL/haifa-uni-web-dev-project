@@ -45,7 +45,7 @@
         if ( !setcookie( 'ArcomageCookie', $cookie, $expiration ) ) {
 		    exit('Error: Unable to set cookie');
 	    }
-        echo "Location:Lobby.html";
+        echo "Location:Lobby.php";
         exit;
      }
  }
