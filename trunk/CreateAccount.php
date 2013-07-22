@@ -26,7 +26,7 @@
  $result = mysqli_query($con,$sql);
  
  // If nickname exist return error
- if(mysqli_num_rows($result) != 0) 
+ if(mysqli_num_rows($result) > 0) 
  {
      die("<p style=\"color:red\">Nickname already in use, please choose another</p>");
  } 
