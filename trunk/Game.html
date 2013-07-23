@@ -4,8 +4,99 @@
     <head>
         <meta charset="utf-8" />
         <title></title>
+        <script>
+            function allowDrop(ev)
+            {
+                ev.preventDefault();
+            }
+
+            function drag(ev)
+            {
+                ev.dataTransfer.setData("Text",ev.target.id);
+            }
+
+            function drop(ev)
+            {
+                ev.preventDefault();
+                var data=ev.dataTransfer.getData("Text");
+                ev.target.appendChild(document.getElementById(data));
+            }
+        </script>
     </head>
-    <body>
-        
+
+    <body style="background-image: url(game-background.jpg);background-repeat:no-repeat;background-size:cover;">
+        <audio autoplay loop>
+           <!-- <source src="johann_sebastian_bach_air.ogg"> -->
+            <source src="GOT_Soundtrack.mp3">
+        </audio>
+        <table style="border: 0;border-spacing: 10px; padding: 12px;margin-left: auto;margin-right: auto;">
+            <tr>
+                <td colspan="8" style="background-color:#FFA500;text-align: center;">
+                    <h1>Arcomage</h1>
+                </td>
+            </tr>
+
+            
+
+            <tr>
+                <td rowspan="2" style="background-image:url(resources.png);background-repeat:no-repeat;
+                    background-size: 120px 350px;color: #EEEEEE;width:120px;height:350px;padding-left: 20px;
+                    vertical-align: top;padding-top: 70px">
+                    <b>
+                    <br>num &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +n</br>
+                    <br style="line-height: 95px;">num &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +n</br>
+                    <br style="line-height: 95px;">num &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +n</br>
+                    </b>
+                </td>
+
+                <td rowspan="2" colspan="2" style="background-color:#EEEEEE;">
+                    tower and wall
+                </td>
+
+                <td><img id="deck" src="back.jpg" alt="deck"width="120" height="180"></td>
+
+                <td ondrop="drop(event)" ondragover="allowDrop(event)" style="height:180px;width:120px;"></td>
+
+                <td rowspan="2" colspan="2" style="background-color:#EEEEEE;">
+                    tower and wall
+                </td>
+
+                <td rowspan="2" style="background-image:url(resources.png);background-repeat:no-repeat;
+                    background-size: 120px 350px;color: #EEEEEE;width:120px;height:350px;padding-left: 20px;
+                    vertical-align: top;padding-top: 70px">
+                    <b>
+                    <br>num &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +n</br>
+                    <br style="line-height: 95px;">num &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +n</br>
+                    <br style="line-height: 95px;">num &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +n</br>
+                    </b>
+                </td>
+            </tr>
+
+            <tr>
+                
+                <td colspan="2" style="background-color:#0094ff;">
+                    messages to user
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td style="height:180px;width:120px;"><img id="drag1" src="back.jpg" alt="card1" draggable="true" ondragstart="drag(event)" width="120" height="180"> </td>
+                <td style="height:180px;width:120px;"><img id="drag2" src="back.jpg" alt="card2" draggable="true" ondragstart="drag(event)" width="120" height="180"> </td>
+                <td style="height:180px;width:120px;"><img id="drag3" src="back.jpg" alt="card3" draggable="true" ondragstart="drag(event)" width="120" height="180"> </td>
+                <td style="height:180px;width:120px;"><img id="drag4" src="back.jpg" alt="card4" draggable="true" ondragstart="drag(event)" width="120" height="180"> </td>
+                <td style="height:180px;width:120px;"><img id="drag5" src="back.jpg" alt="card5" draggable="true" ondragstart="drag(event)" width="120" height="180"> </td>
+                <td style="height:180px;width:120px;"><img id="drag6" src="back.jpg" alt="card6" draggable="true" ondragstart="drag(event)" width="120" height="180"> </td>
+
+                <td>Surrender</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="6" style="background-color:#FFA500;text-align:center;">
+                chat
+                </td>
+            </tr>
+        </table>
+
     </body>
 </html>

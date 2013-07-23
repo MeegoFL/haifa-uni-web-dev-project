@@ -13,7 +13,7 @@
 //	    if ( $expired < time() ) {
         if ( $expiration < time() ) {
             echo "<script type='text/javascript'>
-                window.alert('Your session has expired, please log in again');
+                window.alert('Your cookie has expired, please log in again');
                 window.location.href='Login.html';
                 </script>";
             return FALSE;
