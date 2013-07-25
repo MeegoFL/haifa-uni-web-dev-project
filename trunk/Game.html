@@ -25,9 +25,9 @@
     </head>
 
     <body style="background-image: url(game-background.jpg);background-repeat:no-repeat;background-size:cover;">
-        <audio autoplay loop>
-           <!-- <source src="johann_sebastian_bach_air.ogg"> -->
-            <source src="GOT_Soundtrack.mp3">
+        <audio autoplay loop controls>
+            <source src="GOT_Soundtrack.ogg" type="audio/ogg">
+            <source src="GOT_Soundtrack.mp3" type="audio/mp3">
         </audio>
         <table style="border: 0;border-spacing: 10px; padding: 12px;margin-left: auto;margin-right: auto;">
             <tr>
@@ -49,16 +49,22 @@
                     </b>
                 </td>
 
-                <td rowspan="2" colspan="2" style="background-color:#EEEEEE;">
-                    tower and wall
+                <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center;">
+                    <span style="background-color: #ffd800; position: relative; bottom: 0px;"><b><br>&nbsp tower: num &nbsp</br><br>&nbsp wall: num &nbsp</br></b></span>
+                    <img id="tower1" src="towe_trans.gif" alt="tower1" width="100" height="200" style="position: relative; bottom: -80px;">
+                    <img id="wall1" src="wall_trans.gif" alt="wall1" width="250" height="80" style="position: relative;">
                 </td>
 
-                <td><img id="deck" src="back.jpg" alt="deck"width="120" height="180"></td>
+                <td>
+                    <img id="deck" src="back.jpg" alt="deck"width="120" height="180">
+                </td>
 
                 <td ondrop="drop(event)" ondragover="allowDrop(event)" style="height:180px;width:120px;"></td>
 
-                <td rowspan="2" colspan="2" style="background-color:#EEEEEE;">
-                    tower and wall
+                <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center;">
+                    <span style="background-color: #ffd800 ; position: relative; bottom: 0px;"><b><br>&nbsp tower: num &nbsp</br><br>&nbsp wall: num &nbsp</br></b></span>
+                    <img id="tower2" src="towe_trans.gif" alt="tower2" width="100" height="200" style="position: relative; bottom: -80px;">
+                    <img id="wall2" src="wall_trans.gif" alt="wall2" width="250" height="80" style="position: relative;">
                 </td>
 
                 <td rowspan="2" style="background-image:url(resources.png);background-repeat:no-repeat;
