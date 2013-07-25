@@ -9,6 +9,9 @@
     <head>
         <meta charset="utf-8" />
         <title>Game Lobby</title>
+        <style type="text/css">
+        body {background-image: url('Acromage_title.jpg'); background-size: 100%;background-repeat: no-repeat; opacity: 0.9;}
+        </style>
         <script>
             function SubmitChatText(input) {
                 document.getElementById("chatbox").innerHTML += input + "<br>";
@@ -17,25 +20,25 @@
         </script>
     </head>
 <body>
-    <div id="container" style="width:500px">
-        <div id="header" style="background-color:#FFA500;">
-            <h1 style="margin-bottom:0;text-align: center;">Welcome to Arcomage Game!</h1></div>
-        
-        <div id="userlist" style="background-color:#FFD700;height:50%;width:50%;float:left;">
-        <h1 style="text-align: center;">Online Users</h1>
-            <div id="userlist" style="background-color: #EEEEEE;height: 50%;width:50%;"></div>
-            <br>
-            <br>
-        </div>
-        
-        <div id="chat" style="background-color:#EEEEEE;height:50%;width:50%;float:left;">
+    <h1 style="margin-bottom:0;text-align: center;color: #ffd800; font-size: 50px; text-shadow: 2px 2px 2px #333;">Arcomage Lobby</h1><hr>  
+    <table border="1" style="width:1000px; margin: auto; background-color: #fff">
+        <tr>
+            <td>
+                <h1 style="text-align: center;">Online Users</h1>
+            </td>
+            
+            <td>
             <h1 style="text-align: center;">Chat</h1>
-            <div id="chatbox" style="background-color:#EEEEEE;height:100px;width:100%;overflow-y: scroll;overflow-x: hidden;"></div>
-            <form><input type="text" id="chatfield">  <input type="button" value="enter" onclick="SubmitChatText(this.form.chatfield.value)"></form>
-        </div>
-        
-        <div id="footer" style="background-color:#FFA500;clear:both;text-align:center;">Copyright © TalRan</div>
-    </div>
+            </td>
+        <tr>
+            <td style="height: 500px; width:50%; overflow-y: scroll; overflow-x: hidden;"></td>
+            <td>
+                <div id="chatbox" style="height: 500px; overflow-y: scroll; overflow-x: hidden;"></div>
+                <form><input type="text" id="chatfield" style="width: 85%;"><input type="button" value="enter" style="width: fill-available;" onclick="SubmitChatText(this.form.chatfield.value)"></form>
+            </td>
+        </tr>
+    </table>
+    <p style="text-align: center; color: #f00;text-shadow: 1px 1px 1px #333;">Copyright © TalRan</p>
 </body>
 </html>
 
