@@ -7,14 +7,66 @@
         <style type="text/css">
         body {background-image: url('Acromage_title.jpg'); background-size: 100%;background-repeat: no-repeat;}
         </style>
+        <script>
+             function Login(name, pass) {
+                 // Initialize missingvalue flag and clean error messages
+                 missingValue = 0;
+                 document.getElementById("result").innerHTML = "";
+                 document.getElementById("missingName").innerHTML = "";
+                 document.getElementById("missingPass").innerHTML = "";
+
+                 // Check for each of the fields if missing value and print error
+                 if (name == "") {
+                     document.getElementById("missingName").innerHTML = " This is a required field";
+                     missingValue = 1;
+                 }
+                 if (pass == "") {
+                     document.getElementById("missingPass").innerHTML = " This is a required field";
+                     missingValue = 1;
+                 }
+
+                 // If there was a missing value return and do no action
+                 if (missingValue == 1) return;
+
+                 // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
+                 xmlhttp = new XMLHttpRequest();
+
+                 // Wait for response
+                 xmlhttp.onreadystatechange = function () {
+                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                         response = xmlhttp.responseText;
+                         if (response.indexOf("Location:") !== -1) {
+                             document.location = response.substr(9);
+                         }
+                         else {
+                             document.getElementById("result").innerHTML = response;
+                         }
+
+                     }
+                 }
+
+                 // Ready the values and POST the request
+                 var str = "?username=" + name + "&password=" + pass;
+                 xmlhttp.open("POST", "Login.php" + str, true);
+                 xmlhttp.send();
+             }
+    </script>
     </head>
     <body>
-      <div align="center">
-        <h1 style="font-size: 50px;color: #ffd800;text-shadow: 2px 2px 2px #333;">Please click Login to start play or Register to create new user</h1>
+      <div>
+        <h1 style="font-size: 50px;color: #ffd800;text-shadow: 2px 2px 2px #333;text-align: center">Welcome to Arcomage Game!</h1>
         <hr>
-        <p><a style="font-size: 60px;color: #f00;text-shadow: 2px 2px 2px #333;" href="Login.html">Login</a></p>
-        <br />
-        <p><a style="font-size: 60px;color: #f00;text-shadow: 2px 2px 2px #333;" href="CreateAccount.html">Register</a></p>
+        <section class="loginform cf">
+		<form name="login" accept-charset="utf-8">
+		    <div"><label for="username"><b>Username:</b></label>
+		    <input type="text" name="username" id="username" placeholder="" required><b style="color:red" id="missingName"></b></div>
+		    <div><label for="password"><b>Password: </b></label>
+		    <input type="password" name="password" id="password" placeholder="" required><b style="color:red" id="missingPass"></b></div>
+		    <div><input type="button" value="Login" onclick="Login(this.form.username.value, this.form.password.value)"></div>
+		</form>
+        </section>
+        <p><b>Don't have an account? <a style="color: #f00;text-shadow: 1px 1px 1px #333;" href="CreateAccount.html">Register</a> now!</b></p>
+        <div id="result"></div>
        </div>
     </body>
 </html>
