@@ -56,8 +56,27 @@
                     }
                 }
                 // Ready the values and POST the request
-                var str = "?nickname1=" + window.nickname1; // + "&nickname2=" + user2;
+                var str = "?nickname1=" + window.nickname1;
                 xmlhttp.open("POST", "InitGame.php" + str, true);
+                xmlhttp.send();
+            }
+
+            function ChangeState() {
+                // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+
+                // Wait for response
+                xmlhttp.onreadystatechange = function () {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                        response = xmlhttp.responseText;
+                        PrintUsersList();
+                    }
+                }
+                // Ready the values and POST the request
+                var cookie = getCookie("ArcomageCookie");
+                var nickName = cookie.substring(0, cookie.indexOf("|"));
+                var str = "?nickname=" + nickName; // + "&nickname2=" + user2;
+                xmlhttp.open("POST", "ChangeState.php" + str, true);
                 xmlhttp.send();
             }
 
@@ -77,7 +96,15 @@
                         var nickName = cookie.substring(0, cookie.indexOf("|"));
 
                         for (var i = 0; i < userList.length; i++) {
-                            if (userList[i][1] == 0) {
+                            if (userList[i][0] == nickName && userList[i][1] == 0) {
+                                document.getElementById("userlist").innerHTML += "<b>" + userList[i][0] + "</b>" + " <input type=\"button\" value=\"Busy\" style=\"color: red;\" onclick=\"ChangeState()\"><br>";
+                            }
+
+                            else if (userList[i][0] == nickName && userList[i][1] == 1) {
+                                document.getElementById("userlist").innerHTML += "<b>" + userList[i][0] + "</b>" + " <input type=\"button\" value=\"Free\" style=\"color: green;\" onclick=\"ChangeState()\"><br>";
+                            }
+
+                            else if (userList[i][1] == 0) {
                                 document.getElementById("userlist").innerHTML += userList[i][0] + "<br>";
                             }
                             else if (userList[i][1] == 1) {
@@ -85,8 +112,6 @@
                                 document.getElementById("userlist").innerHTML += userList[i][0] + " <input type=\"button\" value=\"Invite\" onclick=\"InitGame()\"><br>";
                             }
                         }
-                        //document.getElementById("userlist").innerHTML = nickName + " <input type=\"button\" value=\"Free\">";
-                        //document.getElementById("userlist").innerHTML = userList;
 
                         setTimeout('PrintUsersList()', 10000);
                     }
