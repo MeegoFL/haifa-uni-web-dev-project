@@ -2,7 +2,6 @@
     include 'verifyCookie.php';
     if( verifyCookie() ) {
 ?>
-?>
 
 <!DOCTYPE html>
 
@@ -56,6 +55,7 @@
                         response = xmlhttp.responseText;
                         document.getElementById("userlist").innerHTML = response;
                         document.getElementById("userlist").innerHTML += "<input type=\"button\" value=\"Submit\">";
+                        setTimeout('PrintUsersList()', 10000);
                     }
                 }
 
@@ -63,7 +63,9 @@
                 xmlhttp.open("POST", "GetActiveUsers.php", true);
                 xmlhttp.send();
             }
-    </script>
+            window.onload = function () {
+                setTimeout('PrintUsersList()', 10000);
+            }
         </script>
     </head>
 <body>
@@ -97,4 +99,4 @@
     else {
    //    header('Location: Login.html');
     }
-    ?>
+?>
