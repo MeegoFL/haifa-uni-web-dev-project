@@ -7,7 +7,7 @@
                 </script>";
             return FALSE;
         }
-	    list( $username, $expiration, $hmac ) = explode( '|', $_COOKIE['ArcomageCookie'] );
+	    list( $nickname, $expiration, $hmac ) = explode( '|', $_COOKIE['ArcomageCookie'] );
 //	    $expired = $expiration;
 
 //	    if ( $expired < time() ) {
@@ -19,8 +19,8 @@
             return FALSE;
 	    }
 
-	    $key = hash_hmac( 'md5', $username . $expiration, 'TalRan' );
-	    $hash = hash_hmac( 'md5', $username . $expiration, $key );
+	    $key = hash_hmac( 'md5', $nickname . $expiration, 'TalRan' );
+	    $hash = hash_hmac( 'md5', $nickname . $expiration, $key );
 
 	    if ( $hmac != $hash ) {
             echo "<script type='text/javascript'>
@@ -39,7 +39,7 @@
         
         $lastactive = $_SERVER['REQUEST_TIME'];
 
-        //$sql = "SELECT FROM users '"lastactive"' WHERE username = '".$username."'";
+        //$sql = "SELECT FROM users '"lastactive"' WHERE username = '".$nickname."'";
         //$result = mysqli_query($con,$sql);
         //$result->data_seek(0);
         //$row = $result->fetch_assoc();
@@ -47,7 +47,7 @@
            //return FALSE;
         
         
-        $sql = "UPDATE users SET lastactive = '".$lastactive."' WHERE username = '".$username."'";
+        $sql = "UPDATE users SET lastactive = '".$lastactive."' WHERE nickname = '".$nickname."'";
         $result = mysqli_query($con,$sql);
         
         return TRUE;
