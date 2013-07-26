@@ -3,7 +3,8 @@
     verifyCookie();
      // Get the values and check for XSS or SQL injection
     preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["nickname1"]) ? $nickname1 = $_REQUEST["nickname1"] : exit('XSS is detected!');
-    $nickname2 = $_COOKIE["nickname"];
+    $pieces = explode('|',$_COOKIE['ArcomageCookie']);
+    $nickname2 = $pieces[0];
 
     $mysqli = new mysqli("localhost", "root", "12345", "test");
     // Check connection
@@ -35,8 +36,9 @@
         VALUES ('$game_id', '$nickname1', '$first_turn', ".rand(1,102).", ".rand(1,102).", ".rand(1,102).", ".rand(1,102).", "
         .rand(1,102).", ".rand(1,102).")" );
 
-    $mysqli->query("INSERT INTO games (game_id, LastName, current_flag,c ard1_id, card2_id, card3_id, card4_id, card5_id, card6_id)
-        VALUES ('$game_id', '$nickname2','".($first_turn xor 1)."', ".rand(1,102).", ".rand(1,102).", ".rand(1,102).", ".rand(1,102).", "
+    $first_turn = !$first_turn;
+    $mysqli->query("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id)
+        VALUES ('$game_id', '$nickname2', '$first_turn', ".rand(1,102).", ".rand(1,102).", ".rand(1,102).", ".rand(1,102).", "
         .rand(1,102).", ".rand(1,102).")" );
 
     echo "window.location.href='Game.php';";
