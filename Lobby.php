@@ -13,6 +13,8 @@
         body {background-image: url('Images/Arcomage_title.jpg'); background-size: 100%;background-repeat: no-repeat; opacity: 0.9;}
         </style>
         <script>
+            var nickname1;
+            var nickname2;
             function getCookie(c_name) {
                 var c_value = document.cookie;
                 var c_start = c_value.indexOf(" " + c_name + "=");
@@ -42,6 +44,22 @@
                 document.getElementById("chatfield").value = "";
             }
 
+            function InitGame() {
+                // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+
+                // Wait for response
+                xmlhttp.onreadystatechange = function () {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                        response = xmlhttp.responseText;
+                    }
+                }
+                // Ready the values and POST the request
+                var str = "?nickname1=" + window.nickname1; // + "&nickname2=" + user2;
+                xmlhttp.open("POST", "InitGame.php" + str, true);
+                xmlhttp.send();
+            }
+
             function PrintUsersList() {
                 // Initialize missingvalue flag and clean error messages
                 document.getElementById("userlist").innerHTML = "";
@@ -53,8 +71,22 @@
                 xmlhttp.onreadystatechange = function () {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                         response = xmlhttp.responseText;
-                        document.getElementById("userlist").innerHTML = response;
-                        document.getElementById("userlist").innerHTML += "<input type=\"button\" value=\"Submit\">";
+                        eval(response);
+                        var cookie = getCookie("ArcomageCookie");
+                        var nickName = cookie.substring(0, cookie.indexOf("|"));
+
+                        for (var i = 0; i < userList.length; i++) {
+                            if (userList[i][1] == 0) {
+                                document.getElementById("userlist").innerHTML += userList[i][0] + "<br>";
+                            }
+                            else if (userList[i][1] == 1) {
+                                window.nickname1 = userList[i][0];
+                                document.getElementById("userlist").innerHTML += userList[i][0] + " <input type=\"button\" value=\"Invite\" onclick=\"InitGame()\"><br>";
+                            }
+                        }
+                        //document.getElementById("userlist").innerHTML = nickName + " <input type=\"button\" value=\"Free\">";
+                        //document.getElementById("userlist").innerHTML = userList;
+
                         setTimeout('PrintUsersList()', 10000);
                     }
                 }
@@ -64,7 +96,8 @@
                 xmlhttp.send();
             }
             window.onload = function () {
-                setTimeout('PrintUsersList()', 10000);
+                //setTimeout('PrintUsersList()', 10000);
+                PrintUsersList();
             }
         </script>
     </head>
@@ -82,7 +115,6 @@
         <tr>
             <td>
                 <div id="userlist" style="height: 500px; overflow-y: scroll; overflow-x: hidden;"></div>
-                <input type="button" value="refresh" onclick="PrintUsersList()">
             </td>
             <td>
                 <div id="chatbox" style="height: 500px; overflow-y: scroll; overflow-x: hidden;"></div>

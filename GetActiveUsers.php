@@ -11,7 +11,7 @@
 
  // Get list of active users (in last one hour)
  $time = time()-60;
- $result = $mysqli->query("SELECT * FROM users WHERE lastactive > '".$time."'");
+ $result = $mysqli->query("SELECT * FROM users WHERE last_active > '".$time."'");
 
  // If username doesn't exist return error
  if($result->num_rows == 0) 
@@ -19,10 +19,15 @@
      echo "No Online Users";
  } 
 
+ $userlist = array();
+ $i = 0;
  while ($row = $result->fetch_array())
  {
      $nickname = $row['nickname'];
-     echo "<b>$nickname</b><br>";
+     $free2play = $row['free_to_play'];
+     $userList[$i] = array($nickname, $free2play);
+     $i++;
  }
 
+ echo "var userList = " .json_encode($userList);
 ?>

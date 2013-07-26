@@ -35,6 +35,7 @@
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                         response = xmlhttp.responseText;
                         //document.getElementById('message2user').innerHTML += "1";
+                        JSON.parse(xmlhttp.responseText)
 
                         setTimeout('RefreshView()', 3000);
                     }
