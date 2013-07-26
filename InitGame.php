@@ -24,6 +24,9 @@
         exit("window.alert('Suspicious Activity, access denied');\nwindow.location.href='index.html';");
     }
 
+    
+    $mysqli->query("UPDATE users SET free_to_play = 0 WHERE nickname = '$nickname1' OR nickname = '$nickname2'");
+    
     for ($i=1, $game_id=0; $game_id == 0; $i++){
         $result = $mysqli->query("SELECT * FROM games WHERE game_id = '$i'");
         if($result->num_rows == 0) {
