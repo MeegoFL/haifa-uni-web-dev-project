@@ -246,8 +246,7 @@
         case 2: //Lucky Cache
             bricks(0,2);
             gems(0,2);
-            $playAgain = 1;
-            return 1;
+            return 2;
 
         case 3: //Earthquake
         
