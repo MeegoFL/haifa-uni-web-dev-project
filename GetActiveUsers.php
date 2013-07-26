@@ -20,7 +20,7 @@
  while ($row = $result->fetch_array())
  {
      $nickname = $row['nickname'];
-     echo "<b>$nickname</b><br>";
+     echo "<b>$nickname</b>";
  }
 
 ?>
