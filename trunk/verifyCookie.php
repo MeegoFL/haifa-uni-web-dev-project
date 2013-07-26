@@ -47,7 +47,7 @@
            //return FALSE;
         
         
-        $sql = "UPDATE users SET lastactive = '".$lastactive."' WHERE nickname = '".$nickname."'";
+        $sql = "UPDATE users SET last_active = '".$lastactive."' WHERE nickname = '".$nickname."'";
         $result = mysqli_query($con,$sql);
         
         return TRUE;
