@@ -1,5 +1,7 @@
 <?php
-
+    
+ include 'verifyCookie.php';
+ if( !verifyCookie() ) exit("Error: Not Logged In!");
  // Connect to Database
  $mysqli = new mysqli("localhost", "root", "12345", "test");
  if ($mysqli->connect_errno) 
@@ -8,7 +10,7 @@
  }
 
  // Get list of active users (in last one hour)
- $time = time()-3600;
+ $time = time()-60;
  $result = $mysqli->query("SELECT * FROM users WHERE lastactive > '".$time."'");
 
  // If username doesn't exist return error
@@ -20,7 +22,7 @@
  while ($row = $result->fetch_array())
  {
      $nickname = $row['nickname'];
-     echo "<b>$nickname</b>";
+     echo "<b>$nickname</b><br>";
  }
 
 ?>

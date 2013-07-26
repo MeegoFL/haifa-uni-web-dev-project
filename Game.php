@@ -10,21 +10,48 @@
         <meta charset="utf-8" />
         <title></title>
         <script>
-            function allowDrop(ev)
-            {
+            function allowDrop(ev) {
                 ev.preventDefault();
             }
 
-            function drag(ev)
-            {
-                ev.dataTransfer.setData("Text",ev.target.id);
+            function drag(ev) {
+                ev.dataTransfer.setData("Text", ev.target.id);
             }
 
-            function drop(ev)
-            {
+            function drop(ev) {
                 ev.preventDefault();
-                var data=ev.dataTransfer.getData("Text");
+                var data = ev.dataTransfer.getData("Text");
                 ev.target.appendChild(document.getElementById(data));
+            }
+
+            function RefreshView() {
+                // Init
+
+                // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+
+                // Wait for response
+                xmlhttp.onreadystatechange = function () {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                        response = xmlhttp.responseText;
+                        //document.getElementById('message2user').innerHTML += "1";
+
+                        setTimeout('RefreshView()', 3000);
+                    }
+                }
+
+                // Ready the values and POST the request
+                xmlhttp.open("POST", "GetActiveUsers.php", true);
+                xmlhttp.send();
+            }
+
+            function InitilizeGame() {
+                
+            }
+            
+            window.onload = function () {
+                InitilizeGame();
+                setTimeout('RefreshView()', 3000);
             }
         </script>
     </head>
@@ -86,7 +113,7 @@
             <tr>
                 
                 <td colspan="2" style="text-align: center;">
-                    <span style="background-color: #FFA500;"><b>&nbsp messages to user &nbsp</b></span>
+                    <span id="message2user" style="background-color: #FFA500;"><b>&nbsp messages to user &nbsp</b></span>
                 </td>
             </tr>
 
