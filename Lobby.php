@@ -52,6 +52,7 @@
                 xmlhttp.onreadystatechange = function () {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                         response = xmlhttp.responseText;
+                        eval(response);
                     }
                 }
                 // Ready the values and POST the request
