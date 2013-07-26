@@ -2,6 +2,7 @@
     include 'verifyCookie.php';
     if( verifyCookie() ) {
 ?>
+?>
 
 <!DOCTYPE html>
 
@@ -10,7 +11,7 @@
         <meta charset="utf-8" />
         <title>Game Lobby</title>
         <style type="text/css">
-        body {background-image: url('Acromage_title.jpg'); background-size: 100%;background-repeat: no-repeat; opacity: 0.9;}
+        body {background-image: url('Images/Arcomage_title.jpg'); background-size: 100%;background-repeat: no-repeat; opacity: 0.9;}
         </style>
         <script>
             function getCookie(c_name) {
@@ -54,6 +55,7 @@
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                         response = xmlhttp.responseText;
                         document.getElementById("userlist").innerHTML = response;
+                        document.getElementById("userlist").innerHTML += "<input type=\"button\" value=\"Submit\">";
                     }
                 }
 
