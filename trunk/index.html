@@ -56,17 +56,25 @@
       <div>
         <h1 style="font-size: 50px;color: #ffd800;text-shadow: 2px 2px 2px #333;text-align: center">Welcome to Arcomage Game!</h1>
         <hr>
-        <section class="loginform cf">
-		<form name="login" accept-charset="utf-8">
-		    <div><label for="username"><b>Username:</b></label>
-		    <input type="text" name="username" id="username" placeholder="" required><b style="color:red" id="missingName"></b></div>
-		    <div><label for="password"><b>Password: </b></label>
-		    <input type="password" name="password" id="password" placeholder="" required><b style="color:red" id="missingPass"></b></div>
-		    <div><input type="button" value="Login" onclick="Login(this.form.username.value, this.form.password.value)"></div>
-		</form>
-        </section>
-        <p><b>Don't have an account? <a style="color: #f00;text-shadow: 1px 1px 1px #333;" href="CreateAccount.html">Register</a> now!</b></p>
-        <div id="result"></div>
+        <table style="width:500px; margin: auto; text-align: center;color: #ffd800;text-shadow: 2px 2px 2px #333;">
+            <tr>
+		        <td>
+                    <form name="login" accept-charset="utf-8">
+		            <div><label for="username"><b>Username:</b></label>
+		            <input type="text" name="username" id="username" placeholder="" required><b style="color:red" id="missingName"></b></div>
+		            <div><label for="password"><b>Password: </b></label>
+		            <input type="password" name="password" id="password" placeholder="" required><b style="color:red" id="missingPass"></b></div>
+		            <div><input type="button" value="Login" onclick="Login(this.form.username.value, this.form.password.value)"></div>
+		            </form>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Don't have an account? <a style="color: #f00;text-shadow: 1px 1px 1px #333;" href="CreateAccount.html">Register</a> now!</b>
+                    <div id="result"></div>
+                <td>
+            </tr>
+        </table>
        </div>
        <p style="text-align: center; color: #f00;text-shadow: 1px 1px 1px #333;">Copyright © TalRan</p>
     </body>
