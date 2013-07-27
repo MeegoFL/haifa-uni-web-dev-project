@@ -3,6 +3,8 @@
 preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["username"]) ? $username = $_REQUEST["username"] : exit('XSS is detected!');
 preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["password"]) ? $password = md5($_REQUEST["password"]) : exit('XSS is detected!');
 
+session_start();
+
 // Connect to Database
 $mysqli = new mysqli("localhost", "root", "12345", "test");
 if ($mysqli->connect_errno)
@@ -45,6 +47,11 @@ else
         if ( !setcookie( 'ArcomageCookie', $cookie, $expiration ) ) {
 		    exit('Error: Unable to set cookie');
 	    }
+        
+        // store session data
+        $_SESSION['nickname'] = $pieces[0];
+        
+        // Redirect the user to lobby
         echo "Location:Lobby.php";
         exit;
     }

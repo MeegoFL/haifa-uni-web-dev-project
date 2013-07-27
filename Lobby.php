@@ -1,6 +1,7 @@
 <?php
 include 'verifyCookie.php';
 if (verifyCookie()) {
+    session_start();
 ?>
 
 <!DOCTYPE html>
@@ -113,7 +114,7 @@ if (verifyCookie()) {
                             }
                         }
 
-                        setTimeout('RefreshUsers()', 10000);
+                        setTimeout('RefreshUsers()', 3000);
                     }
                 }
 

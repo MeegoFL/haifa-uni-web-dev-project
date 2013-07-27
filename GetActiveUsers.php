@@ -3,9 +3,8 @@
 include 'verifyCookie.php';
 if( !verifyCookie() ) exit("Error: Not Logged In!");
 
-// Get the current user nickname from cookie
-$pieces    = explode('|', $_COOKIE['ArcomageCookie']);
-$mynickname = $pieces[0];
+// Get the current user nickname from session
+$mynickname = $_SESSION['nickname'];
 
 // Connect to Database
 $mysqli = new mysqli("localhost", "root", "12345", "test");
