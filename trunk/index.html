@@ -1,81 +1,100 @@
 <!DOCTYPE html>
-
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>Welcome to Arcomage Game!</title>
-        <style type="text/css">
-        body {background-image: url('Images/Arcomage_title.jpg'); background-size: 100%;background-repeat: no-repeat;}
-        </style>
-        <script>
-             function Login(name, pass) {
-                 // Initialize missingvalue flag and clean error messages
-                 missingValue = 0;
-                 document.getElementById("result").innerHTML = "";
-                 document.getElementById("missingName").innerHTML = "";
-                 document.getElementById("missingPass").innerHTML = "";
+<head>
+    <meta charset="utf-8" />
+    <title>Welcome to Arcomage Game!</title>
+    <style type="text/css">
+        body
+        {
+            background-image: url('Images/Arcomage_title.jpg');
+            background-size: 100%;
+            background-repeat: no-repeat;
+        }
+    </style>
+    <script type="text/javascript">
+        function Login(name, pass) {
+            // Initialize missingvalue flag and clean error messages
+            missingValue = 0;
+            document.getElementById("result").innerHTML = "";
+            document.getElementById("missingName").innerHTML = "";
+            document.getElementById("missingPass").innerHTML = "";
 
-                 // Check for each of the fields if missing value and print error
-                 if (name == "") {
-                     document.getElementById("missingName").innerHTML = " This is a required field";
-                     missingValue = 1;
-                 }
-                 if (pass == "") {
-                     document.getElementById("missingPass").innerHTML = " This is a required field";
-                     missingValue = 1;
-                 }
+            // Check for each of the fields if missing value and print error
+            if (name == "") {
+                document.getElementById("missingName").innerHTML = " This is a required field";
+                missingValue = 1;
+            }
+            if (pass == "") {
+                document.getElementById("missingPass").innerHTML = " This is a required field";
+                missingValue = 1;
+            }
 
-                 // If there was a missing value return and do no action
-                 if (missingValue == 1) return;
+            // If there was a missing value return and do no action
+            if (missingValue == 1) return;
 
-                 // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
-                 xmlhttp = new XMLHttpRequest();
+            // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
 
-                 // Wait for response
-                 xmlhttp.onreadystatechange = function () {
-                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                         response = xmlhttp.responseText;
-                         if (response.indexOf("Location:") !== -1) {
-                             document.location = response.substr(9);
-                         }
-                         else {
-                             document.getElementById("result").innerHTML = response;
-                         }
+            // Wait for response
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    response = xmlhttp.responseText;
+                    if (response.indexOf("Location:") !== -1) {
+                        document.location = response.substr(9);
+                    }
+                    else {
+                        document.getElementById("result").innerHTML = response;
+                    }
 
-                     }
-                 }
+                }
+            }
 
-                 // Ready the values and POST the request
-                 var str = "?username=" + name + "&password=" + pass;
-                 xmlhttp.open("POST", "Login.php" + str, true);
-                 xmlhttp.send();
-             }
+            // Ready the values and POST the request
+            var str = "?username=" + name + "&password=" + pass;
+            xmlhttp.open("POST", "Login.php" + str, true);
+            xmlhttp.send();
+        }
     </script>
-    </head>
-    <body>
-      <div>
-        <h1 style="font-size: 50px;color: #ffd800;text-shadow: 2px 2px 2px #333;text-align: center">Welcome to Arcomage Game!</h1>
+</head>
+<body>
+    <div>
+        <h1 style="font-size: 50px; color: #ffd800; text-shadow: 2px 2px 2px #333; text-align: center">
+            Welcome to Arcomage Game!</h1>
         <hr>
-        <table style="width:500px; margin: auto; text-align: center;color: #ffd800;text-shadow: 2px 2px 2px #333;">
+        <table style="width: 500px; margin-left: 40%; text-align: left; color: #ffd800; text-shadow: 2px 2px 2px #333;">
             <tr>
-		        <td>
+                <td>
                     <form name="login" accept-charset="utf-8">
-		            <div><label for="username"><b>Username:</b></label>
-		            <input type="text" name="username" id="username" placeholder="" required><b style="color:red" id="missingName"></b></div>
-		            <div><label for="password"><b>Password: </b></label>
-		            <input type="password" name="password" id="password" placeholder="" required><b style="color:red" id="missingPass"></b></div>
-		            <div><input type="button" value="Login" onclick="Login(this.form.username.value, this.form.password.value)"></div>
-		            </form>
+                    <div>
+                        <label for="username">
+                            <b>Username:</b></label>
+                        <input type="text" name="username" id="username" placeholder="" required="true">
+                        <b style="color: red" id="missingName"></b>
+                    </div>
+                    <div>
+                        <label for="password">
+                            <b>Password: </b>
+                        </label>
+                        <input type="password" name="password" id="password" placeholder="" required="true">
+                        <b style="color: red" id="missingPass"></b>
+                    </div>
+                    <div style="margin-left: 100px;">
+                        <input type="button" value="Login" onclick="Login(this.form.username.value, this.form.password.value)">
+                    </div>
+                    </form>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <b>Don't have an account? <a style="color: #f00;text-shadow: 1px 1px 1px #333;" href="CreateAccount.html">Register</a> now!</b>
-                    <div id="result"></div>
-                <td>
+                    <b>Don't have an account? <a style="color: #f00; text-shadow: 1px 1px 1px #333;"
+                        href="CreateAccount.html">Register</a> now!</b>
+                    <div id="result">
+                    </div>
+                    <td>
             </tr>
         </table>
-       </div>
-       <p style="text-align: center; color: #f00;text-shadow: 1px 1px 1px #333;">Copyright © TalRan</p>
-    </body>
+    </div>
+    <p style="text-align: center; color: #f00; text-shadow: 1px 1px 1px #333;">
+        Copyright © TalRan</p>
+</body>
 </html>
