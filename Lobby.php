@@ -1,7 +1,7 @@
 <?php
 include 'verifyCookie.php';
 if (verifyCookie()) {
-    session_start();
+session_start();
 ?>
 
 <!DOCTYPE html>
