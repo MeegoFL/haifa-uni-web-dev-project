@@ -48,11 +48,12 @@ $success = $mysqli->query("INSERT INTO games (game_id, nickname, current_flag, c
 }
 
 $success = 0;
+$opponent_turn = !$first_turn;
+
 while (!$success)
 {
-$first_turn = !$first_turn;
 $success = $mysqli->query("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active)
-        VALUES ('$game_id', '$nickname2', '$first_turn', " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " .$time. ")");
+        VALUES ('$game_id', '$nickname2', '$opponent_turn', " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " .$time. ")");
 }
 
 echo "window.location.href='Game.php';";

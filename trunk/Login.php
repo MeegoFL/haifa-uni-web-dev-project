@@ -49,7 +49,7 @@ else
 	    }
         
         // store session data
-        $_SESSION['nickname'] = $pieces[0];
+        $_SESSION['nickname'] = $row['nickname'];
         
         // Redirect the user to lobby
         echo "Location:Lobby.php";

@@ -21,9 +21,16 @@ $mysqli->query("UPDATE games SET last_active = '$currentTime' WHERE game_id = '$
 // Get the player's game stat for current game
 $result = $mysqli->query("SELECT * FROM games WHERE game_id = '$game_id'");
 
-$myGameStat = $result->fetch_array();
-echo "var userGameStat = " .json_encode($myGameStat). ";";
+$GameStat = $result->fetch_array();
+if ($GameStat['nickname'] == $nickname) {
+    echo "var userGameStat = " .json_encode($GameStat). ";";
+    $GameStat = $result->fetch_array();
+    echo "var opponentGameStat = " .json_encode($GameStat). ";";
+}
 
-$opponentGameStat = $result->fetch_array();
-echo "var opponentGameStat = " .json_encode($opponentGameStat). ";";
+else {
+    echo "var opponentGameStat = " .json_encode($GameStat). ";";
+    $GameStat = $result->fetch_array();
+    echo "var userGameStat = " .json_encode($GameStat). ";";
+}
 ?>

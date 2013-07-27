@@ -1,6 +1,7 @@
 <?php
 include 'verifyCookie.php';
 if( verifyCookie() ) {
+    session_start();
 ?>
 
 <!DOCTYPE html>
@@ -35,35 +36,46 @@ if( verifyCookie() ) {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                         response = xmlhttp.responseText;
                         eval(response);
+                        //alert(response);
+                        
+                        // Update player's game stat on screen
                         document.getElementById("myTowerVal").innerHTML = userGameStat['tower'];
                         document.getElementById("myWallVal").innerHTML = userGameStat['wall'];
                         document.getElementById("myMagic").innerHTML = userGameStat['magic'];
                         document.getElementById("myGems").innerHTML = userGameStat['gems'];
                         document.getElementById("myQuarry").innerHTML = userGameStat['quarry'];
                         document.getElementById("myBricks").innerHTML = userGameStat['bricks'];
-                        document.getElementById("MyDungeon").innerHTML = userGameStat['dungeon'];
-                        document.getElementById("MyRecruits").innerHTML = userGameStat['recruits'];
-                        //document.getElementById("myCard1").innerHTML = userGameStat['card1_id'];
-                        //document.getElementById("myCard2").innerHTML = userGameStat['card2_id'];
-                        //document.getElementById("myCard3").innerHTML = userGameStat['card3_id'];
-                        //document.getElementById("myCard4").innerHTML = userGameStat['card4_id'];
-                        //document.getElementById("myCard5").innerHTML = userGameStat['card5_id'];
-                        //document.getElementById("myCard6").innerHTML = userGameStat['card6_id'];
+                        document.getElementById("myDungeon").innerHTML = userGameStat['dungeon'];
+                        document.getElementById("myRecruits").innerHTML = userGameStat['recruits'];
+                        document.getElementById("myCard1").src = "Images/" + userGameStat['card1_id'] + ".gif";
+                        document.getElementById("myCard2").src = "Images/" + userGameStat['card2_id'] + ".gif";
+                        document.getElementById("myCard3").src = "Images/" + userGameStat['card3_id'] + ".gif";  
+                        document.getElementById("myCard4").src = "Images/" + userGameStat['card4_id'] + ".gif";  
+                        document.getElementById("myCard5").src = "Images/" + userGameStat['card5_id'] + ".gif";  
+                        document.getElementById("myCard6").src = "Images/" + userGameStat['card6_id'] + ".gif";
+                        document.getElementById("myCard1").alt = "Images/" + userGameStat['card1_id'] + ".gif";
+                        document.getElementById("myCard2").alt = "Images/" + userGameStat['card2_id'] + ".gif";
+                        document.getElementById("myCard3").alt = "Images/" + userGameStat['card3_id'] + ".gif";  
+                        document.getElementById("myCard4").alt = "Images/" + userGameStat['card4_id'] + ".gif";  
+                        document.getElementById("myCard5").alt = "Images/" + userGameStat['card5_id'] + ".gif";  
+                        document.getElementById("myCard6").alt = "Images/" + userGameStat['card6_id'] + ".gif";
                         if (userGameStat['current_flag'] == 1) {
                             document.getElementById("userMessages").innerHTML = "YOUR TURN!";
                         }
                         else {
-                            document.getElementById("userMessages").innerHTML = "OPPONENT'S TURN";
+                            document.getElementById("userMessages").innerHTML = opponentGameStat['nickname'] + "'S TURN";
                         }
 
-                        //document.getElementById("myTowerVal").innerHTML = userGameStat['tower'];
-                        //document.getElementById("myWallVal").innerHTML = userGameStat['wall'];
-                        //document.getElementById("myMagic").innerHTML = userGameStat['magic'];
-                        //document.getElementById("myGems").innerHTML = userGameStat['gems'];
-                        //document.getElementById("myQuarry").innerHTML = userGameStat['quarry'];
-                        //document.getElementById("myBricks").innerHTML = userGameStat['bricks'];
-                        //document.getElementById("MyDungeon").innerHTML = userGameStat['dungeon'];
-                        //document.getElementById("MyRecruits").innerHTML = userGameStat['recruits'];
+                        // Update opponent's game stat on screen
+                        document.getElementById("opponentTowerVal").innerHTML = opponentGameStat['tower'];
+                        document.getElementById("opponentWallVal").innerHTML = opponentGameStat['wall'];
+                        document.getElementById("opponentMagic").innerHTML = opponentGameStat['magic'];
+                        document.getElementById("opponentGems").innerHTML = opponentGameStat['gems'];
+                        document.getElementById("opponentQuarry").innerHTML = opponentGameStat['quarry'];
+                        document.getElementById("opponentBricks").innerHTML = opponentGameStat['bricks'];
+                        document.getElementById("opponentDungeon").innerHTML = opponentGameStat['dungeon'];
+                        document.getElementById("opponentRecruits").innerHTML = opponentGameStat['recruits'];
+                        
                         setTimeout('RefreshView()', 3000);
                     }
                 }
@@ -104,7 +116,7 @@ if( verifyCookie() ) {
                 <b>
                     <br><b id = "myGems">num</b> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +<b id = "myMagic">num</b></br>
                     <br style="line-height: 95px;"><b id = "myBricks">num</b> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +<b id = "myQuarry">num</b></br>
-                    <br style="line-height: 95px;"><b id = "MyRecruits">num</b> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +<b id = "MyDungeon">num</b></br>
+                    <br style="line-height: 95px;"><b id = "myRecruits">num</b> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +<b id = "myDungeon">num</b></br>
                 </b>
             </td>
 
@@ -140,9 +152,9 @@ if( verifyCookie() ) {
                     background-size: 120px 350px;color: #EEEEEE;width:100px;height:280px;padding-left: 20px;
                     vertical-align: top;padding-top: 70px;white-space: nowrap;">
                 <b>
-                    <br>num &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +n</br>
-                    <br style="line-height: 95px;">num &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +n</br>
-                    <br style="line-height: 95px;">num &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +n</br>
+                    <br><b id = "opponentGems">num</b> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +<b id = "opponentMagic">num</b></br>
+                    <br style="line-height: 95px;"><b id = "opponentBricks">num</b> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +<b id = "opponentQuarry">num</b></br>
+                    <br style="line-height: 95px;"><b id = "opponentRecruits">num</b> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +<b id = "opponentDungeon">num</b></br>
                 </b>
             </td>
         </tr>
@@ -159,22 +171,22 @@ if( verifyCookie() ) {
         <tr>
             <td></td>
             <td style="height:180px;width:120px;">
-                <img id="drag1" src="Images/back.jpg" alt="card1" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="myCard1" src="Images/back.jpg" alt="card1" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="drag2" src="Images/back.jpg" alt="card2" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="myCard2" src="Images/back.jpg" alt="card2" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="drag3" src="Images/back.jpg" alt="card3" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="myCard3" src="Images/back.jpg" alt="card3" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="drag4" src="Images/back.jpg" alt="card4" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="myCard4" src="Images/back.jpg" alt="card4" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="drag5" src="Images/back.jpg" alt="card5" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="myCard5" src="Images/back.jpg" alt="card5" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="drag6" src="Images/back.jpg" alt="card6" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="myCard6" src="Images/back.jpg" alt="card6" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
 
             <td>
