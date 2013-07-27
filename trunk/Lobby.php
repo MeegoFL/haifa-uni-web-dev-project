@@ -69,7 +69,7 @@ if (verifyCookie()) {
                 xmlhttp.onreadystatechange = function () {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                         response = xmlhttp.responseText;
-                        PrintUsersList();
+                        RefreshUsers();
                     }
                 }
                 // Ready the values and POST the request
@@ -80,7 +80,7 @@ if (verifyCookie()) {
                 xmlhttp.send();
             }
 
-            function PrintUsersList() {
+            function RefreshUsers() {
                 // Initialize missingvalue flag and clean error messages
                 document.getElementById("userlist").innerHTML = "";
 
@@ -113,7 +113,7 @@ if (verifyCookie()) {
                             }
                         }
 
-                        setTimeout('PrintUsersList()', 10000);
+                        setTimeout('RefreshUsers()', 10000);
                     }
                 }
 
@@ -122,8 +122,8 @@ if (verifyCookie()) {
                 xmlhttp.send();
             }
             window.onload = function () {
-                //setTimeout('PrintUsersList()', 10000);
-                PrintUsersList();
+                //setTimeout('RefreshUsers()', 10000);
+                RefreshUsers();
             }
     </script>
 </head>
