@@ -1,8 +1,8 @@
 <?php
-    
 
-    
-    
+
+
+
     $con=mysqli_connect("localhost", "root", "12345", "test");
     // Check connection
     if (mysqli_connect_errno())
@@ -19,11 +19,11 @@
             break;
 
         case 1: //update enemy
-            
+
             break;
 
         case 2: //update all
-            
+
             break;
         }
     }
@@ -38,11 +38,11 @@
             break;
 
         case 1: //update enemy
-            
+
             break;
 
         case 2: //update all
-            
+
             break;
         }
     }
@@ -57,11 +57,11 @@
             break;
 
         case 1: //update enemy
-            
+
             break;
 
         case 2: //update all
-            
+
             break;
         }
     }
@@ -75,11 +75,11 @@
             break;
 
         case 1: //update enemy
-            
+
             break;
 
         case 2: //update all
-            
+
             break;
         }
     }
@@ -93,11 +93,11 @@
             break;
 
         case 1: //update enemy
-            
+
             break;
 
         case 2: //update all
-            
+
             break;
         }
     }
@@ -111,11 +111,11 @@
             break;
 
         case 1: //update enemy
-            
+
             break;
 
         case 2: //update all
-            
+
             break;
         }
     }
@@ -129,11 +129,11 @@
             break;
 
         case 1: //update enemy
-            
+
             break;
 
         case 2: //update all
-            
+
             break;
         }
     }
@@ -147,11 +147,11 @@
             break;
 
         case 1: //update enemy
-            
+
             break;
 
         case 2: //update all
-            
+
             break;
         }
     }
@@ -222,12 +222,12 @@
 
     draw()
     {
-        
+
     }
 
     discard()
     {
-        
+
     }
 
     play_card($card_id)
@@ -242,14 +242,14 @@
         case 1: //Brick Shortage
             bricks(2,-8);
             return 1;
-    
+
         case 2: //Lucky Cache
             bricks(0,2);
             gems(0,2);
             return 2;
 
         case 3: //Earthquake
-        
+
             break;
 
         case 4: //Strip Mine
@@ -350,7 +350,7 @@
         case 14: //collapse!
             if(cost(0,4))
             {
-                
+
                 return 1;
             }
             return 0;
@@ -1177,7 +1177,7 @@
             return 0;
 
         default:
-        
+
         }
     }
 
@@ -1191,11 +1191,9 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title></title>
-    </head>
-    <body>
-        
-    </body>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body></body>
 </html>
