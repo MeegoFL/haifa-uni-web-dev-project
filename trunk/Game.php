@@ -9,89 +9,112 @@ if( verifyCookie() ) {
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>Game Page</title>
     <script>
-            function allowDrop(ev) {
-                ev.preventDefault();
-            }
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
 
-            function drag(ev) {
-                ev.dataTransfer.setData("Text", ev.target.id);
-            }
+        function drag(ev) {
+            ev.dataTransfer.setData("Text", ev.target.id);
+            ev.dataTransfer.setData("ID", ev.target.title);
+        }
 
-            function drop(ev) {
-                ev.preventDefault();
-                var data = ev.dataTransfer.getData("Text");
-                ev.target.appendChild(document.getElementById(data));
-            }
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("Text");
+            var id = ev.dataTransfer.getData("ID");
+            ev.target.appendChild(document.getElementById(data));
+            PerformAction(id);
+        }
 
-            function RefreshView() {
-                // Init
+        function RefreshView() {
+            // Init
 
-                // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
-                xmlhttp = new XMLHttpRequest();
+            // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
 
-                // Wait for response
-                xmlhttp.onreadystatechange = function () {
-                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                        response = xmlhttp.responseText;
-                        eval(response);
-                        //alert(response);
-                        
-                        // Update player's game stat on screen
-                        document.getElementById("myTowerVal").innerHTML = userGameStat['tower'];
-                        document.getElementById("myWallVal").innerHTML = userGameStat['wall'];
-                        document.getElementById("myMagic").innerHTML = userGameStat['magic'];
-                        document.getElementById("myGems").innerHTML = userGameStat['gems'];
-                        document.getElementById("myQuarry").innerHTML = userGameStat['quarry'];
-                        document.getElementById("myBricks").innerHTML = userGameStat['bricks'];
-                        document.getElementById("myDungeon").innerHTML = userGameStat['dungeon'];
-                        document.getElementById("myRecruits").innerHTML = userGameStat['recruits'];
-                        document.getElementById("myCard1").src = "Images/" + userGameStat['card1_id'] + ".gif";
-                        document.getElementById("myCard2").src = "Images/" + userGameStat['card2_id'] + ".gif";
-                        document.getElementById("myCard3").src = "Images/" + userGameStat['card3_id'] + ".gif";  
-                        document.getElementById("myCard4").src = "Images/" + userGameStat['card4_id'] + ".gif";  
-                        document.getElementById("myCard5").src = "Images/" + userGameStat['card5_id'] + ".gif";  
-                        document.getElementById("myCard6").src = "Images/" + userGameStat['card6_id'] + ".gif";
-                        document.getElementById("myCard1").alt = "Images/" + userGameStat['card1_id'] + ".gif";
-                        document.getElementById("myCard2").alt = "Images/" + userGameStat['card2_id'] + ".gif";
-                        document.getElementById("myCard3").alt = "Images/" + userGameStat['card3_id'] + ".gif";  
-                        document.getElementById("myCard4").alt = "Images/" + userGameStat['card4_id'] + ".gif";  
-                        document.getElementById("myCard5").alt = "Images/" + userGameStat['card5_id'] + ".gif";  
-                        document.getElementById("myCard6").alt = "Images/" + userGameStat['card6_id'] + ".gif";
-                        if (userGameStat['current_flag'] == 1) {
-                            document.getElementById("userMessages").innerHTML = "YOUR TURN!";
-                        }
-                        else {
-                            document.getElementById("userMessages").innerHTML = opponentGameStat['nickname'] + "'S TURN";
-                        }
+            // Wait for response
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    response = xmlhttp.responseText;
+                    eval(response);
+                    //alert(response);
 
-                        // Update opponent's game stat on screen
-                        document.getElementById("opponentTowerVal").innerHTML = opponentGameStat['tower'];
-                        document.getElementById("opponentWallVal").innerHTML = opponentGameStat['wall'];
-                        document.getElementById("opponentMagic").innerHTML = opponentGameStat['magic'];
-                        document.getElementById("opponentGems").innerHTML = opponentGameStat['gems'];
-                        document.getElementById("opponentQuarry").innerHTML = opponentGameStat['quarry'];
-                        document.getElementById("opponentBricks").innerHTML = opponentGameStat['bricks'];
-                        document.getElementById("opponentDungeon").innerHTML = opponentGameStat['dungeon'];
-                        document.getElementById("opponentRecruits").innerHTML = opponentGameStat['recruits'];
-                        
-                        setTimeout('RefreshView()', 3000);
+                    // Update player's game stat on screen
+                    document.getElementById("myTowerVal").innerHTML = userGameStat['tower'];
+                    document.getElementById("myWallVal").innerHTML = userGameStat['wall'];
+                    document.getElementById("myMagic").innerHTML = userGameStat['magic'];
+                    document.getElementById("myGems").innerHTML = userGameStat['gems'];
+                    document.getElementById("myQuarry").innerHTML = userGameStat['quarry'];
+                    document.getElementById("myBricks").innerHTML = userGameStat['bricks'];
+                    document.getElementById("myDungeon").innerHTML = userGameStat['dungeon'];
+                    document.getElementById("myRecruits").innerHTML = userGameStat['recruits'];
+                    document.getElementById("myCard1").src = "Images/" + userGameStat['card1_id'] + ".gif";
+                    document.getElementById("myCard2").src = "Images/" + userGameStat['card2_id'] + ".gif";
+                    document.getElementById("myCard3").src = "Images/" + userGameStat['card3_id'] + ".gif";
+                    document.getElementById("myCard4").src = "Images/" + userGameStat['card4_id'] + ".gif";
+                    document.getElementById("myCard5").src = "Images/" + userGameStat['card5_id'] + ".gif";
+                    document.getElementById("myCard6").src = "Images/" + userGameStat['card6_id'] + ".gif";
+                    document.getElementById("myCard1").alt = "Images/" + userGameStat['card1_id'] + ".gif";
+                    document.getElementById("myCard2").alt = "Images/" + userGameStat['card2_id'] + ".gif";
+                    document.getElementById("myCard3").alt = "Images/" + userGameStat['card3_id'] + ".gif";
+                    document.getElementById("myCard4").alt = "Images/" + userGameStat['card4_id'] + ".gif";
+                    document.getElementById("myCard5").alt = "Images/" + userGameStat['card5_id'] + ".gif";
+                    document.getElementById("myCard6").alt = "Images/" + userGameStat['card6_id'] + ".gif";
+                    document.getElementById("myCard1").title = userGameStat['card1_id'];
+                    document.getElementById("myCard2").title = userGameStat['card2_id'];
+                    document.getElementById("myCard3").title = userGameStat['card3_id'];
+                    document.getElementById("myCard4").title = userGameStat['card4_id'];
+                    document.getElementById("myCard5").title = userGameStat['card5_id'];
+                    document.getElementById("myCard6").title = userGameStat['card6_id'];
+                    if (userGameStat['current_flag'] == 1) {
+                        document.getElementById("userMessages").innerHTML = "YOUR TURN!";
                     }
+                    else {
+                        document.getElementById("userMessages").innerHTML = opponentGameStat['nickname'] + "'S TURN";
+                    }
+
+                    // Update opponent's game stat on screen
+                    document.getElementById("opponentTowerVal").innerHTML = opponentGameStat['tower'];
+                    document.getElementById("opponentWallVal").innerHTML = opponentGameStat['wall'];
+                    document.getElementById("opponentMagic").innerHTML = opponentGameStat['magic'];
+                    document.getElementById("opponentGems").innerHTML = opponentGameStat['gems'];
+                    document.getElementById("opponentQuarry").innerHTML = opponentGameStat['quarry'];
+                    document.getElementById("opponentBricks").innerHTML = opponentGameStat['bricks'];
+                    document.getElementById("opponentDungeon").innerHTML = opponentGameStat['dungeon'];
+                    document.getElementById("opponentRecruits").innerHTML = opponentGameStat['recruits'];
+
+                    setTimeout('RefreshView()', 3000);
                 }
-
-                // Ready the values and POST the request
-                xmlhttp.open("POST", "RefreshGamePage.php", true);
-                xmlhttp.send();
             }
 
-            function PerformAction() {
+            // Ready the values and POST the request
+            xmlhttp.open("POST", "RefreshGamePage.php", true);
+            xmlhttp.send();
+        }
 
+        function PerformAction(id) {
+            // Init
+
+            // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+
+            // Wait for response
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    response = xmlhttp.responseText;
+                }
             }
 
-            window.onload = function () {
-                RefreshView();
-            }
+            // Ready the values and POST the request
+            xmlhttp.open("POST", "GameLogic.php?id=" + id, true);
+            xmlhttp.send();
+        }
+
+        window.onload = function () {
+            RefreshView();
+        }
     </script>
 </head>
 
@@ -171,22 +194,22 @@ if( verifyCookie() ) {
         <tr>
             <td></td>
             <td style="height:180px;width:120px;">
-                <img id="myCard1" src="Images/back.jpg" alt="card1" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="myCard1" title="" src="Images/back.jpg" alt="card1" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="myCard2" src="Images/back.jpg" alt="card2" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="myCard2" title="" src="Images/back.jpg" alt="card2" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="myCard3" src="Images/back.jpg" alt="card3" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="myCard3" title="" src="Images/back.jpg" alt="card3" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="myCard4" src="Images/back.jpg" alt="card4" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="myCard4" title="" src="Images/back.jpg" alt="card4" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="myCard5" src="Images/back.jpg" alt="card5" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="myCard5" title="" src="Images/back.jpg" alt="card5" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="myCard6" src="Images/back.jpg" alt="card6" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="myCard6" title="" src="Images/back.jpg" alt="card6" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
 
             <td>
