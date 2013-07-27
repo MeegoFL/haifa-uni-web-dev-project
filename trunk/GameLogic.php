@@ -21,10 +21,6 @@
         return mysqli_fetch_array($enemy_result);
     }
 
-    win($who){
-        
-    }
-
     check_for_resource_win($row)
     {
         if($row['gems'] >= 200  && $row['bricks'] >= 200 && $row['recruits'] >= 200
@@ -92,16 +88,6 @@
         return $my_row[$resource];
     }
 
-
-    draw()
-    {
-
-    }
-
-    discard()
-    {
-
-    }
 
     play_card($card_id)
     {
@@ -460,9 +446,7 @@
         case 40: //Prism
             if(cost(1,2))
             {
-                draw();
-                discard();
-                return 2;
+                return 3;
             }
             return 0;
 
@@ -758,9 +742,7 @@
         case 73: //Elven Scout
             if(cost(2,2))
             {
-                draw();
-                discard();
-                return 2;
+                return 3;
             }
             return 0;
 
@@ -1054,6 +1036,8 @@
         }
     }
     
+    preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["card_id"]) ? $card_id = $_REQUEST["card_id"] : exit('XSS is detected!');
+    $play_card_res = play(card_id);
 
 
     mysqli_close($con);

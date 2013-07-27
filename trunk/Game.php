@@ -121,8 +121,8 @@ if( verifyCookie() ) {
 <body style="background-image: url(Images/game-background.jpg);background-repeat:no-repeat;background-size:cover;">
     <audio autoplay="" loop="" controls="">
         <source src="Media/GOT_Soundtrack.ogg" type="audio/ogg">
-            <source src="Media/GOT_Soundtrack.mp3" type="audio/mp3"></source>
-        </source>
+        <source src="Media/GOT_Soundtrack.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
     </audio>
     <table style="border: 0;border-spacing: 10px; padding: 12px;margin-left: auto;margin-right: auto;">
         <tr>
