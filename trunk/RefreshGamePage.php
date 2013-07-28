@@ -33,4 +33,6 @@ else {
     $GameStat = $result->fetch_array();
     echo "var userGameStat = " .json_encode($GameStat). ";";
 }
+
+$mysqli->close();
 ?>

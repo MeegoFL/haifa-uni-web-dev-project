@@ -30,6 +30,7 @@ if($result->num_rows == 0)
 
 $game_session = $invites->fetch_array();
 $last_active = $game_session['last_active'];
+$_SESSION['game_id'] = $game_session['game_id'];
 
 // If no user is in game list -> move him to game.php
 if($invites->num_rows > 0 && ($last_active > time()-60))

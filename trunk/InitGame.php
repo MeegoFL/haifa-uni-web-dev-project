@@ -40,21 +40,18 @@ $_SESSION['game_id'] = $game_id;
 
 $time = time();
 $first_turn = rand(0, 1);
-$success = 0;
-while (!$success)
-{
-$success = $mysqli->query("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active)
-        VALUES ('$game_id', '$nickname1', '$first_turn', " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " .$time. ")");
-}
 
-$success = 0;
+if (!$mysqli->query("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active)
+        VALUES ('$game_id', '$nickname1', '$first_turn', " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " .$time. ")")) {
+            echo "alert(\"Connect 1 failed: " .mysqli_connect_error(). "\n\");";
+        }
+
 $opponent_turn = !$first_turn;
 
-while (!$success)
-{
-$success = $mysqli->query("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active)
-        VALUES ('$game_id', '$nickname2', '$opponent_turn', " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " .$time. ")");
-}
+if(!$mysqli->query("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active)
+        VALUES ('$game_id', '$nickname2', '$opponent_turn', " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " .$time. ")")) {
+            echo "alert(\"Connect 2 failed: " .mysqli_connect_error(). "\n\");";
+        }
 
 echo "window.location.href='Game.php';";
 ?>
