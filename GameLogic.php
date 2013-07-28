@@ -1,111 +1,110 @@
 <?php
+preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["card_id"]) ? $card_id = $_REQUEST["card_id"] : exit('XSS is detected!');
+session_start();
+$game_id = $_SESSION['game_id'];
+$nickname = $_SESSION['nickname'];
+$mysqli = new mysqli("localhost", "root", "12345", "test");
+// Check connection
+if (mysqli_connect_errno()) {
+    echo "Failed to connect to MySQL: " . mysqli_connect_error();
+}
 
-    $con=mysqli_connect("localhost", "root", "12345", "test");
-    // Check connection
-    if (mysqli_connect_errno()) {
-      echo "Failed to connect to MySQL: " . mysqli_connect_error();
-      }
+function get_my_row()
+{
+    $my_result = $mysqli->query("SELECT * FROM games WHERE game_id='$game_id' AND nickname = '$nickname'");
+    return $mysqli->fetch_array($my_result);
+}
 
-    get_my_row()
-    {
-        session_start();
-        $my_result = $mysqli->query("SELECT * FROM games WHERE game_id='".$_SESSION['game_id']."' AND nickname = '".$_SESSION['nickname']."'");
-        return mysqli_fetch_array($my_result);
-    }
+function get_enemy_row()
+{
+    $enemy_result = $mysqli->query("SELECT * FROM games WHERE game_id = '$game_id' AND nickname != '$nickname'");
+    return $mysqli->fetch_array($enemy_result);
+}
 
-    get_enemy_row()
-    {
-        session_start();
-        $enemy_result = $mysqli->query("SELECT * FROM games WHERE game_id = '".$_SESSION['game_id']."' AND nickname != '".$_SESSION['nickname']."'");
-        return mysqli_fetch_array($enemy_result);
-    }
-
-    check_for_win($my_row,$enemy_row)
-    {
-        if( ($my_row['gems'] >= 200  && $my_row['bricks'] >= 200 && $my_row['recruits'] >= 200
-                || $my_row['tower'] >= 100
-                || $enemy_row['tower'] <= 0 )
-            && ($enemy_row['gems'] >= 200  && $enemy_row['bricks'] >= 200 && $enemy_row['recruits'] >= 200
-                || $enemy_row['tower'] >= 100
-                || $my_row['tower'] <= 0 ) ) {
-                    //TODO: return to both users "It's a tie!"
-                    retuen 2; //there's a tie
-        }
-        if($my_row['gems'] >= 200  && $my_row['bricks'] >= 200 && $my_row['recruits'] >= 200
+function check_for_win($my_row,$enemy_row)
+{
+    if( ($my_row['gems'] >= 200  && $my_row['bricks'] >= 200 && $my_row['recruits'] >= 200
             || $my_row['tower'] >= 100
-            || $enemy_row['tower'] <= 0 ){
-            //TODO: return to current user: You win!, to opponent: You loose!
-            return 1; //I win
-        }
-        if(($enemy_row['gems'] >= 200  && $enemy_row['bricks'] >= 200 && $enemy_row['recruits'] >= 200
+            || $enemy_row['tower'] <= 0 )
+        && ($enemy_row['gems'] >= 200  && $enemy_row['bricks'] >= 200 && $enemy_row['recruits'] >= 200
             || $enemy_row['tower'] >= 100
-            || $my_row['tower'] <= 0 )) {
-            //TODO: return to current user: You loose!, to opponent: You win!
-            return 2; //enemy wins
-        }
-        return 0; //no win
-    } //returns 0 if no win, 1 if I win, 2 if enemy wins, 3 if it's a tie
+            || $my_row['tower'] <= 0 ) ) {
+        //TODO: return to both users "It's a tie!"
+        return 2; //there's a tie
+    }
+    if($my_row['gems'] >= 200  && $my_row['bricks'] >= 200 && $my_row['recruits'] >= 200
+        || $my_row['tower'] >= 100
+        || $enemy_row['tower'] <= 0 ){
+        //TODO: return to current user: You win!, to opponent: You loose!
+        return 1; //I win
+    }
+    if(($enemy_row['gems'] >= 200  && $enemy_row['bricks'] >= 200 && $enemy_row['recruits'] >= 200
+        || $enemy_row['tower'] >= 100
+        || $my_row['tower'] <= 0 )) {
+        //TODO: return to current user: You loose!, to opponent: You win!
+        return 2; //enemy wins
+    }
+    return 0; //no win
+} //returns 0 if no win, 1 if I win, 2 if enemy wins, 3 if it's a tie
 
-
-    update($recource,$player,$amount)
-    {
-        $my_row = get_my_row();
-        $enemy_row = get_enemy_row();
-        switch($player) {
+function update($resource,$player,$amount)
+{
+    $my_row = get_my_row();
+    $enemy_row = get_enemy_row();
+    switch($player) {
 
         case 0: //update current player
-            $mysqli->query("UPDATE games SET '$recource'='".max(0,$my_row[$recource] + $amount)."'
+            $mysqli->query("UPDATE games SET $resource ='".max(0,$my_row[$resource] + $amount)."'
                     WHERE game_id='".$my_row['game_id']."' AND nickname='".$my_row['nickname']."'");
-            if($recource=='wall' && $my_row['wall'] + $amount < 0) {
+            if($resource=='wall' && $my_row['wall'] + $amount < 0) {
                 update('tower',0,$my_row['wall'] + $amount);
             }
             return;
 
         case 1: //update enemy
-            $mysqli->query("UPDATE games SET '$recource'='".max(0,$enemy_row[$recource] + $amount)."'
+            $mysqli->query("UPDATE games SET $resource ='".max(0,$enemy_row[$resource] + $amount)."'
                     WHERE game_id='".$enemy_row['game_id']."' AND nickname='".$enemy_row['nickname']."'");
-             if($recource=='wall' && $enemy_row['wall'] + $amount < 0) {
+            if($resource=='wall' && $enemy_row['wall'] + $amount < 0) {
                 update('tower',0,$enemy_row['wall'] + $amount);
             }
             return;
 
         case 2: //update all
-            update($recource,0,$amount);
-            update($recource,1,$amount);
+            update($resource,0,$amount);
+            update($resource,1,$amount);
             return;
-        }
     }
+}
 
-    cost($resource,$amount)
-    {
-        $my_row = get_my_row();
+function cost($resource,$amount)
+{
+    $my_row = get_my_row();
 
-        if($my_row[$resource] - $amount < 0) {
-            return 0;
-        }
-        $mysqli->query("UPDATE games SET '$recource'='".($my_row[$recource] - $amount)."'
+    if($my_row[$resource] - $amount < 0) {
+        return 0;
+    }
+    $mysqli->query("UPDATE games SET $resource ='".($my_row[$resource] - $amount)."'
                     WHERE game_id='".$my_row['game_id']."' AND nickname='".$my_row['nickname']."'");
+}
+
+function get_resource($resource,$player)
+{
+    if($player) {
+        $enemy_row = get_enemy_row();
+        return $enemy_row[$resource];
     }
+    $my_row = get_my_row();
+    return $my_row[$resource];
+}
 
-    get_resource($recource,$player)
-    {
-        if($player) {
-            $enemy_row = get_enemy_row();
-            return $enemy_row[$recource];
-        }
-        $my_row = get_my_row();
-        return $my_row[$resource];
-    }
+function play_card($card_id)
+{
 
-
-    play_card($card_id)
+    switch ((intval($card_id)))
     {
 
-        switch ($card_id)
-        {
-
-             //**********************************//
-		    //---------- Pink cards: ----------//
+        //**********************************//
+        //---------- Pink cards: ----------//
 
         case 1: //Brick Shortage
             update('bricks',2,-8);
@@ -199,7 +198,7 @@
 
         case 13: //Mother Lode
             if(cost(0,4)) {
-                if(get_resource('quarry',0)<get_resource('quarry',1)) {
+                if(get_resource('quarry',0) < get_resource('quarry',1)) {
                     update('quarry',0,2);
                 }
                 else {
@@ -219,7 +218,7 @@
         case 15: //Copping the Tech
             if(cost(0,5)) {
                 if(get_resource('quarry',0)<get_resource('quarry',1)) {
-                    update('quarry',0,(get_resource('quarry',1)-get_resource('quarry',0));
+                    update('quarry',0,(get_resource('quarry',1)-get_resource('quarry',0)));
                 }
                 return 1;
             }
@@ -380,8 +379,8 @@
             }
             return 0;
 
-             //**********************************//
-		    //---------- Blue cards: ----------//
+        //**********************************//
+        //---------- Blue cards: ----------//
 
 
         case 35: //Bag of Baubles
@@ -504,7 +503,7 @@
         case 51: //Crystal Matrix
             if(cost(1,6)) {
                 update('magic',0,2);
-                update('tower',0,3)
+                update('tower',0,3);
                 update('tower',1,1);
                 return 1;
             }
@@ -529,10 +528,10 @@
         case 54: //Parity
             if(cost(1,7)) {
                 if(get_resource('magic',0)<get_resource('magic',1)) {
-                    update('magic',0, get_resource('magic',1)-get_resource('magic',0) );
+                    update('magic',0, get_resource('magic',1) - get_resource('magic',0) );
                 }
                 else {
-                    update('magic',1, get_resource('magic',0)-get_resource('magic',1) );
+                    update('magic',1, get_resource('magic',0) - get_resource('magic',1) );
                 }
                 return 1;
             }
@@ -579,7 +578,7 @@
 
         case 60: //Lightning Shard
             if(cost(1,11)) {
-                if(get_resource('tower',0)>get_resource('wall',1)) {
+                if(get_resource('tower',0) > get_resource('wall',1)) {
                     update('tower',1,-8);
                 }
                 else {
@@ -653,8 +652,8 @@
             }
             return 0;
 
-             //***********************************//
-		    //---------- Green cards: ----------//
+        //***********************************//
+        //---------- Green cards: ----------//
 
         case 69: // MadCowDisease
             update('recruits',2,-6);
@@ -674,7 +673,7 @@
 
         case 72: //Moody Goblins
             if(cost(2,1)) {
-                update('wall',1,-4)
+                update('wall',1,-4);
                 update('gems',0,-3);
                 return 1;
             }
@@ -816,7 +815,7 @@
 
         case 90: //Spizzer
             if(cost(2,8)) {
-                of(get_resource('wall',1)==0) {
+                if(get_resource('wall',1)==0) {
                     update('wall',1,-10);
                 }
                 else {
@@ -835,7 +834,7 @@
 
         case 92: //Unicorn
             if(cost(2,9)) {
-                if(get_resource('magic',0)>get_resource('magic',1)) {
+                if(get_resource('magic',0) > get_resource('magic',1)) {
                     update('wall',1,-12);
                 }
                 else {
@@ -940,73 +939,63 @@
         default: //dicard card_id
             return 4;
 
-        } //end switch
-    } // end play_card
-    
-    preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["card_id"]) ? $card_id = $_REQUEST["card_id"] : exit('XSS is detected!');
+    } //end switch
+} // end play_card
+
+
+$my_row = get_my_row();
+$cards = array($my_row['card1_id'],$my_row['card2_id'], $my_row['card3_id'], $my_row['card4_id'], $my_row['card5_id'], $my_row['card6_id'], );
+if (in_array($card_id, $cards)) {
+
+    $play_card_res = play($card_id);
 
     $my_row = get_my_row();
-    $cards = array($my_row['card1_id'],$my_row['card2_id'], $my_row['card3_id'], $my_row['card4_id'], $my_row['card5_id'], $my_row['card6_id'], );
-    if (in_array($cards_id, $cards)) {
-
-        $play_card_res = play(card_id);
-
-        $my_row = get_my_row();
-        $enemy_row = get_enemy_row();
-        if(check_for_win($my_row,$enemy_row) == 0
-            && $enemy_row['cards_played'] > 0
-            && ($play_card_res == 1 || $play_card_res == 4)) {
-                update('gems',0,$my_row['magic']);
-                update('bricks',0,$my_row['quarry']);
-                update('Recruits',0,$my_row['Dungeon']);
-        }
-
-        $my_row = get_my_row();
-        $enemy_row = get_enemy_row();
-        if(check_for_win($my_row,$enemy_row) == 0) {
-            switch($play_card_res) {
-                case 0: //could not play card, not enough resources
-                    //TODO: return card_id
-                    break;
-                case 1: //played card, end turn
-                    update('current_flag',0,-1);
-                    update('current_flag',1,1);
-                    break;
-
-                case 2: //played card, play again
-                    //TODO: return new card_id with rand(1,102)
-                    break;
-
-                case 3: //played card, discard a card and play again
-                    update('discard_turn',0,1);
-                    //TODO: return new card_id with rand(1,102)
-                    break;
-        
-                case 4: //card_id discarded,
-                    if($my_row['discard_turn']) {
-                        update('discard_turn',0,-1);
-                    }
-                    else {
-                        update('current_flag',0,-1);
-                        update('current_flag',1,1);
-                    }
-                    //TODO: return new card_id with rand(1,102)
-                    break;
-            }//end switch
-        }//end if
-    }// end if
-    else {
-        //TODO: return: Suspicious activity detected! Player doesn't hold the card played.
+    $enemy_row = get_enemy_row();
+    if(check_for_win($my_row,$enemy_row) == 0
+        && $enemy_row['cards_played'] > 0
+        && ($play_card_res == 1 || $play_card_res == 4)) {
+        update('gems',0,$my_row['magic']);
+        update('bricks',0,$my_row['quarry']);
+        update('Recruits',0,$my_row['Dungeon']);
     }
 
-    mysqli_close($con);
-?>
+    $my_row = get_my_row();
+    $enemy_row = get_enemy_row();
+    if(check_for_win($my_row,$enemy_row) == 0) {
+        switch($play_card_res) {
+            case 0: //could not play card, not enough resources
+                //TODO: return card_id
+                break;
+            case 1: //played card, end turn
+                update('current_flag',0,-1);
+                update('current_flag',1,1);
+                break;
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <title></title>
-</head>
-<body></body>
-</html>
+            case 2: //played card, play again
+                //TODO: return new card_id with rand(1,102)
+                break;
+
+            case 3: //played card, discard a card and play again
+                update('discard_turn',0,1);
+                //TODO: return new card_id with rand(1,102)
+                break;
+
+            case 4: //card_id discarded,
+                if($my_row['discard_turn']) {
+                    update('discard_turn',0,-1);
+                }
+                else {
+                    update('current_flag',0,-1);
+                    update('current_flag',1,1);
+                }
+                //TODO: return new card_id with rand(1,102)
+                break;
+        }//end switch
+    }//end if
+}// end if
+else {
+    //TODO: return: Suspicious activity detected! Player doesn't hold the card played.
+}
+
+$mysqli->close();
+?>

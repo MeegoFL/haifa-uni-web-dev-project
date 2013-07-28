@@ -108,7 +108,7 @@ if( verifyCookie() ) {
             }
 
             // Ready the values and POST the request
-            xmlhttp.open("POST", "GameLogic.php?id=" + id, true);
+            xmlhttp.open("POST", "GameLogic.php?card_id=" + id, true);
             xmlhttp.send();
         }
 
