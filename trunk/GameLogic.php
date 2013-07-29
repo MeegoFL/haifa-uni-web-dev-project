@@ -11,14 +11,16 @@ if (mysqli_connect_errno()) {
 
 function get_my_row()
 {
+    global $mysqli;
     $my_result = $mysqli->query("SELECT * FROM games WHERE game_id='$game_id' AND nickname = '$nickname'");
-    return $mysqli->fetch_array($my_result);
+    return $my_result->fetch_array();
 }
 
 function get_enemy_row()
 {
+    global $mysqli;
     $enemy_result = $mysqli->query("SELECT * FROM games WHERE game_id = '$game_id' AND nickname != '$nickname'");
-    return $mysqli->fetch_array($enemy_result);
+    return $enemy_result->fetch_array();
 }
 
 function check_for_win($my_row,$enemy_row)
@@ -49,6 +51,7 @@ function check_for_win($my_row,$enemy_row)
 
 function update($resource,$player,$amount)
 {
+    global $mysqli;
     $my_row = get_my_row();
     $enemy_row = get_enemy_row();
     switch($player) {
@@ -78,6 +81,7 @@ function update($resource,$player,$amount)
 
 function cost($resource,$amount)
 {
+    global $mysqli;
     $my_row = get_my_row();
 
     if($my_row[$resource] - $amount < 0) {
@@ -944,7 +948,7 @@ function play_card($card_id)
 
 
 $my_row = get_my_row();
-$cards = array($my_row['card1_id'],$my_row['card2_id'], $my_row['card3_id'], $my_row['card4_id'], $my_row['card5_id'], $my_row['card6_id'], );
+$cards = array($my_row['card1_id'],$my_row['card2_id'], $my_row['card3_id'], $my_row['card4_id'], $my_row['card5_id'], $my_row['card6_id']);
 if (in_array($card_id, $cards)) {
 
     $play_card_res = play($card_id);
