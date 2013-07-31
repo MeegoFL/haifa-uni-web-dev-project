@@ -11,20 +11,21 @@ if (mysqli_connect_errno()) {
 
 function get_my_row()
 {
-    global $mysqli;
-    $my_result = $mysqli->query("SELECT * FROM games WHERE game_id='$game_id' AND nickname = '$nickname'");
+    global $mysqli, $game_id, $nickname, $card_id;
+    $my_result = $mysqli->query("SELECT * FROM games WHERE game_id = '$game_id' AND nickname = '$nickname';");
     return $my_result->fetch_array();
 }
 
 function get_enemy_row()
 {
-    global $mysqli;
+    global $mysqli, $game_id, $nickname, $card_id;
     $enemy_result = $mysqli->query("SELECT * FROM games WHERE game_id = '$game_id' AND nickname != '$nickname'");
     return $enemy_result->fetch_array();
 }
 
 function check_for_win($my_row,$enemy_row)
 {
+    global $mysqli, $game_id, $nickname, $card_id;
     if( ($my_row['gems'] >= 200  && $my_row['bricks'] >= 200 && $my_row['recruits'] >= 200
             || $my_row['tower'] >= 100
             || $enemy_row['tower'] <= 0 )
@@ -51,7 +52,7 @@ function check_for_win($my_row,$enemy_row)
 
 function update($resource,$player,$amount)
 {
-    global $mysqli;
+    global $mysqli, $game_id, $nickname, $card_id;
     $my_row = get_my_row();
     $enemy_row = get_enemy_row();
     switch($player) {
@@ -81,7 +82,7 @@ function update($resource,$player,$amount)
 
 function cost($resource,$amount)
 {
-    global $mysqli;
+    global $mysqli, $game_id, $nickname, $card_id;
     $my_row = get_my_row();
 
     if($my_row[$resource] - $amount < 0) {
@@ -93,6 +94,7 @@ function cost($resource,$amount)
 
 function get_resource($resource,$player)
 {
+    global $mysqli, $game_id, $nickname, $card_id;
     if($player) {
         $enemy_row = get_enemy_row();
         return $enemy_row[$resource];
@@ -103,7 +105,7 @@ function get_resource($resource,$player)
 
 function play_card($card_id)
 {
-
+    global $mysqli, $game_id, $nickname, $card_id;
     switch ((intval($card_id)))
     {
 
@@ -157,6 +159,7 @@ function play_card($card_id)
         case 8: //Basic Wall
             if(cost(0,2))
             {
+                echo "test";
                 update('wall',0,3);
                 return 1;
             }
@@ -948,12 +951,11 @@ function play_card($card_id)
 
 
 $my_row = get_my_row();
-$cards = array($my_row['card1_id'],$my_row['card2_id'], $my_row['card3_id'], $my_row['card4_id'], $my_row['card5_id'], $my_row['card6_id']);
-if (in_array($card_id, $cards)) {
+if (in_array($card_id, $my_row)) {
 
-    $play_card_res = play($card_id);
+    $play_card_res = play_card($card_id);
+    echo $play_card_res;
 
-    $my_row = get_my_row();
     $enemy_row = get_enemy_row();
     if(check_for_win($my_row,$enemy_row) == 0
         && $enemy_row['cards_played'] > 0
@@ -998,6 +1000,7 @@ if (in_array($card_id, $cards)) {
     }//end if
 }// end if
 else {
+    echo "Player Don't Hold Card " . $card_id;
     //TODO: return: Suspicious activity detected! Player doesn't hold the card played.
 }
 
