@@ -12,14 +12,20 @@ if (mysqli_connect_errno()) {
 function get_my_row()
 {
     global $mysqli, $game_id, $nickname, $card_id;
-    $my_result = $mysqli->query("SELECT * FROM games WHERE game_id = '$game_id' AND nickname = '$nickname';");
+    $my_result = $mysqli->query("SELECT * FROM games WHERE game_id = '$game_id' AND nickname = '$nickname'");
+    if (!$my_result){
+        echo "get_my_row SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    }
     return $my_result->fetch_array();
 }
 
 function get_enemy_row()
 {
     global $mysqli, $game_id, $nickname, $card_id;
-    $enemy_result = $mysqli->query("SELECT * FROM games WHERE game_id = '$game_id' AND nickname != '$nickname'");
+    $enemy_result = $mysqli->query("SELECT * FROM games WHERE game_id = '$game_id' AND nickname <> '$nickname'");
+    if (!$enemy_result){
+        echo "get_enemy_row SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    }
     return $enemy_result->fetch_array();
 }
 
@@ -58,24 +64,30 @@ function update($resource,$player,$amount)
     switch($player) {
 
         case 0: //update current player
-            $mysqli->query("UPDATE games SET $resource ='".max(0,$my_row[$resource] + $amount)."'
-                    WHERE game_id='".$my_row['game_id']."' AND nickname='".$my_row['nickname']."'");
-            if($resource=='wall' && $my_row['wall'] + $amount < 0) {
-                update('tower',0,$my_row['wall'] + $amount);
+            $result = $mysqli->query("UPDATE games SET $resource = '".max(0,$my_row[$resource] + $amount)."'
+                    WHERE game_id='".$game_id."' AND nickname='".$nickname."'");
+            if (!$result){
+                echo "update current player SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
+            }
+            if($resource == 'wall' && $my_row['wall'] + $amount < 0) {
+                update('tower', 0, $my_row['wall'] + $amount);
             }
             return;
 
         case 1: //update enemy
-            $mysqli->query("UPDATE games SET $resource ='".max(0,$enemy_row[$resource] + $amount)."'
+            $result = $mysqli->query("UPDATE games SET $resource ='".max(0,$enemy_row[$resource] + $amount)."'
                     WHERE game_id='".$enemy_row['game_id']."' AND nickname='".$enemy_row['nickname']."'");
+            if (!$result){
+                echo "update enemy SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
+            }
             if($resource=='wall' && $enemy_row['wall'] + $amount < 0) {
-                update('tower',0,$enemy_row['wall'] + $amount);
+                update('tower', 1, $enemy_row['wall'] + $amount);
             }
             return;
 
         case 2: //update all
-            update($resource,0,$amount);
-            update($resource,1,$amount);
+            update($resource, 0, $amount);
+            update($resource, 1, $amount);
             return;
     }
 }
@@ -83,13 +95,23 @@ function update($resource,$player,$amount)
 function cost($resource,$amount)
 {
     global $mysqli, $game_id, $nickname, $card_id;
+    // Get players game stat
     $my_row = get_my_row();
 
+    // If player doesn't have enough resources - exit with 0
     if($my_row[$resource] - $amount < 0) {
         return 0;
     }
-    $mysqli->query("UPDATE games SET $resource ='".($my_row[$resource] - $amount)."'
+    
+    else {
+        $result = $mysqli->query("UPDATE games SET $resource ='".($my_row[$resource] - $amount)."'
                     WHERE game_id='".$my_row['game_id']."' AND nickname='".$my_row['nickname']."'");
+        if (!$result){
+            echo "Update cost SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
+        }
+    
+        return 1;   
+    }
 }
 
 function get_resource($resource,$player)
@@ -130,7 +152,7 @@ function play_card($card_id)
             return 1;
 
         case 5: //Friendly Terrain
-            if(cost(0,1))
+            if(cost("gems",1))
             {
                 update('wall',0,1);
                 return 2;
@@ -138,7 +160,7 @@ function play_card($card_id)
             return 0;
 
         case 6: //Rock Garden
-            if(cost(0,1))
+            if(cost("gems",1))
             {
                 update('wall',0,1);
                 update('tower',0,1);
@@ -148,7 +170,7 @@ function play_card($card_id)
             return 0;
 
         case 7: //Work overtime
-            if(cost(0,2))
+            if(cost("gems",2))
             {
                 update('wall',0,5);
                 update('gems',0,-6);
@@ -157,9 +179,8 @@ function play_card($card_id)
             return 0;
 
         case 8: //Basic Wall
-            if(cost(0,2))
+            if(cost("gems",2))
             {
-                echo "test";
                 update('wall',0,3);
                 return 1;
             }
@@ -167,7 +188,7 @@ function play_card($card_id)
 
 
         case 9: //Innovations
-            if(cost(0,2))
+            if(cost("gems",2))
             {
                 update('quarry',2,1);
                 update('gems',0,4);
@@ -176,7 +197,7 @@ function play_card($card_id)
             return 0;
 
         case 10: //Miners
-            if(cost(0,3))
+            if(cost("gems",3))
             {
                 update('quarry',0,1);
                 return 1;
@@ -184,7 +205,7 @@ function play_card($card_id)
             return 0;
 
         case 11: //Sturdy Wall
-            if(cost(0,3))
+            if(cost("gems",3))
             {
                 update('wall',0,4);
                 return 1;
@@ -192,7 +213,7 @@ function play_card($card_id)
             return 0;
 
         case 12: //Foundations
-            if(cost(0,3)) {
+            if(cost("gems",3)) {
                 if(get_update('wall',0)==0) {
                     update('wall',0,6);
                 }
@@ -204,7 +225,7 @@ function play_card($card_id)
             return 0;
 
         case 13: //Mother Lode
-            if(cost(0,4)) {
+            if(cost("gems",4)) {
                 if(get_resource('quarry',0) < get_resource('quarry',1)) {
                     update('quarry',0,2);
                 }
@@ -216,14 +237,14 @@ function play_card($card_id)
             return 0;
 
         case 14: //collapse!
-            if(cost(0,4)) {
+            if(cost("gems",4)) {
                 update('quarry',1,-1);
                 return 1;
             }
             return 0;
 
         case 15: //Copping the Tech
-            if(cost(0,5)) {
+            if(cost("gems",5)) {
                 if(get_resource('quarry',0)<get_resource('quarry',1)) {
                     update('quarry',0,(get_resource('quarry',1)-get_resource('quarry',0)));
                 }
@@ -232,21 +253,21 @@ function play_card($card_id)
             return 0;
 
         case 16: //Big Wall
-            if(cost(0,5)) {
+            if(cost("gems",5)) {
                 update('wall',0,6);
                 return 1;
             }
             return 0;
 
         case 17: //New Equipment
-            if(cost(0,5)) {
+            if(cost("gems",5)) {
                 update('quarry',0,2);
                 return 1;
             }
             return 0;
 
         case 18: //Flood Water
-            if(cost(0,6)) {
+            if(cost("gems",6)) {
                 if(get_resource('wall',0)<=get_resource('wall',1)) {
                     update('dungeon',0,-1);
                     update('tower',0,-2);
@@ -260,7 +281,7 @@ function play_card($card_id)
             return 0;
 
         case 19: //Dwarven Miners
-            if(cost(0,7)) {
+            if(cost("gems",7)) {
                 update('wall',0,14);
                 update('quarry',0,1);
                 return 1;
@@ -268,14 +289,14 @@ function play_card($card_id)
             return 0;
 
         case 20: //Tremors
-            if(cost(0,7)) {
+            if(cost("gems",7)) {
                 update('wall',2,-5);
                 return 2;
             }
             return 0;
 
         case 21: //Forced Labor
-            if(cost(0,7)) {
+            if(cost("gems",7)) {
                 update('wall',0,9);
                 update('recruits',0,-5);
                 return 1;
@@ -283,21 +304,21 @@ function play_card($card_id)
             return 0;
 
         case 22: //Secret Room
-            if(cost(0,8)) {
+            if(cost("gems",8)) {
                 update('magic',0,1);
                 return 2;
             }
             return 0;
 
         case 23: //Reinforced Wall
-            if(cost(0,8)) {
+            if(cost("gems",8)) {
                 update('wall',0,8);
                 return 1;
             }
             return 0;
 
         case 24: //Porticulus
-            if(cost(0,9)) {
+            if(cost("gems",9)) {
                 update('wall',0,5);
                 update('dungeon',0,1);
                 return 1;
@@ -305,7 +326,7 @@ function play_card($card_id)
             return 0;
 
         case 25: //Crystal Rocks
-            if(cost(0,9)) {
+            if(cost("gems",9)) {
                 update('wall',0,7);
                 update('gems',0,7);
                 return 1;
@@ -313,7 +334,7 @@ function play_card($card_id)
             return 0;
 
         case 26: //Barracks
-            if(cost(0,10)) {
+            if(cost("gems",10)) {
                 update('recruits',0,6);
                 update('wall',0,6);
                 if(get_resource('dungeon',0)<get_resource('dungeon',1)) {
@@ -324,7 +345,7 @@ function play_card($card_id)
             return 0;
 
         case 27: //Harmonic Ore
-            if(cost(0,11)) {
+            if(cost("gems",11)) {
                 update('wall',0,6);
                 update('tower',0,3);
                 return 1;
@@ -332,14 +353,14 @@ function play_card($card_id)
             return 0;
 
         case 28: //MondoWall
-            if(cost(0,13)) {
+            if(cost("gems",13)) {
                 update('wall',0,12);
                 return 1;
             }
             return 0;
 
         case 29: //Battlemnets
-            if(cost(0,14)) {
+            if(cost("gems",14)) {
                 update('wall',0,7);
                 update('wall',1,-6);
                 return 1;
@@ -347,7 +368,7 @@ function play_card($card_id)
             return 0;
 
         case 30: //Focused Designs
-            if(cost(0,15)) {
+            if(cost("gems",15)) {
                 update('wall',0,8);
                 update('tower',0,5);
                 return 1;
@@ -355,14 +376,14 @@ function play_card($card_id)
             return 0;
 
         case 31: //Great Wall
-            if(cost(0,16)) {
+            if(cost("gems",16)) {
                 update('wall',0,15);
                 return 1;
             }
             return 0;
 
         case 32: //Shift
-            if(cost(0,17)) {
+            if(cost("gems",17)) {
                 $tmp = get_resource('wall',0) - get_resource('wall',1);
                 update('wall',0,-$tmp);
                 update('wall',1,$tmp);
@@ -371,7 +392,7 @@ function play_card($card_id)
             return 0;
 
         case 33: //Rock Launcher
-            if(cost(0,18)) {
+            if(cost("gems",18)) {
                 update('wall',0,6);
                 update('wall',1,-10);
                 return 1;
@@ -379,7 +400,7 @@ function play_card($card_id)
             return 0;
 
         case 34: //Dragon's Heart
-            if(cost(0,24)) {
+            if(cost("gems",24)) {
                 update('wall',20);
                 update('tower',8);
                 return 1;
@@ -405,55 +426,55 @@ function play_card($card_id)
             return 1;
 
         case 37: //Quartz
-            if(cost(1,1)) {
+            if(cost("bricks",1)) {
                 update('tower',0,1);
                 return 2;
             }
             return 0;
 
         case 38: //Smoky Quartz
-            if(cost(1,2)) {
+            if(cost("bricks",2)) {
                 update('tower',1,-1);
                 return 2;
             }
             return 0;
 
         case 39: //Amethyst
-            if(cost(1,2)) {
+            if(cost("bricks",2)) {
                 update('tower',0,3);
                 return 1;
             }
             return 0;
 
         case 40: //Prism
-            if(cost(1,2)) {
+            if(cost("bricks",2)) {
                 return 3;
             }
             return 0;
 
         case 41: //Gemstone Flaw
-            if(cost(1,2)) {
+            if(cost("bricks",2)) {
                 update('tower',1,-3);
                 return 1;
             }
             return 0;
 
         case 42: //Spell Weavers
-            if(cost(1,3)) {
+            if(cost("bricks",3)) {
                 update('magic',0,1);
                 return 1;
             }
             return 0;
 
         case 43: //Ruby
-            if(cost(1,3)) {
+            if(cost("bricks",3)) {
                 update('tower',0,5);
                 return 1;
             }
             return 0;
 
         case 44: //Power Burn
-            if(cost(1,3)) {
+            if(cost("bricks",3)) {
                 update('tower',0,-5);
                 update('magic',0,2);
                 return 1;
@@ -461,7 +482,7 @@ function play_card($card_id)
             return 0;
 
         case 45: //Solar Flare
-            if(cost(1,4)) {
+            if(cost("bricks",4)) {
                 update('tower',0,2);
                 update('tower',1,-2);
                 return 1;
@@ -469,14 +490,14 @@ function play_card($card_id)
             return 0;
 
         case 46: //Gem Spear
-            if(cost(1,4)) {
+            if(cost("bricks",4)) {
                 update('tower',1,-5);
                 return 1;
             }
             return 0;
 
         case 47: //Quarry's Help
-            if(cost(1,4)) {
+            if(cost("bricks",4)) {
                 update('tower',0,7);
                 update('bricks',0,-10);
                 return 1;
@@ -484,14 +505,14 @@ function play_card($card_id)
             return 0;
 
         case 48: //Lodestone
-            if(cost(1,5)) {
+            if(cost("bricks",5)) {
                 update('tower',0,3); //TODO !!!!!!!!!!!!!!!! can't be discarded!!!!!!!!
                 return 1;
             }
             return 0;
 
         case 49: //Discord
-            if(cost(1,5)) {
+            if(cost("bricks",5)) {
                 update('tower',2,-7);
                 update('magic',2,-1);
                 return 1;
@@ -499,7 +520,7 @@ function play_card($card_id)
             return 0;
 
         case 50: //Apprentice
-            if(cost(1,5)) {
+            if(cost("bricks",5)) {
                 update('tower',0,4);
                 update('recruits',0,-3);
                 update('tower',1,-2);
@@ -508,7 +529,7 @@ function play_card($card_id)
             return 0;
 
         case 51: //Crystal Matrix
-            if(cost(1,6)) {
+            if(cost("bricks",6)) {
                 update('magic',0,2);
                 update('tower',0,3);
                 update('tower',1,1);
@@ -517,14 +538,14 @@ function play_card($card_id)
             return 0;
 
         case 52: //Emerald
-            if(cost(1,6)) {
+            if(cost("bricks",6)) {
                 update('tower',0,8);
                 return 1;
             }
             return 0;
 
         case 53: //Harmonic Vibe
-            if(cost(1,7)) {
+            if(cost("bricks",7)) {
                 update('magic',0,1);
                 update('tower',0,3);
                 update('wall',0,3);
@@ -533,7 +554,7 @@ function play_card($card_id)
             return 0;
 
         case 54: //Parity
-            if(cost(1,7)) {
+            if(cost("bricks",7)) {
                 if(get_resource('magic',0)<get_resource('magic',1)) {
                     update('magic',0, get_resource('magic',1) - get_resource('magic',0) );
                 }
@@ -545,7 +566,7 @@ function play_card($card_id)
             return 0;
 
         case 55: //Crumblestone
-            if(cost(1,7)) {
+            if(cost("bricks",7)) {
                 update('tower',0,5);
                 update('bricks',1,-6);
                 return 1;
@@ -553,7 +574,7 @@ function play_card($card_id)
             return 0;
 
         case 56: //Shatterer
-            if(cost(1,8)) {
+            if(cost("bricks",8)) {
                 update('magic',0,-1);
                 update('tower',1,-9);
                 return 1;
@@ -561,7 +582,7 @@ function play_card($card_id)
             return 0;
 
         case 57: //Crystallize
-            if(cost(1,8)) {
+            if(cost("bricks",8)) {
                 update('tower',0,11);
                 update('wall',0,-6);
                 return 1;
@@ -569,7 +590,7 @@ function play_card($card_id)
             return 0;
 
         case 58: //Pearl Of Wisdom
-            if(cost(1,9)) {
+            if(cost("bricks",9)) {
                 update('tower',0,5);
                 update('magic',0,1);
                 return 1;
@@ -577,14 +598,14 @@ function play_card($card_id)
             return 0;
 
         case 59: //Sapphire
-            if(cost(1,10)) {
+            if(cost("bricks",10)) {
                 update('tower',0,11);
                 return 1;
             }
             return 0;
 
         case 60: //Lightning Shard
-            if(cost(1,11)) {
+            if(cost("bricks",11)) {
                 if(get_resource('tower',0) > get_resource('wall',1)) {
                     update('tower',1,-8);
                 }
@@ -596,7 +617,7 @@ function play_card($card_id)
             return 0;
 
         case 61: //Crystal Shield
-            if(cost(1,12)) {
+            if(cost("bricks",12)) {
                 update('tower',0,8);
                 update('wall',0,3);
                 return 1;
@@ -604,7 +625,7 @@ function play_card($card_id)
             return 0;
 
         case 62: //Fire Ruby
-            if(cost(1,12)) {
+            if(cost("bricks",12)) {
                 update('tower',0,6);
                 update('tower',1,-4);
                 return 1;
@@ -612,7 +633,7 @@ function play_card($card_id)
             return 0;
 
         case 63: //Empathy Gem
-            if(cost(1,14)) {
+            if(cost("bricks",14)) {
                 update('tower',0,8);
                 update('dungeon',0,1);
                 return 1;
@@ -620,7 +641,7 @@ function play_card($card_id)
             return 0;
 
         case 64: //Sanctuary
-            if(cost(1,15)) {
+            if(cost("bricks",15)) {
                 update('tower',0,10);
                 update('wall',0,5);
                 update('recruits',0,5);
@@ -629,14 +650,14 @@ function play_card($card_id)
             return 0;
 
         case 65: //Diamond
-            if(cost(1,16)) {
+            if(cost("bricks",16)) {
                 update('tower',0,15);
                 return 1;
             }
             return 0;
 
         case 66: //Lava Jewel
-            if(cost(1,17)) {
+            if(cost("bricks",17)) {
                 update('tower',0,12);
                 update('wall',1,-6);
                 return 1;
@@ -644,7 +665,7 @@ function play_card($card_id)
             return 0;
 
         case 67: //Phase Jewel
-            if(cost(1,18)) {
+            if(cost("bricks",18)) {
                 update('tower',0,13);
                 update('recruits',0,6);
                 update('bricks',0,6);
@@ -653,7 +674,7 @@ function play_card($card_id)
             return 0;
 
         case 68: //Dragon's Eye
-            if(cost(1,21)) {
+            if(cost("bricks",21)) {
                 update('tower',0,20);
                 return 1;
             }
@@ -672,14 +693,14 @@ function play_card($card_id)
             return 1;
 
         case 71: //Faerie
-            if(cost(2,1)) {
+            if(cost("recruits",1)) {
                 update('wall',1,-2);
                 return 2;
             }
             return 0;
 
         case 72: //Moody Goblins
-            if(cost(2,1)) {
+            if(cost("recruits",1)) {
                 update('wall',1,-4);
                 update('gems',0,-3);
                 return 1;
@@ -687,13 +708,13 @@ function play_card($card_id)
             return 0;
 
         case 73: //Elven Scout
-            if(cost(2,2)) {
+            if(cost("recruits",2)) {
                 return 3;
             }
             return 0;
 
         case 74: //Spearman
-            if(cost(2,2)) {
+            if(cost("recruits",2)) {
                 if(get_resource('wall',0)>get_resource('wall',1)) {
                     update('wall',1,-3);
                 }
@@ -705,7 +726,7 @@ function play_card($card_id)
             return 0;
 
         case 75: //Gnome
-            if(cost(2,2)) {
+            if(cost("recruits",2)) {
                 update('wall',1,-3);
                 update('gems',0,1);
                 return 1;
@@ -713,14 +734,14 @@ function play_card($card_id)
             return 0;
 
         case 76: //Minotaur
-            if(cost(2,3)) {
+            if(cost("recruits",3)) {
                 update('dungeon',0,1);
                 return 1;
             }
             return 0;
 
         case 77: //Goblin Mob
-            if(cost(2,3)) {
+            if(cost("recruits",3)) {
                 update('wall',1,-6);
                 update('wall',0,-3);
                 return 1;
@@ -728,14 +749,14 @@ function play_card($card_id)
             return 0;
 
         case 78: //Orc
-            if(cost(2,3)) {
+            if(cost("recruits",3)) {
                 update('wall',1,-5);
                 return 1;
             }
             return 0;
 
         case 79: //Goblin Archers
-            if(cost(2,4)) {
+            if(cost("recruits",4)) {
                 update('tower',1,-3);
                 update('wall',0,-1);
                 return 1;
@@ -743,7 +764,7 @@ function play_card($card_id)
             return 0;
 
         case 80: //Berserker
-            if(cost(2,4)) {
+            if(cost("recruits",4)) {
                 update('wall',1,-8);
                 update('tower',0,-3);
                 return 1;
@@ -751,7 +772,7 @@ function play_card($card_id)
             return 0;
 
         case 81: //Dwarves
-            if(cost(2,5)) {
+            if(cost("recruits",5)) {
                 update('wall',1,-4);
                 update('wall',0,3);
                 return 1;
@@ -759,14 +780,14 @@ function play_card($card_id)
             return 0;
 
         case 82: //Slasher
-            if(cost(2,5)) {
+            if(cost("recruits",5)) {
                 update('wall',1,-6);
                 return 1;
             }
             return 0;
 
         case 83: //Imp
-            if(cost(2,5)) {
+            if(cost("recruits",5)) {
                 update('wall',1,-6);
                 update('bricks',2,-5);
                 update('gems',2,-5);
@@ -776,28 +797,28 @@ function play_card($card_id)
             return 0;
 
         case 84: //Shadow Faerie
-            if(cost(2,6)) {
+            if(cost("recruits",6)) {
                 update('tower',1,-2);
                 return 2;
             }
             return 0;
 
         case 85: //Little Snakes
-            if(cost(2,6)) {
+            if(cost("recruits",6)) {
                 update('tower',1,-4);
                 return 1;
             }
             return 0;
 
         case 86: //Ogre
-            if(cost(2,6)) {
+            if(cost("recruits",6)) {
                 update('wall',1,-7);
                 return 1;
             }
             return 0;
 
         case 87: //Rabid Sheep
-            if(cost(2,6)) {
+            if(cost("recruits",6)) {
                 update('wall',1,-6);
                 update('recruits',1,-3);
                 return 1;
@@ -805,14 +826,14 @@ function play_card($card_id)
             return 0;
 
         case 88: //Troll Trainer
-            if(cost(2,7)) {
+            if(cost("recruits",7)) {
                 update('dungeon',0,2);
                 return 1;
             }
             return 0;
 
         case 89: //Tower Gremlin
-            if(cost(2,8)) {
+            if(cost("recruits",8)) {
                 update('wall',1,-2);
                 update('wall',0,4);
                 update('tower',0,2);
@@ -821,7 +842,7 @@ function play_card($card_id)
             return 0;
 
         case 90: //Spizzer
-            if(cost(2,8)) {
+            if(cost("recruits",8)) {
                 if(get_resource('wall',1)==0) {
                     update('wall',1,-10);
                 }
@@ -833,14 +854,14 @@ function play_card($card_id)
             return 0;
 
         case 91: //Werewolf
-            if(cost(2,9)) {
+            if(cost("recruits",9)) {
                 update('wall',1,-9);
                 return 1;
             }
             return 0;
 
         case 92: //Unicorn
-            if(cost(2,9)) {
+            if(cost("recruits",9)) {
                 if(get_resource('magic',0) > get_resource('magic',1)) {
                     update('wall',1,-12);
                 }
@@ -852,7 +873,7 @@ function play_card($card_id)
             return 0;
 
         case 93: //Elven Archers
-            if(cost(2,10)) {
+            if(cost("recruits",10)) {
                 if(get_resource('wall',0)>get_resource('wall',1)) {
                     update('tower',1,-6);
                 }
@@ -864,7 +885,7 @@ function play_card($card_id)
             return 0;
 
         case 94: //Corrosion Clouds
-            if(cost(2,11))
+            if(cost("recruits",11))
             {
                 if(get_resource('wall',1)>0) {
                     update('wall',1,-10);
@@ -877,7 +898,7 @@ function play_card($card_id)
             return 0;
 
         case 95: //Rock Stompers
-            if(cost(2,11)) {
+            if(cost("recruits",11)) {
                 update('wall',1,-8);
                 update('quarry',1,-1);
                 return 1;
@@ -885,7 +906,7 @@ function play_card($card_id)
             return 0;
 
         case 96: //Thief
-            if(cost(2,12)) {
+            if(cost("recruits",12)) {
                 update('gems',1,-10);
                 update('bricks',1,-5);
                 update('gems',0,5);
@@ -895,7 +916,7 @@ function play_card($card_id)
             return 0;
 
         case 97: //Warlord
-            if(cost(2,13)) {
+            if(cost("recruits",13)) {
                 update('wall',1,-13);
                 update('gems',0,-3);
                 return 1;
@@ -903,7 +924,7 @@ function play_card($card_id)
             return 0;
 
         case 98: //Succubus
-            if(cost(2,14)) {
+            if(cost("recruits",14)) {
                 update('tower',1,-5);
                 update('recruits',1,-8);
                 return 1;
@@ -911,7 +932,7 @@ function play_card($card_id)
             return 0;
 
         case 99: //Stone Giant
-            if(cost(2,15)) {
+            if(cost("recruits",15)) {
                 update('wall',1,-10);
                 update('wall',0,4);
                 return 1;
@@ -919,7 +940,7 @@ function play_card($card_id)
             return 0;
 
         case 100: //Vampire
-            if(cost(2,17)) {
+            if(cost("recruits",17)) {
                 update('wall',1,-10);
                 update('recruits',1,-5);
                 update('dungeon',1,-1);
@@ -928,14 +949,14 @@ function play_card($card_id)
             return 0;
 
         case 101: //Pegasus Lancer
-            if(cost(2,18)) {
+            if(cost("recruits",18)) {
                 update('tower',1,-12);
                 return 1;
             }
             return 0;
 
         case 102: //Dragon
-            if(cost(2,25)) {
+            if(cost("recruits",25)) {
                 update('wall',1,-20);
                 update('gems',1,-10);
                 update('dungeon',1,-1);
@@ -954,7 +975,6 @@ $my_row = get_my_row();
 if (in_array($card_id, $my_row)) {
 
     $play_card_res = play_card($card_id);
-    echo $play_card_res;
 
     $enemy_row = get_enemy_row();
     if(check_for_win($my_row,$enemy_row) == 0
