@@ -999,11 +999,13 @@ function play_card()
 } // end play_card
 
 
+//********************* MAIN*************************//
+
 // Get the player game stat
 $my_game_stat = get_my_game_stat();
 
 // Check if player's turn
-if ($my_cards['current_turn'] == 0) {
+if ($my_game_stat['current_flag'] == false) {
     die("Error: Not Your Turn!");
 }
 
