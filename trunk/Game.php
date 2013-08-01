@@ -100,6 +100,9 @@ if( verifyCookie() ) {
                     if (response.indexOf("Error:") !== -1) {
                         alert(response.substr(7));
                     }
+                    else if (response != "") {
+                        alert(response);
+                    }
                 }
             }
 

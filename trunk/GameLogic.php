@@ -55,9 +55,12 @@ function get_new_card()
     }
 }
 
-function check_for_win($my_row, $enemy_row)
+function check_for_win()
 {
     global $mysqli, $game_id, $nickname;
+    $my_row = get_my_game_stat();
+    $enemy_row = get_enemy_game_stat();
+
     if( ($my_row['gems'] >= 200  && $my_row['bricks'] >= 200 && $my_row['recruits'] >= 200
             || $my_row['tower'] >= 100
             || $enemy_row['tower'] <= 0 )
@@ -65,21 +68,24 @@ function check_for_win($my_row, $enemy_row)
             || $enemy_row['tower'] >= 100
             || $my_row['tower'] <= 0 ) ) {
         //TODO: return to both users "It's a tie!"
-        return 2; //there's a tie
+        exit(3); //there's a tie
     }
+    
     if($my_row['gems'] >= 200  && $my_row['bricks'] >= 200 && $my_row['recruits'] >= 200
         || $my_row['tower'] >= 100
         || $enemy_row['tower'] <= 0 ){
         //TODO: return to current user: You win!, to opponent: You loose!
-        return 1; //I win
+        exit(1); //I win
     }
+    
     if(($enemy_row['gems'] >= 200  && $enemy_row['bricks'] >= 200 && $enemy_row['recruits'] >= 200
         || $enemy_row['tower'] >= 100
         || $my_row['tower'] <= 0 )) {
         //TODO: return to current user: You loose!, to opponent: You win!
-        return 2; //enemy wins
+        exit(2); //enemy wins
     }
-    return 0; //no win
+    
+    return; //no win
 } //returns 0 if no win, 1 if I win, 2 if enemy wins, 3 if it's a tie
 
 function update_resources($resource, $player, $amount)
@@ -90,7 +96,7 @@ function update_resources($resource, $player, $amount)
     switch($player) {
 
         case 0: //update current player
-            $result = $mysqli->query("UPDATE games SET $resource = '".max(0,$my_row[$resource] + $amount)."'
+            $result = $mysqli->query("UPDATE games SET $resource = '".max(0, $my_row[$resource] + $amount)."'
                     WHERE game_id='".$game_id."' AND nickname='".$nickname."'");
             if (!$result){
                 echo "update current player SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
@@ -101,7 +107,7 @@ function update_resources($resource, $player, $amount)
             return;
 
         case 1: //update enemy
-            $result = $mysqli->query("UPDATE games SET $resource ='".max(0,$enemy_row[$resource] + $amount)."'
+            $result = $mysqli->query("UPDATE games SET $resource ='".max(0, $enemy_row[$resource] + $amount)."'
                     WHERE game_id='".$enemy_row['game_id']."' AND nickname='".$enemy_row['nickname']."'");
             if (!$result){
                 echo "update enemy SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
@@ -1010,56 +1016,43 @@ if ($my_game_stat['current_flag'] == false) {
 $my_cards = array($my_game_stat['card1_id'],  $my_game_stat['card2_id'], $my_game_stat['card3_id'], $my_game_stat['card4_id'], $my_game_stat['card5_id'], $my_game_stat['card6_id']);
 if (in_array(get_played_card_num(), $my_cards)) {
 
-    // Play the card and update_resources game stats
-    $play_card_res = play_card();
+    // Play the card
+    $play_card_result = play_card();
 
-    $enemy_row = get_enemy_game_stat();
-    if(check_for_win($my_row, $enemy_row) == 0
-        && $enemy_row['cards_played'] > 0
-        && ($play_card_res == 1 || $play_card_res == 4)) {
-        update_resources('gems', 0, $my_row['magic']);
-        update_resources('bricks', 0, $my_row['quarry']);
-        update_resources('Recruits', 0, $my_row['Dungeon']);
+    // Check if anyone wins after played card
+    check_for_win();
+
+    get_new_card();
+
+    switch ($play_card_result) {
+        case 0: // Card Discarded
+            echo "Your Card Will be Discarded!";
+            break;
+
+        case 1: // Played card one turn only
+            break;
+
+        case 2: // Played card got another turn
+            $my_row = get_my_game_stat();
+            update_resources('gems', 0, $my_row['magic']);
+            update_resources('bricks', 0, $my_row['quarry']);
+            update_resources('recruits', 0, $my_row['dungeon']);
+            exit("You have another Turn");
+            break;
     }
-
-    $my_row = get_my_game_stat();
+    
+    // Update enemy resources for begining of his turn
     $enemy_row = get_enemy_game_stat();
+    update_resources('gems', 1, $enemy_row['magic']);
+    update_resources('bricks', 1, $enemy_row['quarry']);
+    update_resources('recruits', 1, $enemy_row['dungeon']);
 
-    if(check_for_win($my_row,$enemy_row) == 0) {
-        switch($play_card_res) {
-            case 0: //could not play card, not enough resources
-                //TODO: return card_id
-                break;
-            case 1: //played card, end turn
-                update_resources('current_flag', 0, -1);
-                update_resources('current_flag', 1, 1);
-                get_new_card();
-                break;
+    // Check if anyone wins after update resources
+    check_for_win();
 
-            case 2: //played card, play again
-                //TODO: return new card_id with rand(1,102)
-                get_new_card();
-                break;
-
-            case 3: //played card, discard a card and play again
-                update_resources('discard_turn',0,1);
-                //TODO: return new card_id with rand(1,102)
-                get_new_card();
-                break;
-
-            case 4: //card_id discarded,
-                if($my_row['discard_turn']) {
-                    update_resources('discard_turn',0,-1);
-                }
-                else {
-                    update_resources('current_flag',0,-1);
-                    update_resources('current_flag',1,1);
-                }
-                //TODO: return new card_id with rand(1,102)
-                get_new_card();
-                break;
-        }//end switch
-    }//end if
+    // Switch Turns
+    update_resources('current_flag', 0, -1);
+    update_resources('current_flag', 1, 1);
 }// end if
 else {
     echo "Player Don't Hold Card " . $card_id;
