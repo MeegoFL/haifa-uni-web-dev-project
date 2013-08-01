@@ -102,7 +102,7 @@ if( verifyCookie() ) {
             }
 
             // Ready the values and POST the request
-            var str = "?cardLocation=" + cardID;
+            var str = "?card_location=" + cardID;
             xmlhttp.open("POST", "GameLogic.php" + str, true);
             xmlhttp.send();
         }
