@@ -30,6 +30,7 @@ if( verifyCookie() ) {
 
         function RefreshView() {
             // Init
+            refreshInterval = 3000;
 
             // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
             xmlhttp = new XMLHttpRequest();
@@ -63,9 +64,21 @@ if( verifyCookie() ) {
                     document.getElementById("card6_id").title = userGameStat['card6_id'];
                     if (userGameStat['current_flag'] == 1) {
                         document.getElementById("userMessages").innerHTML = "YOUR TURN!";
+                        imgs = document.getElementsByTagName("img");
+                        for (var i = 0; i < imgs.length; i++) {
+                            imgs[i].setAttribute("draggable", "true");
+                            imgs[i].setAttribute("style", "opacity:1;");
+                        }
+                        refreshInterval = 60000;
                     }
                     else {
                         document.getElementById("userMessages").innerHTML = "Opponent's turn";
+                        imgs = document.getElementsByTagName("img");
+                        for (var i = 0; i < imgs.length; i++) {
+                            imgs[i].setAttribute("draggable", "false");
+                            imgs[i].setAttribute("style", "opacity:0.6;");
+                        }
+                        refreshInterval = 3000;
                     }
 
                     // Update opponent's game stat on screen
@@ -78,7 +91,7 @@ if( verifyCookie() ) {
                     document.getElementById("opponentDungeon").innerHTML = opponentGameStat['dungeon'];
                     document.getElementById("opponentRecruits").innerHTML = opponentGameStat['recruits'];
 
-                    setTimeout('RefreshView()', 3000);
+                    setTimeout('RefreshView()', refreshInterval);
                 }
             }
 
@@ -103,6 +116,7 @@ if( verifyCookie() ) {
                     else if (response != "") {
                         alert(response);
                     }
+                    RefreshView();
                 }
             }
 

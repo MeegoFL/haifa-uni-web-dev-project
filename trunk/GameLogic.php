@@ -480,7 +480,7 @@ function play_card()
 
         case 40: //Prism
             if(resources_cost("bricks",2)) {
-                return 3;
+                return 2;
             }
             return 0;
 
@@ -741,7 +741,7 @@ function play_card()
 
         case 73: //Elven Scout
             if(resources_cost("recruits",2)) {
-                return 3;
+                return 2;
             }
             return 0;
 
