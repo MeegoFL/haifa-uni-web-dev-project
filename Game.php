@@ -16,16 +16,16 @@ if( verifyCookie() ) {
         }
 
         function drag(ev) {
-            ev.dataTransfer.setData("Text", ev.target.id);
-            ev.dataTransfer.setData("ID", ev.target.title);
+            ev.dataTransfer.setData("ElementID", ev.target.id);
+            ev.dataTransfer.setData("CardID", ev.target.alt);
         }
 
         function drop(ev) {
             ev.preventDefault();
-            var data = ev.dataTransfer.getData("Text");
-            var id = ev.dataTransfer.getData("ID");
-            ev.target.appendChild(document.getElementById(data));
-            PerformAction(id);
+            var elmID = ev.dataTransfer.getData("ElementID");
+            var cardID = ev.dataTransfer.getData("CardID");
+            ev.target.appendChild(document.getElementById(elmID));
+            PerformAction(cardID);
         }
 
         function RefreshView() {
@@ -56,12 +56,6 @@ if( verifyCookie() ) {
                     document.getElementById("myCard4").src = "Images/" + userGameStat['card4_id'] + ".gif";
                     document.getElementById("myCard5").src = "Images/" + userGameStat['card5_id'] + ".gif";
                     document.getElementById("myCard6").src = "Images/" + userGameStat['card6_id'] + ".gif";
-                    document.getElementById("myCard1").alt = "Images/" + userGameStat['card1_id'] + ".gif";
-                    document.getElementById("myCard2").alt = "Images/" + userGameStat['card2_id'] + ".gif";
-                    document.getElementById("myCard3").alt = "Images/" + userGameStat['card3_id'] + ".gif";
-                    document.getElementById("myCard4").alt = "Images/" + userGameStat['card4_id'] + ".gif";
-                    document.getElementById("myCard5").alt = "Images/" + userGameStat['card5_id'] + ".gif";
-                    document.getElementById("myCard6").alt = "Images/" + userGameStat['card6_id'] + ".gif";
                     document.getElementById("myCard1").title = userGameStat['card1_id'];
                     document.getElementById("myCard2").title = userGameStat['card2_id'];
                     document.getElementById("myCard3").title = userGameStat['card3_id'];
@@ -94,7 +88,7 @@ if( verifyCookie() ) {
             xmlhttp.send();
         }
 
-        function PerformAction(id) {
+        function PerformAction(cardID) {
             // Init
 
             // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
@@ -108,7 +102,8 @@ if( verifyCookie() ) {
             }
 
             // Ready the values and POST the request
-            xmlhttp.open("POST", "GameLogic.php?card_id=" + id, true);
+            var str = "?cardLocation=" + cardID;
+            xmlhttp.open("POST", "GameLogic.php" + str, true);
             xmlhttp.send();
         }
 

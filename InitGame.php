@@ -13,8 +13,8 @@ if (mysqli_connect_errno()) {
     echo "Failed to connect to MySQL: " . mysqli_connect_error();
 }
 
-// Clear Game sessions not active for last 24hr
-$deleteLastActive = time() - 86400;
+// Clear Game sessions not active for last 2hr
+$deleteLastActive = time() - 120;
 $mysqli->query("DELETE FROM games WHERE last_active < '$deleteLastActive'");
 
 $time   = time() - 60;
@@ -41,6 +41,7 @@ $_SESSION['game_id'] = $game_id;
 $time = time();
 $first_turn = rand(0, 1);
 $opponent_turn = !$first_turn;
+sleep(1); // for some unknown reason somtimes opponent_turn gets null value -> might need to wait for function to end.
 
 if (!$mysqli->query("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active)
         VALUES ('$game_id', '$nickname1', '$first_turn', " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " .$time. ")")) {
