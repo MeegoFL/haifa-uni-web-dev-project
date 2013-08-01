@@ -17,16 +17,15 @@ if( verifyCookie() ) {
         }
 
         function drag(ev) {
-            ev.dataTransfer.setData("ElementID", ev.target.id);
-            ev.dataTransfer.setData("CardID", ev.target.alt);
+            ev.dataTransfer.setData("Text", ev.target.id);
+            //ev.dataTransfer.setData("CardID", ev.target.alt);
         }
 
         function drop(ev) {
             ev.preventDefault();
-            var elmID = ev.dataTransfer.getData("ElementID");
-            var cardID = ev.dataTransfer.getData("CardID");
+            var elmID = ev.dataTransfer.getData("Text");
             ev.target.src = document.getElementById(elmID).src;
-            PerformAction(cardID);
+            PerformAction(elmID);
         }
 
         function RefreshView() {
@@ -40,7 +39,6 @@ if( verifyCookie() ) {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     response = xmlhttp.responseText;
                     eval(response);
-                    //alert(response);
 
                     // Update player's game stat on screen
                     document.getElementById("myTowerVal").innerHTML = userGameStat['tower'];
@@ -51,18 +49,18 @@ if( verifyCookie() ) {
                     document.getElementById("myBricks").innerHTML = userGameStat['bricks'];
                     document.getElementById("myDungeon").innerHTML = userGameStat['dungeon'];
                     document.getElementById("myRecruits").innerHTML = userGameStat['recruits'];
-                    document.getElementById("myCard1").src = "Images/" + userGameStat['card1_id'] + ".png";
-                    document.getElementById("myCard2").src = "Images/" + userGameStat['card2_id'] + ".png";
-                    document.getElementById("myCard3").src = "Images/" + userGameStat['card3_id'] + ".png";
-                    document.getElementById("myCard4").src = "Images/" + userGameStat['card4_id'] + ".png";
-                    document.getElementById("myCard5").src = "Images/" + userGameStat['card5_id'] + ".png";
-                    document.getElementById("myCard6").src = "Images/" + userGameStat['card6_id'] + ".png";
-                    document.getElementById("myCard1").title = userGameStat['card1_id'];
-                    document.getElementById("myCard2").title = userGameStat['card2_id'];
-                    document.getElementById("myCard3").title = userGameStat['card3_id'];
-                    document.getElementById("myCard4").title = userGameStat['card4_id'];
-                    document.getElementById("myCard5").title = userGameStat['card5_id'];
-                    document.getElementById("myCard6").title = userGameStat['card6_id'];
+                    document.getElementById("card1_id").src = "Images/" + userGameStat['card1_id'] + ".png";
+                    document.getElementById("card2_id").src = "Images/" + userGameStat['card2_id'] + ".png";
+                    document.getElementById("card3_id").src = "Images/" + userGameStat['card3_id'] + ".png";
+                    document.getElementById("card4_id").src = "Images/" + userGameStat['card4_id'] + ".png";
+                    document.getElementById("card5_id").src = "Images/" + userGameStat['card5_id'] + ".png";
+                    document.getElementById("card6_id").src = "Images/" + userGameStat['card6_id'] + ".png";
+                    document.getElementById("card1_id").title = userGameStat['card1_id'];
+                    document.getElementById("card2_id").title = userGameStat['card2_id'];
+                    document.getElementById("card3_id").title = userGameStat['card3_id'];
+                    document.getElementById("card4_id").title = userGameStat['card4_id'];
+                    document.getElementById("card5_id").title = userGameStat['card5_id'];
+                    document.getElementById("card6_id").title = userGameStat['card6_id'];
                     if (userGameStat['current_flag'] == 1) {
                         document.getElementById("userMessages").innerHTML = "YOUR TURN!";
                     }
@@ -113,9 +111,6 @@ if( verifyCookie() ) {
 
         window.onload = function () {
             RefreshView();
-            var dropArea = document.getElementById("played_card");
-            dropArea.addEventListener("drop", allowDrop(event), false);
-            dropArea.addEventListener("dragover", drop(event), false)
         }
     </script>
 </head>
@@ -202,22 +197,22 @@ if( verifyCookie() ) {
         <tr>
             <td></td>
             <td style="height:180px;width:120px;">
-                <img id="myCard1" title="" src="Images/back.jpg" alt="card1" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="card1_id" title="" src="Images/back.jpg" alt="card1" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="myCard2" title="" src="Images/back.jpg" alt="card2" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="card2_id" title="" src="Images/back.jpg" alt="card2" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="myCard3" title="" src="Images/back.jpg" alt="card3" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="card3_id" title="" src="Images/back.jpg" alt="card3" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="myCard4" title="" src="Images/back.jpg" alt="card4" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="card4_id" title="" src="Images/back.jpg" alt="card4" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="myCard5" title="" src="Images/back.jpg" alt="card5" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="card5_id" title="" src="Images/back.jpg" alt="card5" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="myCard6" title="" src="Images/back.jpg" alt="card6" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img id="card6_id" title="" src="Images/back.jpg" alt="card6" draggable="true" ondragstart="drag(event)" width="120" height="180" />
             </td>
 
             <td>
