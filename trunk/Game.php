@@ -98,6 +98,9 @@ if( verifyCookie() ) {
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     response = xmlhttp.responseText;
+                    if (response.indexOf("Error:") !== -1) {
+                        alert(response.substr(7));
+                        }
                 }
             }
 
@@ -113,12 +116,16 @@ if( verifyCookie() ) {
     </script>
 </head>
 
-<body style="background-image: url(Images/game-background.jpg);background-repeat:no-repeat;background-size:cover;">
-    <audio autoplay="" loop="" controls="">
+<body onload = "RefreshView();" style="background-image: url(Images/game-background.jpg);background-repeat:no-repeat;background-size:cover;">
+    <audio id="audio" autoplay="" loop="">
         <source src="Media/GOT_Soundtrack.ogg" type="audio/ogg">
         <source src="Media/GOT_Soundtrack.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
+    <div>
+        <button onclick="document.getElementById('audio').play()">Play the Audio</button>
+        <button onclick="document.getElementById('audio').pause()">Pause the Audio</button>
+    </div>
     <table style="border: 0;border-spacing: 10px; padding: 12px;margin-left: auto;margin-right: auto;">
         <tr>
             <td colspan="8" style="background-color:#FFA500;text-align: center;">

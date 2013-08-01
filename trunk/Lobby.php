@@ -57,7 +57,7 @@ session_start();
                     }
                 }
                 // Ready the values and POST the request
-                var str = "?nickname1=" + window.nickname1;
+                var str = "?nickname=" + window.nickname1;
                 xmlhttp.open("POST", "InitGame.php" + str, true);
                 xmlhttp.send();
             }
