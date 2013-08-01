@@ -1,6 +1,6 @@
 <?php
 // Validate input to avoid attacks
-preg_match('/^[a-zA-Z0-9_]+$/',$_REQUEST["cardLocation"]) ? $cardLocation = $_REQUEST["cardLocation"] : exit('XSS is detected!');
+preg_match('/^[a-zA-Z0-9_]+$/',$_REQUEST["card_location"]) ? $card_location = $_REQUEST["card_location"] : exit('XSS is detected!');
 
 // Start the session and get current user information
 session_start();
@@ -22,7 +22,8 @@ function get_played_card_num(){
         echo "get_played_card_num SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
     }
     $row = $my_result->fetch_array();
-    return $row[$card_location . '_id'];
+    echo $card_location . "_id";
+    return $row[$card_location . "_id"];
 }
 
 function get_my_game_stat()
@@ -152,7 +153,7 @@ function get_resource($resource, $player)
     return $my_row[$resource];
 }
 
-function play_card($card_id)
+function play_card()
 {
     global $mysqli, $game_id, $nickname;
     switch (get_played_card_num())
@@ -998,11 +999,12 @@ function play_card($card_id)
 } // end play_card
 
 
-$my_row = get_my_game_stat();
-if (in_array($card_id, $my_row)) {
+$my_game_stat = get_my_game_stat();
+$my_cards = array($my_game_stat['card1_id'],  $my_game_stat['card2_id'], $my_game_stat['card3_id'], $my_game_stat['card4_id'], $my_game_stat['card5_id'], $my_game_stat['card6_id']);
+if (in_array(get_played_card_num(), $my_cards)) {
 
     // Play the card and update_resources game stats
-    $play_card_res = play_card($card_id);
+    $play_card_res = play_card();
 
     $enemy_row = get_enemy_game_stat();
     if(check_for_win($my_row, $enemy_row) == 0
@@ -1022,8 +1024,8 @@ if (in_array($card_id, $my_row)) {
                 //TODO: return card_id
                 break;
             case 1: //played card, end turn
-                update_resources('current_flag',0,-1);
-                update_resources('current_flag',1,1);
+                update_resources('current_flag', 0, -1);
+                update_resources('current_flag', 1, 1);
                 get_new_card();
                 break;
 
