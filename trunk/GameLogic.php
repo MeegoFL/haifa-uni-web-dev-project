@@ -22,7 +22,6 @@ function get_played_card_num(){
         echo "get_played_card_num SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
     }
     $row = $my_result->fetch_array();
-    echo $card_location . "_id";
     return $row[$card_location . "_id"];
 }
 
@@ -48,10 +47,10 @@ function get_enemy_game_stat()
 
 function get_new_card()
 {
-    global $mysqli, $game_id, $nickname, $cardLocation;
+    global $mysqli, $game_id, $nickname, $card_location;
     
-    $cardLocation = $cardLocation . "_id";
-    $my_result = $mysqli->query("UPDATE games SET $cardLocation = " .rand(0,102). " WHERE game_id = '$game_id' AND nickname = '$nickname'");
+    $card_id =  $card_location . "_id";
+    $my_result = $mysqli->query("UPDATE games SET $card_id = " .rand(0,102). " WHERE game_id = '$game_id' AND nickname = '$nickname'");
     if (!$my_result){
         echo "get_new_card SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
     }

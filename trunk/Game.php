@@ -12,6 +12,7 @@ if( verifyCookie() ) {
     <title>Game Page</title>
     <script>
         function allowDrop(ev) {
+            ev.stopPropagation();
             ev.preventDefault();
         }
 
@@ -24,7 +25,7 @@ if( verifyCookie() ) {
             ev.preventDefault();
             var elmID = ev.dataTransfer.getData("ElementID");
             var cardID = ev.dataTransfer.getData("CardID");
-            ev.target.appendChild(document.getElementById(elmID));
+            ev.target.src = document.getElementById(elmID).src;
             PerformAction(cardID);
         }
 
@@ -66,7 +67,7 @@ if( verifyCookie() ) {
                         document.getElementById("userMessages").innerHTML = "YOUR TURN!";
                     }
                     else {
-                        document.getElementById("userMessages").innerHTML = opponentGameStat['nickname'] + "'S TURN";
+                        document.getElementById("userMessages").innerHTML = "Opponent's turn";
                     }
 
                     // Update opponent's game stat on screen
@@ -100,7 +101,7 @@ if( verifyCookie() ) {
                     response = xmlhttp.responseText;
                     if (response.indexOf("Error:") !== -1) {
                         alert(response.substr(7));
-                        }
+                    }
                 }
             }
 
@@ -112,6 +113,9 @@ if( verifyCookie() ) {
 
         window.onload = function () {
             RefreshView();
+            var dropArea = document.getElementById("played_card");
+            dropArea.addEventListener("drop", allowDrop(event), false);
+            dropArea.addEventListener("dragover", drop(event), false)
         }
     </script>
 </head>
@@ -160,7 +164,9 @@ if( verifyCookie() ) {
                 <img id="deck" src="Images/back.jpg" alt="deck" width="120" height="180" />
             </td>
 
-            <td ondrop="drop(event)" ondragover="allowDrop(event)" style="height:180px;width:120px;"></td>
+            <td style="height:180px;width:120px;">
+                <img id="played_card" title="" src="Images/place_card.png" alt="card1" ondrop="drop(event)" ondragover="allowDrop(event)" width="120" height="180" />
+            </td>
 
             <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center;">
                 <span style="background-color: #ffd800 ; position: relative; bottom: 0px;">
