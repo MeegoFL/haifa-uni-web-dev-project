@@ -16,10 +16,20 @@ if ($mysqli->connect_errno)
 
 // Get User information from db
 $result = $mysqli->query("SELECT * FROM users WHERE nickname = '$mynickname'");
+if (!$result) {
+    echo "Get user information SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
+}
 
 //$_SESSION['game_id'] = $game_session['game_id'];
+$my_game_stat = $result->fetch_array();
+
+// If we got here it means the game has ended successfully - remove it from table
+$game_id = $my_game_stat['game_id'];
+$my_result = $mysqli->query("DELETE FROM games WHERE game_id = '$game_id' AND game_end_status != '0';");
+if (!$my_result) {
+    exit("Remove game seesion SQL failed: (" . $mysqli->errno . ") " . $mysqli->error);
+}
 
 // Return variable with list of user's values
-$my_game_stat = $result->fetch_array();
 echo "var userGameStat = " .json_encode($my_game_stat). ";";
 ?>
