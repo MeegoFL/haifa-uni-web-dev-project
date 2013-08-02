@@ -47,10 +47,10 @@ else
         if ( !setcookie( 'ArcomageCookie', $cookie, $expiration ) ) {
 		    exit('Error: Unable to set cookie');
 	    }
-        
+
         // store session data
         $_SESSION['nickname'] = $row['nickname'];
-        
+
         // Redirect the user to lobby
         echo "Location:Lobby.php";
         exit;

@@ -44,6 +44,23 @@ if( verifyCookie() ) {
             PerformAction(elmID);
         }
 
+        function EndGame(result) {
+            switch (result) {
+                case "1":
+                    alert("You WIN!");
+                    break;
+                case "2":
+                    alert("You LOSE!");
+                    break;
+                case "3":
+                    alert("It's a TIE!");
+                    break;
+                default:
+                    return; // Error: funciton shouldn't have been called
+            }
+            window.location.href = 'postgame.php';
+        }
+
         function RefreshView() {
             // Init
             refreshInterval = 3000;
@@ -56,6 +73,8 @@ if( verifyCookie() ) {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     response = xmlhttp.responseText;
                     eval(response);
+
+                    if (userGameStat['game_end_status'] != 0) EndGame(userGameStat['game_end_status']);
 
                     // Update player's game stat on screen
                     document.getElementById("player_name").innerHTML = userGameStat['nickname'];
@@ -96,7 +115,6 @@ if( verifyCookie() ) {
                     else {
                         document.getElementById("userMessages").innerHTML = "Opponent's turn";
                         document.getElementById("input_button").setAttribute("disabled");
-
                         cards = document.getElementsByClassName("card_hand");
                         for (var i = 0; i < cards.length; i++) {
                             cards[i].setAttribute("draggable", "false");
@@ -137,27 +155,11 @@ if( verifyCookie() ) {
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     response = xmlhttp.responseText;
+                    
                     if (response.indexOf("Error:") !== -1) {
                         alert(response.substr(7));
                     }
-                    else if (response.indexOf("GameOver:") !== -1) {
-                        switch (response.substr(10)) {
-                            case "TIE":
-                                alert("it's a TIE!");
-                                window.location.href = 'postgame.php';
-                                break;
-                            
-                            case "WIN":
-                                alert("You WIN!");
-                                window.location.href = 'postgame.php';
-                                break;
-                            
-                            case "LOSE":
-                                alert("You LOSE!");
-                                window.location.href = 'postgame.php';
-                                break;
-                        }
-                    }
+
                     else if (response != "") {
                         alert(response);
                     }
@@ -177,11 +179,13 @@ if( verifyCookie() ) {
     </script>
 </head>
 
-<body onload = "RefreshView();" style="background-image: url(Images/game-background.jpg);background-repeat:no-repeat;background-size:cover;">
+<body onload="RefreshView();" style="background-image: url(Images/game-background.jpg);background-repeat:no-repeat;background-size:cover;">
     <audio id="audio" autoplay="" loop="">
         <source src="Media/GOT_Soundtrack.ogg" type="audio/ogg">
-        <source src="Media/GOT_Soundtrack.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
+            <source src="Media/GOT_Soundtrack.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </source>
+        </source>
     </audio>
     <div>
         <button onclick="document.getElementById('audio').play()">Play the Audio</button>
@@ -205,49 +209,89 @@ if( verifyCookie() ) {
                     background-size: 120px 350px;color: #EEEEEE;width:100px;height:280px;padding-left: 20px;
                     vertical-align: top;padding-top: 70px;white-space: nowrap;">
                 <b>
-                    <br><b id = "myGems">num</b> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +<b id = "myMagic">num</b></br>
-                    <br style="line-height: 95px;"><b id = "myBricks">num</b> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +<b id = "myQuarry">num</b></br>
-                    <br style="line-height: 95px;"><b id = "myRecruits">num</b> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +<b id = "myDungeon">num</b></br>
+                    <br>
+                        <b id="myGems">num</b>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +
+                        <b id="myMagic">num</b>
+                    </br>
+                    <br style="line-height: 95px;">
+                        <b id="myBricks">num</b>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +
+                        <b id="myQuarry">num</b>
+                    </br>
+                    <br style="line-height: 95px;">
+                        <b id="myRecruits">num</b>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +
+                        <b id="myDungeon">num</b>
+                    </br>
                 </b>
             </td>
 
             <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center;">
                 <span style="background-color: #ffd800; position: relative; bottom: 0px;">
                     <b>
-                        <br>&nbsp tower: <b id="myTowerVal">num</b>&nbsp</br>
-                        <br>&nbsp wall: <b id="myWallVal">num</b>&nbsp</br>
+                        <br>
+                            &nbsp tower:
+                            <b id="myTowerVal">num</b>
+                            &nbsp
+                        </br>
+                        <br>
+                            &nbsp wall:
+                            <b id="myWallVal">num</b>
+                            &nbsp
+                        </br>
                     </b>
                 </span>
-                <img id="tower1" src="Images/towe_trans.gif" alt="tower1" width="100" height="200" style="position: relative; bottom: -80px;" />
-                <img id="wall1" src="Images/wall_trans.gif" alt="wall1" width="250" height="80" style="position: relative;" />
+                <img id="tower1" src="Images/towe_trans.gif" alt="tower1" width="100" height="200" style="position: relative; bottom: -80px;" draggable="false" />
+                <img id="wall1" src="Images/wall_trans.gif" alt="wall1" width="250" height="80" style="position: relative;" draggable="false"/>
             </td>
 
             <td>
-                <img id="deck" src="Images/back.jpg" alt="deck" width="120" height="180" />
+                <img id="deck" src="Images/back.jpg" alt="deck" width="120" height="180" draggable="false"/>
             </td>
 
             <td style="height:180px;width:120px;">
-                <img id="played_card" title="" src="Images/0.png" alt="card1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="EndMove()" width="120" height="180" />
+                <img id="played_card" title="" src="Images/0.png" alt="card1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="EndMove()" width="120" height="180" draggable="false"/>
             </td>
 
             <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center;">
                 <span style="background-color: #ffd800 ; position: relative; bottom: 0px;">
                     <b>
-                        <br>&nbsp tower: <b id="opponentTowerVal">num</b>&nbsp</br>
-                        <br>&nbsp wall: <b id="opponentWallVal">num</b>&nbsp</br>
+                        <br>
+                            &nbsp tower:
+                            <b id="opponentTowerVal">num</b>
+                            &nbsp
+                        </br>
+                        <br>
+                            &nbsp wall:
+                            <b id="opponentWallVal">num</b>
+                            &nbsp
+                        </br>
                     </b>
                 </span>
-                <img id="tower2" src="Images/towe_trans.gif" alt="tower2" width="100" height="200" style="position: relative; bottom: -80px;" />
-                <img id="wall2" src="Images/wall_trans.gif" alt="wall2" width="250" height="80" style="position: relative;" />
+                <img id="tower2" src="Images/towe_trans.gif" alt="tower2" width="100" height="200" style="position: relative; bottom: -80px;" draggable="false"/>
+                <img id="wall2" src="Images/wall_trans.gif" alt="wall2" width="250" height="80" style="position: relative;" draggable="false" />
             </td>
 
             <td rowspan="2" style="background-image:url(Images/resources.png);background-repeat:no-repeat;
                     background-size: 120px 350px;color: #EEEEEE;width:100px;height:280px;padding-left: 20px;
                     vertical-align: top;padding-top: 70px;white-space: nowrap;">
                 <b>
-                    <br><b id = "opponentGems">num</b> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +<b id = "opponentMagic">num</b></br>
-                    <br style="line-height: 95px;"><b id = "opponentBricks">num</b> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +<b id = "opponentQuarry">num</b></br>
-                    <br style="line-height: 95px;"><b id = "opponentRecruits">num</b> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +<b id = "opponentDungeon">num</b></br>
+                    <br>
+                        <b id="opponentGems">num</b>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +
+                        <b id="opponentMagic">num</b>
+                    </br>
+                    <br style="line-height: 95px;">
+                        <b id="opponentBricks">num</b>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +
+                        <b id="opponentQuarry">num</b>
+                    </br>
+                    <br style="line-height: 95px;">
+                        <b id="opponentRecruits">num</b>
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +
+                        <b id="opponentDungeon">num</b>
+                    </br>
                 </b>
             </td>
         </tr>
@@ -256,7 +300,11 @@ if( verifyCookie() ) {
 
             <td colspan="2" style="text-align: center;">
                 <span style="background-color: #FFA500;">
-                    <br>&nbsp <b id="userMessages"></b>&nbsp</br>
+                    <br>
+                        &nbsp
+                        <b id="userMessages"></b>
+                        &nbsp
+                    </br>
                 </span>
             </td>
         </tr>
@@ -264,27 +312,27 @@ if( verifyCookie() ) {
         <tr>
             <td></td>
             <td style="height:180px;width:120px;">
-                <img class="card_hand" id="card1_id" title="" src="Images/back.jpg" alt="card1" draggable="true" ondragstart="drag(event)" onclick ="StartMove(this.id)" width="120" height="180" />
+                <img class="card_hand" id="card1_id" title="" src="Images/back.jpg" alt="card1" draggable="true" ondragstart="drag(event)" onclick="StartMove(this.id)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img class="card_hand" id="card2_id" title="" src="Images/back.jpg" alt="card2" draggable="true" ondragstart="drag(event)" onclick ="StartMove(this.id)" width="120" height="180" />
+                <img class="card_hand" id="card2_id" title="" src="Images/back.jpg" alt="card2" draggable="true" ondragstart="drag(event)" onclick="StartMove(this.id)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img class="card_hand" id="card3_id" title="" src="Images/back.jpg" alt="card3" draggable="true" ondragstart="drag(event)" onclick ="StartMove(this.id)" width="120" height="180" />
+                <img class="card_hand" id="card3_id" title="" src="Images/back.jpg" alt="card3" draggable="true" ondragstart="drag(event)" onclick="StartMove(this.id)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img class="card_hand" id="card4_id" title="" src="Images/back.jpg" alt="card4" draggable="true" ondragstart="drag(event)" onclick ="StartMove(this.id)" width="120" height="180" />
+                <img class="card_hand" id="card4_id" title="" src="Images/back.jpg" alt="card4" draggable="true" ondragstart="drag(event)" onclick="StartMove(this.id)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img class="card_hand" id="card5_id" title="" src="Images/back.jpg" alt="card5" draggable="true" ondragstart="drag(event)" onclick ="StartMove(this.id)" width="120" height="180" />
+                <img class="card_hand" id="card5_id" title="" src="Images/back.jpg" alt="card5" draggable="true" ondragstart="drag(event)" onclick="StartMove(this.id)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img class="card_hand" id="card6_id" title="" src="Images/back.jpg" alt="card6" draggable="true" ondragstart="drag(event)" onclick ="StartMove(this.id)" width="120" height="180" />
+                <img class="card_hand" id="card6_id" title="" src="Images/back.jpg" alt="card6" draggable="true" ondragstart="drag(event)" onclick="StartMove(this.id)" width="120" height="180" />
             </td>
 
             <td>
                 <span>
-                    <input type="button" id="surrender" value="Surrender" style="color: #f00; font-size: 16px;" onclick="PerformAction('surrender')">
+                    <input type="button" id="surrender" value="Surrender" style="color: #f00; font-size: 16px;" onclick="PerformAction('surrender')" />
                 </span>
             </td>
         </tr>
@@ -292,8 +340,8 @@ if( verifyCookie() ) {
             <td></td>
             <td colspan="6">
                 <form id="manual_input">
-                <input type="text" placeholder="card1 or card2 or card3 etc... or surrender" id="input_text" name="input_text" style="width: 89%;">
-                <input type="button" id="input_button" value="Execute!" onclick="PerformAction(this.form.input_text.value + '_id')">
+                    <input type="text" placeholder="card1 or card2 or card3 etc... or surrender" id="input_text" name="input_text" style="width: 89%;" />
+                    <input type="button" id="input_button" value="Execute!" onclick="PerformAction(this.form.input_text.value + '_id')" />
                 </form>
             </td>
         </tr>

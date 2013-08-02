@@ -59,75 +59,122 @@ if( verifyCookie() ) {
 
 </head>
 
-<body onload = "LoadGameStat();">
+<body onload="LoadGameStat();">
 
 
-<div id="container" style="width:800px;margin-left: auto;margin-right: auto;">
+    <div id="container" style="width:800px;margin-left: auto;margin-right: auto;">
 
-<div id="header" style="background-color:#FFA500;">
-<h1 style="margin-bottom:0;">Game Stats</h1></div>
+        <div id="header" style="background-color:#FFA500;">
+            <h1 style="margin-bottom:0;">Game Stats</h1>
+        </div>
 
-<div id="menu" style="background-color:#FFD700;height:200px;width:200px;float:left;">
-<b>Current game</b><br>
-Winner<br>
-Total game time<br>
-Total number of moves<br>
-bla bla bla more stats
-</div>
+        <div id="menu" style="background-color:#FFD700;height:200px;width:200px;float:left;">
+            <b>Current game</b>
+            <br />
+            Winner
+            <br />
+            Total game time
+            <br />
+            Total number of moves
+            <br />
+            bla bla bla more stats
+        </div>
 
-<div id="content" style="background-color:#EEEEEE;height:200px;width:600px;float:left;">
-<b id="winnerName">Winner name</b><br>
-<b id="gameTime">Game time</b><br>
-<b id="numOfMoves">Number of moves</b><br>
-</div>
+        <div id="content" style="background-color:#EEEEEE;height:200px;width:600px;float:left;">
+            <b id="winnerName">Winner name</b>
+            <br />
+            <b id="gameTime">Game time</b>
+            <br />
+            <b id="numOfMoves">Number of moves</b>
+            <br />
+        </div>
 
-<div id="menu" style="background-color:#FFD700;height:200px;width:200px;float:left;">
-<b>Overall games won</b><br>
-<br>Games Won: <b id="games_won"></b></br>
-<br>Longest winning streak: <b id="longest_win_streak"></b></br>
-<br>Tower wins: <b id="num_tower_wins"></b></br>
-<br>Resource wins: <b id="num_resources_wins"></b></br>
-<br>Enemy's tower Destroyed: <b id="num_destroy_wins"></b></br>
-<br>Enemy surrendered: <b id="num_surrender_wins"></b></br>
-</div>
+        <div id="menu" style="background-color:#FFD700;height:200px;width:200px;float:left;">
+            <b>Overall games won</b>
+            <br />
+            <br>
+                Games Won:
+                <b id="games_won"></b>
+            </br>
+            <br>
+                Longest winning streak:
+                <b id="longest_win_streak"></b>
+            </br>
+            <br>
+                Tower wins:
+                <b id="num_tower_wins"></b>
+            </br>
+            <br>
+                Resource wins:
+                <b id="num_resources_wins"></b>
+            </br>
+            <br>
+                Enemy's tower Destroyed:
+                <b id="num_destroy_wins"></b>
+            </br>
+            <br>
+                Enemy surrendered:
+                <b id="num_surrender_wins"></b>
+            </br>
+        </div>
 
-<div id="content" style="background-color:#EEEEEE;height:200px;width:200px;float:left;">
-Games Played: <b id="games_played">games played</b><br>
-</div>
+        <div id="content" style="background-color:#EEEEEE;height:200px;width:200px;float:left;">
+            Games Played:
+            <b id="games_played">games played</b>
+            <br />
+        </div>
 
-<div id="menu" style="background-color:#FFD700;height:200px;width:200px;float:left;">
-<b>Overall games lost</b><br>
-Games lost<br>
-Longest losing streak<br>
-Enemy tower wins<br>
-Enemy resource wins<br>
-Tower destroyed<br>
-Surrendered<br>
-</div>
+        <div id="menu" style="background-color:#FFD700;height:200px;width:200px;float:left;">
+            <b>Overall games lost</b>
+            <br />
+            Games lost
+            <br />
+            Longest losing streak
+            <br />
+            Enemy tower wins
+            <br />
+            Enemy resource wins
+            <br />
+            Tower destroyed
+            <br />
+            Surrendered
+            <br />
+        </div>
 
-<div id="content" style="background-color:#EEEEEE;height:200px;width:200px;float:left;">
-Games Played: <b id="gamesPlayed">games played</b><br>
-</div>
+        <div id="content" style="background-color:#EEEEEE;height:200px;width:200px;float:left;">
+            Games Played:
+            <b id="gamesPlayed">games played</b>
+            <br />
+        </div>
 
-<div id="menu" style="background-color:#FFD700;height:200px;width:200px;float:left;">
-<b>Current game</b><br>
-Games Played<br>
-Win percentage<br>
-Current streak<br>
-Maximum turns<br>
-Minimum turns<br>
-Avarage turns<br>
+        <div id="menu" style="background-color:#FFD700;height:200px;width:200px;float:left;">
+            <b>Current game</b>
+            <br />
+            Games Played
+            <br />
+            Win percentage
+            <br />
+            Current streak
+            <br />
+            Maximum turns
+            <br />
+            Minimum turns
+            <br />
+            Avarage turns
+            <br />
 
-</div>
+        </div>
 
-<div id="content" style="background-color:#EEEEEE;height:200px;width:600px;float:left;">
-<b id=""></b><br>
-</div>
+        <div id="content" style="background-color:#EEEEEE;height:200px;width:600px;float:left;">
+            <b id=""></b>
+            <br />
+        </div>
 
-<div id="footer" style="background-color:#FFA500;clear:both;text-align:center;">
-Copyright © TalRan</div>
+        <div id="footer" style="background-color:#FFA500;clear:both;text-align:center;">
+            Copyright © TalRan
+        </div>
 
-</div>
+    </div>
 
 </body>
 </html>

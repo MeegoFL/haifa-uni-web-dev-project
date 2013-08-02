@@ -45,13 +45,13 @@ sleep(1); // for some unknown reason somtimes opponent_turn gets null value -> m
 
 if (!$mysqli->query("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active)
         VALUES ('$game_id', '$my_nickname', '$first_turn', " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " .$time. ")")) {
-            echo "Connect 1 failed: (" . $mysqli->errno . ") " . $mysqli->error;
-        }
+    echo "Connect 1 failed: (" . $mysqli->errno . ") " . $mysqli->error;
+}
 
 if(!$mysqli->query("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active)
         VALUES ('$game_id', '$opponent_nickname', '$opponent_turn', " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " .$time. ")")) {
-            echo "Connect 2 failed: (" . $mysqli->errno . ") " . $mysqli->error;
-        }
+    echo "Connect 2 failed: (" . $mysqli->errno . ") " . $mysqli->error;
+}
 
 echo "window.location.href='Game.php';";
 ?>

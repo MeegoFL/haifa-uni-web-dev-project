@@ -48,7 +48,7 @@ function get_enemy_game_stat()
 function get_new_card()
 {
     global $mysqli, $game_id, $nickname, $card_location;
-    
+
     $my_result = $mysqli->query("UPDATE games SET $card_location = " .rand(1,102). " WHERE game_id = '$game_id' AND nickname = '$nickname'");
     if (!$my_result){
         echo "get_new_card SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
@@ -67,25 +67,36 @@ function check_for_win()
         && ($enemy_row['gems'] >= 200  && $enemy_row['bricks'] >= 200 && $enemy_row['recruits'] >= 200
             || $enemy_row['tower'] >= 100
             || $my_row['tower'] <= 0 ) ) {
-        exit("GameOver: TIE"); //there's a tie
+        $query = "UPDATE games SET game_end_status = '3' WHERE game_id = '$game_id';";
     }
-    
-    if($my_row['gems'] >= 200  && $my_row['bricks'] >= 200 && $my_row['recruits'] >= 200
+
+    else if($my_row['gems'] >= 200  && $my_row['bricks'] >= 200 && $my_row['recruits'] >= 200
         || $my_row['tower'] >= 100
         || $enemy_row['tower'] <= 0 ){
-        //TODO: return to current user: You win!, to opponent: You loose!
-        exit("GameOver: WIN"); //I win
+
+        $query = "UPDATE games SET game_end_status = '2' WHERE game_id = '$game_id' AND nickname = '$nickname';
+                    UPDATE games SET game_end_status = '1' WHERE game_id = '$game_id' AND nickname != '$nickname';";
     }
-    
-    if(($enemy_row['gems'] >= 200  && $enemy_row['bricks'] >= 200 && $enemy_row['recruits'] >= 200
+
+    else if(($enemy_row['gems'] >= 200  && $enemy_row['bricks'] >= 200 && $enemy_row['recruits'] >= 200
         || $enemy_row['tower'] >= 100
         || $my_row['tower'] <= 0 )) {
-        //TODO: return to current user: You loose!, to opponent: You win!
-        exit("GameOver: LOSE"); //enemy wins
+
+        $query = "UPDATE games SET game_end_status = '1' WHERE game_id = '$game_id' AND nickname = '$nickname';
+                    UPDATE games SET game_end_status = '2' WHERE game_id = '$game_id' AND nickname != '$nickname';";
+    }
+
+    else return;
+
+    // Execute Query and save game results
+    $my_result = $mysqli->query($query);
+    if (!$my_result){
+        echo "check_for_win SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
     }
     
-    return; //no win
-} //returns 0 if no win, 1 if I win, 2 if enemy wins, 3 if it's a tie
+    // Exit with GameOver to mark game end
+    exit("GameOver");
+} // 0 if no win, 1 if I win, 2 if enemy wins, 3 if it's a tie
 
 function update_resources($resource, $player, $amount)
 {
@@ -1018,7 +1029,7 @@ if (in_array($played_card, $my_cards)) {
 
     // Play the card
     $play_card_result = play_card($played_card);
-    
+
     $result = $mysqli->query("UPDATE games SET last_played_card ='" .$played_card. "'
                 WHERE game_id='" .$my_game_stat['game_id']. "'");
     if (!$result){
@@ -1046,7 +1057,7 @@ if (in_array($played_card, $my_cards)) {
             exit("You have another Turn");
             break;
     }
-    
+
     // Update enemy resources for begining of his turn
     $enemy_row = get_enemy_game_stat();
     update_resources('gems', 1, $enemy_row['magic']);
