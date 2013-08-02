@@ -21,6 +21,22 @@ if( verifyCookie() ) {
             //ev.dataTransfer.setData("CardID", ev.target.alt);
         }
 
+        function StartMove(cardID) {
+            window.moveEvent = cardID;
+            cards = document.getElementsByClassName("card_hand");
+            for (var i = 0; i < cards.length; i++) {
+                cards[i].removeAttribute("style");
+            }
+            document.getElementById(cardID).setAttribute("style", "border:1px solid red; opacity:0.8;");
+        }
+
+        function EndMove() {
+            if (window.moveEvent) {
+                PerformAction(window.moveEvent);
+                window.moveEvent = null;
+            }
+        }
+
         function drop(ev) {
             ev.preventDefault();
             var elmID = ev.dataTransfer.getData("Text");
@@ -42,6 +58,7 @@ if( verifyCookie() ) {
                     eval(response);
 
                     // Update player's game stat on screen
+                    document.getElementById("player_name").innerHTML = userGameStat['nickname'];
                     document.getElementById("myTowerVal").innerHTML = userGameStat['tower'];
                     document.getElementById("myWallVal").innerHTML = userGameStat['wall'];
                     document.getElementById("myMagic").innerHTML = userGameStat['magic'];
@@ -63,15 +80,16 @@ if( verifyCookie() ) {
                     document.getElementById("card5_id").title = userGameStat['card5_id'];
                     document.getElementById("card6_id").title = userGameStat['card6_id'];
                     document.getElementById("played_card").src = "Images/" + userGameStat['last_played_card'] + ".png";
-                    
+
                     if (userGameStat['current_flag'] == 1) {
                         document.getElementById("userMessages").innerHTML = "YOUR TURN!";
                         document.getElementById("input_button").removeAttribute("disabled");
-                        
-                        imgs = document.getElementsByTagName("img");
-                        for (var i = 0; i < imgs.length; i++) {
-                            imgs[i].setAttribute("draggable", "true");
-                            imgs[i].setAttribute("style", "opacity:1;");
+
+                        cards = document.getElementsByClassName("card_hand");
+                        for (var i = 0; i < cards.length; i++) {
+                            cards[i].setAttribute("draggable", "true");
+                            cards[i].setAttribute("style", "opacity:1;");
+                            cards[i].setAttribute("onclick", "StartMove(this.id)");
                         }
                         refreshInterval = 60000;
                     }
@@ -79,15 +97,17 @@ if( verifyCookie() ) {
                         document.getElementById("userMessages").innerHTML = "Opponent's turn";
                         document.getElementById("input_button").setAttribute("disabled");
 
-                        imgs = document.getElementsByTagName("img");
-                        for (var i = 0; i < imgs.length; i++) {
-                            imgs[i].setAttribute("draggable", "false");
-                            imgs[i].setAttribute("style", "opacity:0.6;");
+                        cards = document.getElementsByClassName("card_hand");
+                        for (var i = 0; i < cards.length; i++) {
+                            cards[i].setAttribute("draggable", "false");
+                            cards[i].setAttribute("style", "opacity:0.6;");
+                            cards[i].setAttribute("onclick", "");
                         }
                         refreshInterval = 3000;
                     }
 
                     // Update opponent's game stat on screen
+                    document.getElementById("opponent_name").innerHTML = opponentGameStat['nickname'];
                     document.getElementById("opponentTowerVal").innerHTML = opponentGameStat['tower'];
                     document.getElementById("opponentWallVal").innerHTML = opponentGameStat['wall'];
                     document.getElementById("opponentMagic").innerHTML = opponentGameStat['magic'];
@@ -156,6 +176,11 @@ if( verifyCookie() ) {
             </td>
         </tr>
 
+        <tr>
+            <td colspan="3" id="player_name" style="background-color:#ffd800;text-align: center;">your stats</td>
+            <td colspan="2"></td>
+            <td colspan="3" id="opponent_name" style="background-color:#ffd800;text-align: center;">opponent stats</td>
+        </tr>
 
         <tr>
             <td rowspan="2" style="background-image:url(Images/resources.png);background-repeat:no-repeat;
@@ -184,7 +209,7 @@ if( verifyCookie() ) {
             </td>
 
             <td style="height:180px;width:120px;">
-                <img id="played_card" title="" src="Images/place_card.png" alt="card1" ondrop="drop(event)" ondragover="allowDrop(event)" width="120" height="180" />
+                <img id="played_card" title="" src="Images/0.png" alt="card1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="EndMove()" width="120" height="180" />
             </td>
 
             <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center;">
@@ -221,22 +246,22 @@ if( verifyCookie() ) {
         <tr>
             <td></td>
             <td style="height:180px;width:120px;">
-                <img id="card1_id" title="" src="Images/back.jpg" alt="card1" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img class="card_hand" id="card1_id" title="" src="Images/back.jpg" alt="card1" draggable="true" ondragstart="drag(event)" onclick ="StartMove(this.id)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="card2_id" title="" src="Images/back.jpg" alt="card2" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img class="card_hand" id="card2_id" title="" src="Images/back.jpg" alt="card2" draggable="true" ondragstart="drag(event)" onclick ="StartMove(this.id)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="card3_id" title="" src="Images/back.jpg" alt="card3" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img class="card_hand" id="card3_id" title="" src="Images/back.jpg" alt="card3" draggable="true" ondragstart="drag(event)" onclick ="StartMove(this.id)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="card4_id" title="" src="Images/back.jpg" alt="card4" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img class="card_hand" id="card4_id" title="" src="Images/back.jpg" alt="card4" draggable="true" ondragstart="drag(event)" onclick ="StartMove(this.id)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="card5_id" title="" src="Images/back.jpg" alt="card5" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img class="card_hand" id="card5_id" title="" src="Images/back.jpg" alt="card5" draggable="true" ondragstart="drag(event)" onclick ="StartMove(this.id)" width="120" height="180" />
             </td>
             <td style="height:180px;width:120px;">
-                <img id="card6_id" title="" src="Images/back.jpg" alt="card6" draggable="true" ondragstart="drag(event)" width="120" height="180" />
+                <img class="card_hand" id="card6_id" title="" src="Images/back.jpg" alt="card6" draggable="true" ondragstart="drag(event)" onclick ="StartMove(this.id)" width="120" height="180" />
             </td>
 
             <td>
@@ -249,7 +274,7 @@ if( verifyCookie() ) {
             <td></td>
             <td colspan="6">
                 <form id="manual_input">
-                <input type="text" id="input_text" name="input_text" style="width: 89%;">
+                <input type="text" placeholder="card1 or card2 or card3 etc... or surrender" id="input_text" name="input_text" style="width: 89%;">
                 <input type="button" id="input_button" value="Execute!" onclick="PerformAction(this.form.input_text.value + '_id')">
                 </form>
             </td>
