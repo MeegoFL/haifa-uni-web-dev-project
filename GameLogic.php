@@ -67,33 +67,35 @@ function check_for_win()
         && ($enemy_row['gems'] >= 200  && $enemy_row['bricks'] >= 200 && $enemy_row['recruits'] >= 200
             || $enemy_row['tower'] >= 100
             || $my_row['tower'] <= 0 ) ) {
-        $query = "UPDATE games SET game_end_status = '3' WHERE game_id = '$game_id';";
+        $query = array("UPDATE games SET game_end_status = '3' WHERE game_id = '$game_id';");
     }
 
     else if($my_row['gems'] >= 200  && $my_row['bricks'] >= 200 && $my_row['recruits'] >= 200
         || $my_row['tower'] >= 100
         || $enemy_row['tower'] <= 0 ){
 
-        $query = "UPDATE games SET game_end_status = '2' WHERE game_id = '$game_id' AND nickname = '$nickname';
-                    UPDATE games SET game_end_status = '1' WHERE game_id = '$game_id' AND nickname != '$nickname';";
+        $query = array("UPDATE games SET game_end_status = '2' WHERE game_id = '$game_id' AND nickname = '$nickname'",
+        "UPDATE games SET game_end_status = '1' WHERE game_id = '$game_id' AND nickname != '$nickname';");
     }
 
     else if(($enemy_row['gems'] >= 200  && $enemy_row['bricks'] >= 200 && $enemy_row['recruits'] >= 200
         || $enemy_row['tower'] >= 100
         || $my_row['tower'] <= 0 )) {
 
-        $query = "UPDATE games SET game_end_status = '1' WHERE game_id = '$game_id' AND nickname = '$nickname';
-                    UPDATE games SET game_end_status = '2' WHERE game_id = '$game_id' AND nickname != '$nickname';";
+        $query = array("UPDATE games SET game_end_status = '1' WHERE game_id = '$game_id' AND nickname = '$nickname';",
+        "UPDATE games SET game_end_status = '2' WHERE game_id = '$game_id' AND nickname != '$nickname';");
     }
 
     else return;
 
     // Execute Query and save game results
-    $my_result = $mysqli->query($query);
-    if (!$my_result){
-        echo "check_for_win SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    foreach ($query as $key => $value) {
+        $my_result = $mysqli->query($value);
+        if (!$my_result) {
+            echo "check_for_win SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
+        }   
     }
-    
+
     // Exit with GameOver to mark game end
     exit("GameOver");
 } // 0 if no win, 1 if I win, 2 if enemy wins, 3 if it's a tie

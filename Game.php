@@ -160,6 +160,10 @@ if( verifyCookie() ) {
                         alert(response.substr(7));
                     }
 
+                    else if (response == "GameOver") {
+                        RefreshView();
+                    }
+
                     else if (response != "") {
                         alert(response);
                     }
