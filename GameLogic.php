@@ -49,7 +49,7 @@ function get_new_card()
 {
     global $mysqli, $game_id, $nickname, $card_location;
     
-    $my_result = $mysqli->query("UPDATE games SET $card_location = " .rand(0,102). " WHERE game_id = '$game_id' AND nickname = '$nickname'");
+    $my_result = $mysqli->query("UPDATE games SET $card_location = " .rand(1,102). " WHERE game_id = '$game_id' AND nickname = '$nickname'");
     if (!$my_result){
         echo "get_new_card SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
     }
