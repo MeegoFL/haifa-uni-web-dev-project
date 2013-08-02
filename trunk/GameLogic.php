@@ -67,22 +67,21 @@ function check_for_win()
         && ($enemy_row['gems'] >= 200  && $enemy_row['bricks'] >= 200 && $enemy_row['recruits'] >= 200
             || $enemy_row['tower'] >= 100
             || $my_row['tower'] <= 0 ) ) {
-        //TODO: return to both users "It's a tie!"
-        exit(3); //there's a tie
+        exit("GameOver: TIE"); //there's a tie
     }
     
     if($my_row['gems'] >= 200  && $my_row['bricks'] >= 200 && $my_row['recruits'] >= 200
         || $my_row['tower'] >= 100
         || $enemy_row['tower'] <= 0 ){
         //TODO: return to current user: You win!, to opponent: You loose!
-        exit(1); //I win
+        exit("GameOver: WIN"); //I win
     }
     
     if(($enemy_row['gems'] >= 200  && $enemy_row['bricks'] >= 200 && $enemy_row['recruits'] >= 200
         || $enemy_row['tower'] >= 100
         || $my_row['tower'] <= 0 )) {
         //TODO: return to current user: You loose!, to opponent: You win!
-        exit(2); //enemy wins
+        exit("GameOver: LOSE"); //enemy wins
     }
     
     return; //no win
@@ -433,8 +432,8 @@ function play_card($played_card)
 
         case 34: //Dragon's Heart
             if(resources_cost("gems",24)) {
-                update_resources('wall',20);
-                update_resources('tower',8);
+                update_resources('wall', 0, 20);
+                update_resources('tower', 0, 8);
                 return 1;
             }
             return 0;

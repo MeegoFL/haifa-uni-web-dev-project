@@ -9,10 +9,10 @@ if( verifyCookie() ) {
 <html>
 
 <head>
-        <meta charset="utf-8" />
+    <meta charset="utf-8" />
     <title>Post Game Page</title>
     <script>
-       function RefreshView() {
+        function LoadGameStat() {
             // Init
 
             // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
@@ -23,27 +23,43 @@ if( verifyCookie() ) {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     response = xmlhttp.responseText;
                     eval(response);
-                    //alert(response);
 
                     // Update player's game stat on screen
-                    document.getElementById("gamesPlayed").innerHTML = userGameStat['games_played'];
+                    document.getElementById("games_won").innerHTML = userGameStat['games_won'];
+                    document.getElementById("games_lost").innerHTML = userGameStat['games_lost'];
+                    document.getElementById("win_max_cards").innerHTML = userGameStat['win_max_cards'];
+                    document.getElementById("win_min_cards").innerHTML = userGameStat['win_min_cards'];
+                    document.getElementById("win_avg_cards").innerHTML = userGameStat['win_avg_cards'];
+                    document.getElementById("num_tower_wins").innerHTML = userGameStat['num_tower_wins'];
+                    document.getElementById("num_resources_wins").innerHTML = userGameStat['num_resources_wins'];
+                    document.getElementById("num_destroy_wins").innerHTML = userGameStat['num_destroy_wins'];
+                    document.getElementById("num_surrender_wins").innerHTML = userGameStat['num_surrender_wins'];
+                    document.getElementById("num_tower_loses").innerHTML = userGameStat['num_tower_loses'];
+                    document.getElementById("num_resources_loses").innerHTML = userGameStat['num_resources_loses'];
+                    document.getElementById("num_destroy_loses").innerHTML = userGameStat['num_destroy_loses'];
+                    document.getElementById("num_surrender_loses").innerHTML = userGameStat['num_surrender_loses'];
+                    document.getElementById("longest_win_streak").innerHTML = userGameStat['longest_win_streak'];
+                    document.getElementById("longest_lose_streak").innerHTML = userGameStat['longest_lose_streak'];
+                    document.getElementById("current_streak").innerHTML = userGameStat['current_streak'];
+                    document.getElementById("games_played").innerHTML = userGameStat['games_played'];
+                    document.getElementById("win_precentage").innerHTML = (userGameStat['games_won'] / userGameStat['games_played']) * 100;
 
-                                        setTimeout('RefreshView()', refreshInterval);
                 }
             }
 
             // Ready the values and POST the request
-            xmlhttp.open("POST", "RefreshGamePage.php", true);
+            xmlhttp.open("POST", "GetGameStats.php", true);
             xmlhttp.send();
         }
+
         window.onload = function () {
-            RefreshView();
+            LoadGameStat();
         }
     </script>
 
 </head>
 
-<body onload = "RefreshView();">
+<body onload = "LoadGameStat();">
 
 
 <div id="container" style="width:800px;margin-left: auto;margin-right: auto;">
@@ -67,16 +83,16 @@ bla bla bla more stats
 
 <div id="menu" style="background-color:#FFD700;height:200px;width:200px;float:left;">
 <b>Overall games won</b><br>
-Games Won<br>
-Longest winning streak<br>
-Tower wins<br>
-Resource wins<br>
-Enemy's tower Destroyed<br>
-Enemy surrendered<br>
+<br>Games Won: <b id="games_won"></b></br>
+<br>Longest winning streak: <b id="longest_win_streak"></b></br>
+<br>Tower wins: <b id="num_tower_wins"></b></br>
+<br>Resource wins: <b id="num_resources_wins"></b></br>
+<br>Enemy's tower Destroyed: <b id="num_destroy_wins"></b></br>
+<br>Enemy surrendered: <b id="num_surrender_wins"></b></br>
 </div>
 
 <div id="content" style="background-color:#EEEEEE;height:200px;width:200px;float:left;">
-Games Played: <b id="gamesPlayed">games played</b><br>
+Games Played: <b id="games_played">games played</b><br>
 </div>
 
 <div id="menu" style="background-color:#FFD700;height:200px;width:200px;float:left;">
