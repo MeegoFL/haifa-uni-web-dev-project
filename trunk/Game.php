@@ -66,6 +66,8 @@ if( verifyCookie() ) {
                     
                     if (userGameStat['current_flag'] == 1) {
                         document.getElementById("userMessages").innerHTML = "YOUR TURN!";
+                        document.getElementById("input_button").removeAttribute("disabled");
+                        
                         imgs = document.getElementsByTagName("img");
                         for (var i = 0; i < imgs.length; i++) {
                             imgs[i].setAttribute("draggable", "true");
@@ -75,6 +77,8 @@ if( verifyCookie() ) {
                     }
                     else {
                         document.getElementById("userMessages").innerHTML = "Opponent's turn";
+                        document.getElementById("input_button").setAttribute("disabled");
+
                         imgs = document.getElementsByTagName("img");
                         for (var i = 0; i < imgs.length; i++) {
                             imgs[i].setAttribute("draggable", "false");
@@ -104,6 +108,7 @@ if( verifyCookie() ) {
 
         function PerformAction(cardID) {
             // Init
+            document.getElementById("input_text").value = "";
 
             // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
             xmlhttp = new XMLHttpRequest();
@@ -235,15 +240,18 @@ if( verifyCookie() ) {
             </td>
 
             <td>
-                <span style="background-color: #FFA500;">
-                    <b id="test">&nbsp Surrender &nbsp</b>
+                <span>
+                    <input type="button" id="surrender" value="Surrender" style="color: #f00; font-size: 16px;" onclick="PerformAction('surrender')">
                 </span>
             </td>
         </tr>
         <tr>
             <td></td>
-            <td colspan="6" style="background-color:#FFA500;text-align:center;">
-                <b>chat</b>
+            <td colspan="6">
+                <form id="manual_input">
+                <input type="text" id="input_text" name="input_text" style="width: 89%;">
+                <input type="button" id="input_button" value="Execute!" onclick="PerformAction(this.form.input_text.value + '_id')">
+                </form>
             </td>
         </tr>
     </table>

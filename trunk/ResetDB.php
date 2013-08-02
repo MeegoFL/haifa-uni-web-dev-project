@@ -68,4 +68,12 @@ $query = "CREATE TABLE games(
 
 //Use this to safely create a table while testing
 if(!$mysqli->query($query)) echo "Table creation failed: (" . $mysqli->errno . ") " . $mysqli->error;
+
+// Add the administraor user
+$password = md5('alpine');
+$query = "INSERT INTO users (username, password, nickname) VALUES ('administrator','" .$password. "', 'admin');";
+
+//Use this to safely create a table while testing
+if(!$mysqli->query($query)) echo "Table creation failed: (" . $mysqli->errno . ") " . $mysqli->error;
+
 ?>
