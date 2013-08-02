@@ -58,6 +58,7 @@ $query = "CREATE TABLE games(
     card4_id INT(10),
     card5_id INT(10),
     card6_id INT(10),
+    last_played_card INT(10),
     current_flag TINYINT(1) DEFAULT 0,
     cards_played BIGINT(20) DEFAULT 0,
     discard_turn TINYINT(1) DEFAULT 0,

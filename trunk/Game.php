@@ -24,7 +24,7 @@ if( verifyCookie() ) {
         function drop(ev) {
             ev.preventDefault();
             var elmID = ev.dataTransfer.getData("Text");
-            ev.target.src = document.getElementById(elmID).src;
+            //ev.target.src = document.getElementById(elmID).src;
             PerformAction(elmID);
         }
 
@@ -62,6 +62,8 @@ if( verifyCookie() ) {
                     document.getElementById("card4_id").title = userGameStat['card4_id'];
                     document.getElementById("card5_id").title = userGameStat['card5_id'];
                     document.getElementById("card6_id").title = userGameStat['card6_id'];
+                    document.getElementById("played_card").src = "Images/" + userGameStat['last_played_card'] + ".png";
+                    
                     if (userGameStat['current_flag'] == 1) {
                         document.getElementById("userMessages").innerHTML = "YOUR TURN!";
                         imgs = document.getElementsByTagName("img");
