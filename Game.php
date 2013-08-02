@@ -140,6 +140,24 @@ if( verifyCookie() ) {
                     if (response.indexOf("Error:") !== -1) {
                         alert(response.substr(7));
                     }
+                    else if (response.indexOf("GameOver:") !== -1) {
+                        switch (response.substr(10)) {
+                            case "TIE":
+                                alert("it's a TIE!");
+                                window.location.href = 'postgame.php';
+                                break;
+                            
+                            case "WIN":
+                                alert("You WIN!");
+                                window.location.href = 'postgame.php';
+                                break;
+                            
+                            case "LOSE":
+                                alert("You LOSE!");
+                                window.location.href = 'postgame.php';
+                                break;
+                        }
+                    }
                     else if (response != "") {
                         alert(response);
                     }
