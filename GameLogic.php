@@ -157,10 +157,10 @@ function get_resource($resource, $player)
     return $my_row[$resource];
 }
 
-function play_card()
+function play_card($played_card)
 {
     global $mysqli, $game_id, $nickname;
-    switch (get_played_card_num())
+    switch ($played_card)
     {
 
         //**********************************//
@@ -1007,6 +1007,7 @@ function play_card()
 
 // Get the player game stat
 $my_game_stat = get_my_game_stat();
+$played_card = get_played_card_num();
 
 // Check if player's turn
 if ($my_game_stat['current_flag'] == false) {
@@ -1014,10 +1015,16 @@ if ($my_game_stat['current_flag'] == false) {
 }
 
 $my_cards = array($my_game_stat['card1_id'],  $my_game_stat['card2_id'], $my_game_stat['card3_id'], $my_game_stat['card4_id'], $my_game_stat['card5_id'], $my_game_stat['card6_id']);
-if (in_array(get_played_card_num(), $my_cards)) {
+if (in_array($played_card, $my_cards)) {
 
     // Play the card
-    $play_card_result = play_card();
+    $play_card_result = play_card($played_card);
+    
+    $result = $mysqli->query("UPDATE games SET last_played_card ='" .$played_card. "'
+                WHERE game_id='" .$my_game_stat['game_id']. "'");
+    if (!$result){
+        echo "Update resources_cost SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    }
 
     // Check if anyone wins after played card
     check_for_win();
