@@ -32,6 +32,7 @@ if( verifyCookie() ) {
 
         function EndMove() {
             if (window.moveEvent) {
+                document.getElementById("played_card").src = document.getElementById(window.moveEvent).src;
                 PerformAction(window.moveEvent);
                 window.moveEvent = null;
             }
@@ -40,7 +41,7 @@ if( verifyCookie() ) {
         function drop(ev) {
             ev.preventDefault();
             var elmID = ev.dataTransfer.getData("Text");
-            //ev.target.src = document.getElementById(elmID).src;
+            ev.target.src = document.getElementById(elmID).src;
             PerformAction(elmID);
         }
 
@@ -52,9 +53,6 @@ if( verifyCookie() ) {
                 case "2":
                     alert("You LOSE!");
                     break;
-                case "3":
-                    alert("It's a TIE!");
-                    break;
                 default:
                     return; // Error: funciton shouldn't have been called
             }
@@ -63,7 +61,7 @@ if( verifyCookie() ) {
 
         function RefreshView() {
             // Init
-            refreshInterval = 3000;
+            refreshInterval = 2000;
 
             // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
             xmlhttp = new XMLHttpRequest();
@@ -114,14 +112,14 @@ if( verifyCookie() ) {
                     }
                     else {
                         document.getElementById("userMessages").innerHTML = "Opponent's turn";
-                        document.getElementById("input_button").setAttribute("disabled");
+                        document.getElementById("input_button").setAttribute("disabled", "true");
                         cards = document.getElementsByClassName("card_hand");
                         for (var i = 0; i < cards.length; i++) {
                             cards[i].setAttribute("draggable", "false");
                             cards[i].setAttribute("style", "opacity:0.6;");
                             cards[i].setAttribute("onclick", "");
                         }
-                        refreshInterval = 3000;
+                        refreshInterval = 2000;
                     }
 
                     // Update opponent's game stat on screen
@@ -186,10 +184,8 @@ if( verifyCookie() ) {
 <body onload="RefreshView();" style="background-image: url(Images/game-background.jpg);background-repeat:no-repeat;background-size:cover;">
     <audio id="audio" autoplay="" loop="">
         <source src="Media/GOT_Soundtrack.ogg" type="audio/ogg">
-            <source src="Media/GOT_Soundtrack.mp3" type="audio/mpeg">
-                Your browser does not support the audio element.
-            </source>
-        </source>
+        <source src="Media/GOT_Soundtrack.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
     </audio>
     <div>
         <button onclick="document.getElementById('audio').play()">Play the Audio</button>
