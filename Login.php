@@ -34,16 +34,18 @@ else
     }
     else
     {
-        // Need to find how to redirect to Lobby.html
         //set cookie:
         $nickname = $row['nickname'];
 		$expiration = time() + 7200; // 2 hours
+        
         //generate cookie:
         $key = hash_hmac( 'md5', $nickname . $expiration, 'TalRan' );
         $hash = hash_hmac( 'md5', $nickname . $expiration, $key );
         $cookie = $nickname . '|' . $expiration . '|' . $hash;
-	    //if ( !setcookie( "ArcomageCookie", $cookie, $expiration, COOKIE_PATH, COOKIE_DOMAIN, false, true ) ) {
+	    
+        //if ( !setcookie( "ArcomageCookie", $cookie, $expiration, COOKIE_PATH, COOKIE_DOMAIN, false, true ) ) {
         //TODO: need the rest of the parameters?
+        
         if ( !setcookie( 'ArcomageCookie', $cookie, $expiration ) ) {
 		    exit('Error: Unable to set cookie');
 	    }

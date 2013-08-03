@@ -199,9 +199,9 @@ if( verifyCookie() ) {
         </tr>
 
         <tr>
-            <td colspan="3" id="player_name" style="background-color:#ffd800;text-align: center;">your stats</td>
+            <td colspan="3" id="player_name" style="background-color:#ffd800;text-align: center; font-weight: 900;">your stats</td>
             <td colspan="2"></td>
-            <td colspan="3" id="opponent_name" style="background-color:#ffd800;text-align: center;">opponent stats</td>
+            <td colspan="3" id="opponent_name" style="background-color:#ffd800;text-align: center; font-weight: 900;">opponent stats</td>
         </tr>
 
         <tr>
