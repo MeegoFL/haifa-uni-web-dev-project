@@ -93,50 +93,86 @@ function execute_query()
 
 function end_game($end_result)
 {
-    global $mysqli, $query, $game_id, $nickname;
+    global $query, $game_id, $nickname;
+    $user_statistics = get_user_statistics();
+    $games_played = $user_statistics['games_played'] + 1;
 
-    if ( ($end_result >= 0) || ($end_result <= 3) )
+    if ( ($end_result >= 1) && ($end_result <= 3) )
     {
         $my_result = "1";
         $enemy_result = "2";
+        $games_won = $user_statistics['games_won'] + 1;
+        $longest_win_streak = $user_statistics['longest_win_streak'] + 1;
+        $longest_lose_streak = "0";
+        $num_surrender_wins = $user_statistics['num_surrender_wins']; 
+        $num_resources_wins = $user_statistics['num_resources_wins'];
+        $num_tower_wins = $user_statistics['num_tower_wins'];
+        $num_destroy_wins = $user_statistics['num_destroy_wins'];
         switch ($end_result)
         {
-            case 0: // surrender win
-
-                break;
-
             case 1: // resources win
-
+                $num_resources_wins += 1;
                 break;
 
             case 2: // tower win
-
+                $num_tower_wins += 1;
                 break;
 
             case 3: // destory win
-
+                $num_destroy_wins += 1;
                 break;
         }
 
+        $query[] = "UPDATE users SET games_won = '$games_won',   
+            games_played = '$games_played', 
+            longest_win_streak = '$longest_win_streak', 
+            longest_lose_streak = '$longest_lose_streak', 
+            num_surrender_wins = '$num_surrender_wins', 
+            num_resources_wins = '$num_resources_wins', 
+            num_tower_wins = '$num_tower_wins', 
+            num_destroy_wins = '$num_destroy_wins' 
+            WHERE nickname = '$nickname'";
     }
-    else if ( ($end_result >= 4) || ($end_result <= 6) )
+    
+    else if ( ($end_result == 0) || (($end_result >= 4) && ($end_result <= 6)) )
     {
         $my_result = "2";
         $enemy_result = "1";
+        $games_lost = $user_statistics['games_lost'] + 1;
+        $longest_lose_streak = $user_statistics['longest_lose_streak'] + 1;
+        $longest_win_streak = "0";
+        $num_surrender_loses = $user_statistics['num_surrender_loses']; 
+        $num_resources_loses = $user_statistics['num_resources_loses'];
+        $num_tower_loses = $user_statistics['num_tower_loses'];
+        $num_destroy_loses = $user_statistics['num_destroy_loses'];
         switch ($end_result)
         {
-            case 4: // resources lose
+            case 0: // surrender lose
+                $num_surrender_loses += 1;
+                break;
 
+            case 4: // resources lose
+                $num_resources_loses += 1;
                 break;
 
             case 5: // tower lose
-
+                $num_tower_loses += 1;
                 break;
 
             case 6: // destory lose
-
+                $num_destroy_loses += 1;
                 break;
         }
+
+        $query[] = "UPDATE users SET games_lost = '$games_lost', 
+            games_played = '$games_played', 
+            longest_win_streak = '$longest_win_streak', 
+            longest_lose_streak = '$longest_lose_streak', 
+            num_surrender_loses = '$num_surrender_loses', 
+            num_resources_loses = '$num_resources_loses', 
+            num_tower_loses = '$num_tower_loses', 
+            num_destroy_loses = '$num_destroy_loses' 
+            WHERE nickname = '$nickname'";
     }
 
     else return; // No such option
@@ -146,21 +182,6 @@ function end_game($end_result)
 
     execute_query();
     exit("GameOver");
-}
-
-function surrender()
-{
-    global $mysqli, $query;
-    $query = array("UPDATE games SET game_end_status = '1' WHERE game_id = '$game_id' AND nickname = '$nickname';",
-                    "UPDATE games SET game_end_status = '2' WHERE game_id = '$game_id' AND nickname != '$nickname';");
-
-
-    $my_result = $mysqli->query($value);
-    if (!$my_result) {
-        echo "check_for_win SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
-    }
-
-    end_game(0);
 }
 
 function get_my_game_stat()
@@ -181,6 +202,14 @@ function get_enemy_game_stat()
         echo "get_enemy_game_stat SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
     }
     return $enemy_result->fetch_array();
+}
+
+function get_user_statistics()
+{
+    global $mysqli, $nickname;
+    $result = $mysqli->query("SELECT * FROM users WHERE nickname = '$nickname'");
+    if (!$result) echo "get_user_statistics SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    return $result->fetch_array();
 }
 
 function get_new_card()
@@ -1210,7 +1239,7 @@ function play_card($played_card)
 
 
 //********************* MAIN*************************//
-if ($card_location == "surrender") surrender();
+if ($card_location == "surrender") end_game(0);
 else main();
 
 $mysqli->close();
