@@ -98,11 +98,11 @@ if (verifyCookie()) {
 
                         for (var i = 0; i < userList.length; i++) {
                             if (userList[i][0] == nickName && userList[i][1] == 0) {
-                                document.getElementById("userlist").innerHTML += "<b>" + userList[i][0] + "</b>" + " <input type=\"button\" value=\"Busy\" style=\"color: red;\" onclick=\"ChangeState()\"><br>";
+                                document.getElementById("userlist").innerHTML += "<b>" + userList[i][0] + " -> You Are Currently: </b>" + " <input type=\"button\" value=\"Busy\" style=\"color: red;\" onclick=\"ChangeState()\"><br>";
                             }
 
                             else if (userList[i][0] == nickName && userList[i][1] == 1) {
-                                document.getElementById("userlist").innerHTML += "<b>" + userList[i][0] + "</b>" + " <input type=\"button\" value=\"Free\" style=\"color: green;\" onclick=\"ChangeState()\"><br>";
+                                document.getElementById("userlist").innerHTML += "<b>" + userList[i][0] + " -> You Are Currently: </b>" + " <input type=\"button\" value=\"Free To Play\" style=\"color: green;\" onclick=\"ChangeState()\"><br>";
                             }
 
                             else if (userList[i][1] == 0) {
@@ -110,7 +110,7 @@ if (verifyCookie()) {
                             }
                             else if (userList[i][1] == 1) {
                                 window.nickname1 = userList[i][0];
-                                document.getElementById("userlist").innerHTML += userList[i][0] + " <input type=\"button\" value=\"Invite\" onclick=\"InitGame()\"><br>";
+                                document.getElementById("userlist").innerHTML += userList[i][0] + " <input type=\"button\" value=\"Invite To Play\" onclick=\"InitGame()\"><br>";
                             }
                         }
 
@@ -131,7 +131,7 @@ if (verifyCookie()) {
 <body>
     <h1 style="margin-bottom:0;text-align: center;color: #ffd800; font-size: 50px; text-shadow: 2px 2px 2px #333;">Arcomage Lobby</h1>
     <hr />
-    <table border="1" style="width:1000px; margin: auto; background-color: #fff">
+    <table border="1" style="width:800px; margin: auto; background-color: #fff">
         <tr>
             <td>
                 <h1 style="text-align: center;">Online Users</h1>
@@ -141,13 +141,13 @@ if (verifyCookie()) {
                 <h1 style="text-align: center;">Chat</h1>
             </td>
             <tr>
-                <td>
+                <td style="width: 50%;">
                     <div id="userlist" style="height: 500px; overflow-y: scroll; overflow-x: hidden;"></div>
                 </td>
                 <td>
                     <div id="chatbox" style="height: 500px; overflow-y: scroll; overflow-x: hidden;"></div>
                     <form>
-                        <input type="text" id="chatfield" style="width: 85%;" />
+                        <input type="text" id="chatfield" style="width: 80%;" />
                         <input type="button" value="enter" style="width: fill-available;" onclick="SubmitChatText(this.form.chatfield.value)" />
                     </form>
                 </td>
