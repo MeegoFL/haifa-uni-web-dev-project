@@ -94,91 +94,140 @@ function execute_query()
 function end_game($end_result)
 {
     global $query, $game_id, $nickname;
-    $user_statistics = get_user_statistics();
-    $games_played = $user_statistics['games_played'] + 1;
+
+    // Get the current statistics for both player
+    $statistics = get_users_statistics();
+    
+    // Put the results in correct user array
+    ($statistics[0]['nickname'] == $nickname) ? $user_statistics = $statistics[0] : $user_statistics = $statistics[1];
+    ($statistics[0]['nickname'] != $nickname) ? $opponent_statistics = $statistics[0] : $opponent_statistics = $statistics[1];
+    
+    // Set the nickname of opponent and games played for both users
+    $opponent_nickname = $opponent_statistics['nickname'];
+    $user_games_played = $user_statistics['games_played'] + 1;
+    $opponent_games_played = $opponent_statistics['games_played'] + 1;
 
     if ( ($end_result >= 1) && ($end_result <= 3) )
     {
-        $my_result = "1";
-        $enemy_result = "2";
-        $games_won = $user_statistics['games_won'] + 1;
-        $longest_win_streak = $user_statistics['longest_win_streak'] + 1;
-        $longest_lose_streak = "0";
-        $num_surrender_wins = $user_statistics['num_surrender_wins']; 
-        $num_resources_wins = $user_statistics['num_resources_wins'];
-        $num_tower_wins = $user_statistics['num_tower_wins'];
-        $num_destroy_wins = $user_statistics['num_destroy_wins'];
+        $user_result = "1";
+        $opponent_result = "2";
+        
+        // User's new statistics
+        $user_games_won = $user_statistics['games_won'] + 1;
+        $user_num_surrender_wins = $user_statistics['num_surrender_wins']; 
+        $user_num_resources_wins = $user_statistics['num_resources_wins'];
+        $user_num_tower_wins = $user_statistics['num_tower_wins'];
+        $user_num_destroy_wins = $user_statistics['num_destroy_wins'];
+
+        // Opponents new statistics
+        $opponent_games_lost = $opponent_statistics['games_lost'] + 1;
+        $opponent_num_surrender_loses = $opponent_statistics['num_surrender_loses']; 
+        $opponent_num_resources_loses = $opponent_statistics['num_resources_loses'];
+        $opponent_num_tower_loses = $opponent_statistics['num_tower_loses'];
+        $opponent_num_destroy_loses = $opponent_statistics['num_destroy_loses'];
+        
         switch ($end_result)
         {
             case 1: // resources win
-                $num_resources_wins += 1;
+                $user_num_resources_wins += 1;
+                $opponent_num_resources_loses += 1;
                 break;
 
             case 2: // tower win
-                $num_tower_wins += 1;
+                $user_num_tower_wins += 1;
+                $opponent_num_tower_loses += 1;
                 break;
 
             case 3: // destory win
-                $num_destroy_wins += 1;
+                $user_num_destroy_wins += 1;
+                $opponent_num_destroy_loses += 1;
                 break;
         }
 
-        $query[] = "UPDATE users SET games_won = '$games_won',   
-            games_played = '$games_played', 
-            longest_win_streak = '$longest_win_streak', 
-            longest_lose_streak = '$longest_lose_streak', 
-            num_surrender_wins = '$num_surrender_wins', 
-            num_resources_wins = '$num_resources_wins', 
-            num_tower_wins = '$num_tower_wins', 
-            num_destroy_wins = '$num_destroy_wins' 
+        // Setup User's query
+        $query[] = "UPDATE users SET games_won = '$user_games_won',   
+            games_played = '$user_games_played', 
+            num_surrender_wins = '$user_num_surrender_wins', 
+            num_resources_wins = '$user_num_resources_wins', 
+            num_tower_wins = '$user_num_tower_wins', 
+            num_destroy_wins = '$user_num_destroy_wins' 
             WHERE nickname = '$nickname'";
+
+        // Setup Opponent's query
+        $query[] = "UPDATE users SET games_lost = '$opponent_games_lost',   
+            games_played = '$opponent_games_played', 
+            num_surrender_loses = '$opponent_num_surrender_loses', 
+            num_resources_loses = '$opponent_num_resources_loses', 
+            num_tower_loses = '$opponent_num_tower_loses', 
+            num_destroy_loses = '$opponent_num_destroy_loses' 
+            WHERE nickname = '$opponent_nickname'";
     }
     
     else if ( ($end_result == 0) || (($end_result >= 4) && ($end_result <= 6)) )
     {
-        $my_result = "2";
-        $enemy_result = "1";
-        $games_lost = $user_statistics['games_lost'] + 1;
-        $longest_lose_streak = $user_statistics['longest_lose_streak'] + 1;
-        $longest_win_streak = "0";
-        $num_surrender_loses = $user_statistics['num_surrender_loses']; 
-        $num_resources_loses = $user_statistics['num_resources_loses'];
-        $num_tower_loses = $user_statistics['num_tower_loses'];
-        $num_destroy_loses = $user_statistics['num_destroy_loses'];
+        $user_result = "2";
+        $opponent_result = "1";
+        
+        // User's new statistics
+        $user_games_lost = $user_statistics['games_lost'] + 1;
+        $user_num_surrender_loses = $user_statistics['num_surrender_loses']; 
+        $user_num_resources_loses = $user_statistics['num_resources_loses'];
+        $user_num_tower_loses = $user_statistics['num_tower_loses'];
+        $user_num_destroy_loses = $user_statistics['num_destroy_loses'];
+
+        // Opponents new statistics
+        $opponent_games_won = $opponent_statistics['games_won'] + 1;
+        $opponent_num_surrender_wins = $opponent_statistics['num_surrender_wins']; 
+        $opponent_num_resources_wins = $opponent_statistics['num_resources_wins'];
+        $opponent_num_tower_wins = $opponent_statistics['num_tower_wins'];
+        $opponent_num_destroy_wins = $opponent_statistics['num_destroy_wins'];
+        
         switch ($end_result)
         {
             case 0: // surrender lose
-                $num_surrender_loses += 1;
+                $user_num_surrender_loses += 1;
+                $opponent_num_surrender_wins += 1;
                 break;
 
             case 4: // resources lose
-                $num_resources_loses += 1;
+                $user_num_resources_loses += 1;
+                $opponent_num_resources_wins += 1;
                 break;
 
             case 5: // tower lose
-                $num_tower_loses += 1;
+                $user_num_tower_loses += 1;
+                $opponent_num_tower_wins += 1;
                 break;
 
             case 6: // destory lose
-                $num_destroy_loses += 1;
+                $user_num_destroy_loses += 1;
+                $opponent_num_destroy_wins += 1;
                 break;
         }
 
-        $query[] = "UPDATE users SET games_lost = '$games_lost', 
-            games_played = '$games_played', 
-            longest_win_streak = '$longest_win_streak', 
-            longest_lose_streak = '$longest_lose_streak', 
-            num_surrender_loses = '$num_surrender_loses', 
-            num_resources_loses = '$num_resources_loses', 
-            num_tower_loses = '$num_tower_loses', 
-            num_destroy_loses = '$num_destroy_loses' 
+        // Setup User's query
+        $query[] = "UPDATE users SET games_lost = '$user_games_lost', 
+            games_played = '$user_games_played',  
+            num_surrender_loses = '$user_num_surrender_loses', 
+            num_resources_loses = '$user_num_resources_loses', 
+            num_tower_loses = '$user_num_tower_loses', 
+            num_destroy_loses = '$user_num_destroy_loses' 
             WHERE nickname = '$nickname'";
+
+        // Setup Opponent's query
+        $query[] = "UPDATE users SET games_won = '$opponent_games_won',   
+            games_played = '$opponent_games_played', 
+            num_surrender_wins = '$opponent_num_surrender_wins', 
+            num_resources_wins = '$opponent_num_resources_wins', 
+            num_tower_wins = '$opponent_num_tower_wins', 
+            num_destroy_wins = '$opponent_num_destroy_wins' 
+            WHERE nickname = '$opponent_nickname'";
     }
 
     else return; // No such option
 
-    $query[] = "UPDATE games SET game_end_status = '$my_result' WHERE game_id = '$game_id' AND nickname = '$nickname'";
-    $query[] = "UPDATE games SET game_end_status = '$enemy_result' WHERE game_id = '$game_id' AND nickname != '$nickname';";
+    $query[] = "UPDATE games SET game_end_status = '$user_result' WHERE game_id = '$game_id' AND nickname = '$nickname'";
+    $query[] = "UPDATE games SET game_end_status = '$opponent_result' WHERE game_id = '$game_id' AND nickname != '$nickname';";
 
     execute_query();
     exit("GameOver");
@@ -204,12 +253,19 @@ function get_enemy_game_stat()
     return $enemy_result->fetch_array();
 }
 
-function get_user_statistics()
+function get_users_statistics()
 {
-    global $mysqli, $nickname;
-    $result = $mysqli->query("SELECT * FROM users WHERE nickname = '$nickname'");
-    if (!$result) echo "get_user_statistics SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
-    return $result->fetch_array();
+    global $mysqli, $nickname, $opponent_game_stat;
+    $result_arr = array();
+    $opponent_nickname = $opponent_game_stat['nickname'];
+    
+    $result = $mysqli->query("SELECT * FROM users WHERE nickname = '$nickname' OR nickname = '$opponent_nickname'");
+    if (!$result) echo "get_users_statistics SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    
+    $result_arr[] = $result->fetch_array();
+    $result_arr[] = $result->fetch_array();
+    
+    return $result_arr;
 }
 
 function get_new_card()
