@@ -54,7 +54,7 @@ else
         $_SESSION['nickname'] = $row['nickname'];
 
         // Redirect the user to lobby
-        if($nickname = "administrator") echo "Location:AdminPage.php";
+        if($nickname == "administrator") echo "Location:AdminPage.php";
         else echo "Location:Lobby.php";
         exit;
     }
