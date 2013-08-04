@@ -239,7 +239,7 @@ if( verifyCookie() ) {
                 </b>
             </td>
 
-            <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center;">
+            <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center; width: 250px;">
                 <span style="background-color: #ffd800; position: relative; bottom: 0px;">
                     <b>
                         <br>
@@ -266,7 +266,7 @@ if( verifyCookie() ) {
                 <img id="played_card" title="" src="Images/0.png" alt="card1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="EndMove()" width="120" height="180" draggable="false"/>
             </td>
 
-            <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center;">
+            <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center; width: 250px;">
                 <span style="background-color: #ffd800 ; position: relative; bottom: 0px;">
                     <b>
                         <br>
