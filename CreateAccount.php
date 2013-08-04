@@ -4,6 +4,8 @@ preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["username"]) ? $username = $_REQUEST["us
 preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["password"]) ? $password = ($_REQUEST["password"]) : exit('XSS is detected!');
 preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["nickname"]) ? $nickname = $_REQUEST["nickname"] : exit('XSS is detected!');
 
+session_start();
+
 // Check password strength
 if( strlen($password) < 6 ) { $error .= "Password too short!<br>";}
 if( !preg_match("#[0-9]+#", $password) ) {$error .= "Password must include at least one number!<br>";}
@@ -47,7 +49,25 @@ else
     $sql = "INSERT INTO users (username, password, nickname) VALUES ('".$username."','".$password."','".$nickname."')";
     $result = mysqli_query($con,$sql);
 
-    echo "<p style=\"color:green\">User added successfully</p>";
+    //set cookie:
+	$expiration = time() + 7200; // 2 hours
+        
+    //generate cookie:
+    $key = hash_hmac( 'md5', $nickname . $expiration, 'TalRan' );
+    $hash = hash_hmac( 'md5', $nickname . $expiration, $key );
+    $cookie = $nickname . '|' . $expiration . '|' . $hash;
+	    
+    //if ( !setcookie( "ArcomageCookie", $cookie, $expiration, COOKIE_PATH, COOKIE_DOMAIN, false, true ) ) {
+    //TODO: need the rest of the parameters?
+        
+    if ( !setcookie( 'ArcomageCookie', $cookie, $expiration ) ) {
+		exit('Error: Unable to set cookie');
+	}
+
+    // store session data
+    $_SESSION['nickname'] = $nickname;
+    
+    echo "SUCCESS";
 }
 
 // Close the connection
