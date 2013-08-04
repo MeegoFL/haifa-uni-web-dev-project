@@ -70,7 +70,10 @@ if( verifyCookie() ) {
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     response = xmlhttp.responseText;
-                    eval(response);
+                    gameStat = JSON.parse(response);
+                    userGameStat = gameStat[0];
+                    opponentGameStat = gameStat[1];
+
 
                     if (userGameStat['game_end_status'] != 0) EndGame(userGameStat['game_end_status']);
 
