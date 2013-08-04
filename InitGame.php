@@ -5,7 +5,7 @@ session_start();
 
 // Get the values and check for XSS or SQL injection
 preg_match('/^[a-zA-Z0-9]+$/', $_REQUEST["nickname"]) ? $opponent_nickname = $_REQUEST["nickname"] : exit('XSS is detected!');
-$my_nickname = $_SESSION['nickname'];
+$my_nickname = explode('|', $_COOKIE["ArcomageCookie"])[0];
 
 $mysqli = new mysqli("localhost", "root", "12345", "test");
 // Check connection
@@ -19,7 +19,7 @@ $mysqli->query("DELETE FROM games WHERE last_active < '$deleteLastActive'");
 
 $time   = time() - 60;
 // Check if username exists
-$result = $mysqli->query("SELECT * FROM users WHERE nickname = '" . $my_nickname . "' AND last_active > '" . $time . "' AND free_to_play = '1'");
+$result = $mysqli->query("SELECT * FROM users WHERE nickname = '$my_nickname' AND last_active > '$time'");
 
 // If username doesn't exist return error
 if ($result->num_rows == 0) {
@@ -37,6 +37,7 @@ for ($i = 1, $game_id = 0; $game_id == 0; $i++) {
 }
 
 $_SESSION['game_id'] = $game_id;
+$_SESSION['nickname'] = $my_nickname;
 
 $time = time();
 $first_turn = $time%1;
@@ -53,5 +54,5 @@ if(!$mysqli->query("INSERT INTO games (game_id, nickname, current_flag, card1_id
     echo "Connect 2 failed: (" . $mysqli->errno . ") " . $mysqli->error;
 }
 
-echo "window.location.href='Game.php';";
+echo "GAME_START";
 ?>

@@ -28,6 +28,7 @@ $query = "CREATE TABLE users(
 	num_resources_loses int(10) DEFAULT 0,
 	num_destroy_loses int(10) DEFAULT 0,
 	num_surrender_loses int(10) DEFAULT 0,
+    last_game_result int(10) DEFAULT 0,
     PRIMARY KEY (`username`)
 );";
 

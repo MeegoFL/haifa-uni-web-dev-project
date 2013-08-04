@@ -5,7 +5,7 @@ if( !verifyCookie() ) exit("Error: Not Logged In!");
 session_start();
 
 // Get the current user nickname from session
-$mynickname = $_SESSION['nickname'];
+$mynickname = explode('|', $_COOKIE["ArcomageCookie"])[0];
 
 // Connect to Database
 $mysqli = new mysqli("localhost", "root", "12345", "test");
@@ -30,12 +30,13 @@ if($result->num_rows == 0)
 
 $game_session = $invites->fetch_array();
 $last_active = $game_session['last_active'];
-$_SESSION['game_id'] = $game_session['game_id'];
 
-// If no user is in game list -> move him to game.php
-if($invites->num_rows > 0 && ($last_active > time()-60))
+// If user is in game list -> move him to game.php
+if($invites->num_rows > 0 && ($last_active > time()-300))
 {
-    exit("window.location.href='Game.php';");
+    $_SESSION['game_id'] = $game_session['game_id'];
+    $_SESSION['nickname'] = $mynickname;
+    exit("GAME_START");
 }
 
 $userlist = array();
@@ -48,5 +49,5 @@ while ($row = $result->fetch_array())
     $i++;
 }
 
-echo "var userList = " .json_encode($userList);
+echo json_encode($userList);
 ?>

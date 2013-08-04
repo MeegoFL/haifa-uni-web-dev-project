@@ -30,11 +30,11 @@ if( verifyCookie() ) {
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     response = xmlhttp.responseText;
-                    eval(response);
+                    userGameStat = JSON.parse(response);
 
                     // Update player's game stat on screen
-                    if(result == 1) document.getElementById("game_result").innerHTML = "You've WON!";
-                    else if (result == 2) document.getElementById("game_result").innerHTML = "You've LOST!";
+                    if (userGameStat['last_game_result'] == 1) document.getElementById("game_result").innerHTML = "You've WON!";
+                    else if (userGameStat['last_game_result'] == 2) document.getElementById("game_result").innerHTML = "You've LOST!";
 
                     document.getElementById("games_won").innerHTML = userGameStat['games_won'];
                     document.getElementById("games_lost").innerHTML = userGameStat['games_lost'];
@@ -49,7 +49,7 @@ if( verifyCookie() ) {
                     document.getElementById("num_destroy_loses").innerHTML = userGameStat['num_destroy_loses'];
                     document.getElementById("num_surrender_loses").innerHTML = userGameStat['num_surrender_loses'];
                     document.getElementById("games_played").innerHTML = userGameStat['games_played'];
-                    document.getElementById("win_precentage").innerHTML = (userGameStat['games_won'] / userGameStat['games_played']) * 100;
+                    document.getElementById("win_precentage").innerHTML = Math.round((userGameStat['games_won'] / userGameStat['games_played']) * 100);
 
                 }
             }
