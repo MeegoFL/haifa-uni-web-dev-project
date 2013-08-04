@@ -390,11 +390,13 @@ function play_card($played_card)
             return 2;
 
         case 3: //Earthquake
-
+            update_resources('quarry', 2, -1);
             break;
 
         case 4: //Strip Mine
-            update_resources('quarry', 2, -1);
+            update_resources('quarry', 0, -1);
+            update_resources('wall', 0, 10);
+            update_resources('gems', 0, 5);
             return 1;
 
         case 5: //Friendly Terrain
