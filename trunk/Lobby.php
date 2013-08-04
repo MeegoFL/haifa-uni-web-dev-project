@@ -112,7 +112,6 @@ if (verifyCookie()) {
             xmlhttp.send();
         }
         window.onload = function () {
-            //setTimeout('RefreshUsers()', 10000);
             RefreshUsers();
         }
     </script>

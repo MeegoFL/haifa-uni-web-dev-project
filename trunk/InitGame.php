@@ -41,7 +41,7 @@ $_SESSION['nickname'] = $my_nickname;
 $_SESSION['cards_played'] = 0;
 
 $time = time();
-$first_turn = $time%1;
+$first_turn = $time % 2;
 $opponent_turn = !$first_turn;
 sleep(1); // for some unknown reason somtimes opponent_turn gets null value -> might need to wait for function to end.
 
