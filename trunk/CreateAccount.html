@@ -43,7 +43,12 @@
             // Wait for response
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    document.getElementById("result").innerHTML = xmlhttp.responseText;
+                    response = xmlhttp.responseText;
+                    if (response == "SUCCESS") {
+                        alert("User Added Successfully");
+                        window.location.href = "Lobby.php";
+                    }
+                    document.getElementById("result").innerHTML = response;
                 }
             }
 
