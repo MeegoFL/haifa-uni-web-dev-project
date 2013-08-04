@@ -82,8 +82,8 @@ if( verifyCookie() ) {
                     document.getElementById("myTowerVal").innerHTML = userGameStat['tower'];
 
 
-                    document.getElementById("myTowerImg").height = 50+200*(userGameStat['tower'] / 100);
-
+                    document.getElementById("myTowerImg").height = 100+200*(userGameStat['tower'] / 100);
+                    document.getElementById("myWallImg").height = 60+80*(userGameStat['wall'] / 100);
 
                     document.getElementById("myWallVal").innerHTML = userGameStat['wall'];
                     document.getElementById("myMagic").innerHTML = userGameStat['magic'];
@@ -135,6 +135,8 @@ if( verifyCookie() ) {
                     document.getElementById("opponentTowerVal").innerHTML = opponentGameStat['tower'];
 
                     document.getElementById("opponentTowerImg").height = 50+200*(opponentGameStat['tower'] / 100);
+                    document.getElementById("opponentWallImg").height = 60+80*(opponentGameStat['wall'] / 100);
+
                     document.getElementById("opponentWallVal").innerHTML = opponentGameStat['wall'];
                     document.getElementById("opponentMagic").innerHTML = opponentGameStat['magic'];
                     document.getElementById("opponentGems").innerHTML = opponentGameStat['gems'];
@@ -253,7 +255,7 @@ if( verifyCookie() ) {
                     </b>
                 </span>
                 <img id="myTowerImg" src="Images/towe_trans.gif" alt="tower1" width="100" height="250" style="position: relative; bottom: -80px;" draggable="false" />
-                <img id="wall1" src="Images/wall_trans.gif" alt="wall1" width="250" height="80" style="position: relative;" draggable="false"/>
+                <img id="mytWallImg" src="Images/wall_trans.gif" alt="wall1" width="250" height="80" style="position: relative;" draggable="false"/>
             </td>
 
             <td>
@@ -280,7 +282,7 @@ if( verifyCookie() ) {
                     </b>
                 </span>
                 <img id="opponentTowerImg" src="Images/towe_trans.gif" alt="tower2" width="100" height="250" style="position: relative; bottom: -80px;" draggable="false"/>
-                <img id="wall2" src="Images/wall_trans.gif" alt="wall2" width="250" height="80" style="position: relative;" draggable="false" />
+                <img id="opponentWallImg" src="Images/wall_trans.gif" alt="wall2" width="250" height="80" style="position: relative;" draggable="false" />
             </td>
 
             <td rowspan="2" style="background-image:url(Images/resources.png);background-repeat:no-repeat;
