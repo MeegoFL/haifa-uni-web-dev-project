@@ -35,6 +35,7 @@ function main()
         $play_card_result = play_card($played_card);
 
         $query[] = "UPDATE games SET last_played_card ='" .$played_card. "' WHERE game_id='" .$my_game_stat['game_id']. "'";
+        $_SESSION['cards_played'] += 1; 
 
         // Check if anyone wins after played card
         check_for_win();
@@ -144,6 +145,10 @@ function end_game($end_result)
                 break;
         }
 
+        // Max / Min cards update
+        ($_SESSION['cards_played'] > $user_statistics['win_max_cards']) ? $max_cards_played = $_SESSION['cards_played'] : $max_cards_played = $user_statistics['win_max_cards'];
+        ($_SESSION['cards_played'] < $user_statistics['win_min_cards']) ? $min_cards_played = $_SESSION['cards_played'] : $min_cards_played = $user_statistics['win_min_cards'];
+
         // Setup User's query
         $query[] = "UPDATE users SET games_won = '$user_games_won',   
             games_played = '$user_games_played', 
@@ -151,6 +156,8 @@ function end_game($end_result)
             num_resources_wins = '$user_num_resources_wins', 
             num_tower_wins = '$user_num_tower_wins', 
             num_destroy_wins = '$user_num_destroy_wins', 
+            win_max_cards = '$max_cards_played', 
+            win_min_cards = '$min_cards_played', 
             last_game_result = '$user_result' 
             WHERE nickname = '$nickname'";
 
@@ -1327,7 +1334,7 @@ function play_card($played_card)
 
 
 //********************* MAIN*************************//
-if ($card_location == "surrender") end_game(0);
+if ($card_location == "surrender" | $card_location == "surrender_id") end_game(0);
 else main();
 
 $mysqli->close();

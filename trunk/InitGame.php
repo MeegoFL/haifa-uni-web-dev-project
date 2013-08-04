@@ -38,6 +38,7 @@ for ($i = 1, $game_id = 0; $game_id == 0; $i++) {
 
 $_SESSION['game_id'] = $game_id;
 $_SESSION['nickname'] = $my_nickname;
+$_SESSION['cards_played'] = 0;
 
 $time = time();
 $first_turn = $time%1;

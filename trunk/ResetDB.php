@@ -23,7 +23,7 @@ $query = "CREATE TABLE users(
 	num_destroy_wins int(10) DEFAULT 0,
 	num_surrender_wins int(10) DEFAULT 0,
 	win_max_cards int(10) DEFAULT 0,
-	win_min_cards int(10) DEFAULT 0,
+	win_min_cards int(10) DEFAULT 1000,
 	num_tower_loses int(10) DEFAULT 0,
 	num_resources_loses int(10) DEFAULT 0,
 	num_destroy_loses int(10) DEFAULT 0,
