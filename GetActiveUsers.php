@@ -36,6 +36,7 @@ if($invites->num_rows > 0 && ($last_active > time()-300))
 {
     $_SESSION['game_id'] = $game_session['game_id'];
     $_SESSION['nickname'] = $mynickname;
+    $_SESSION['cards_played'] = 0;
     exit("GAME_START");
 }
 
