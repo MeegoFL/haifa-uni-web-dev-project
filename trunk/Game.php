@@ -80,6 +80,11 @@ if( verifyCookie() ) {
                     // Update player's game stat on screen
                     document.getElementById("player_name").innerHTML = userGameStat['nickname'];
                     document.getElementById("myTowerVal").innerHTML = userGameStat['tower'];
+
+
+                    document.getElementById("myTowerImg").height = 50+200*(userGameStat['tower'] / 100);
+
+
                     document.getElementById("myWallVal").innerHTML = userGameStat['wall'];
                     document.getElementById("myMagic").innerHTML = userGameStat['magic'];
                     document.getElementById("myGems").innerHTML = userGameStat['gems'];
@@ -128,6 +133,8 @@ if( verifyCookie() ) {
                     // Update opponent's game stat on screen
                     document.getElementById("opponent_name").innerHTML = opponentGameStat['nickname'];
                     document.getElementById("opponentTowerVal").innerHTML = opponentGameStat['tower'];
+
+                    document.getElementById("opponentTowerImg").height = 50+200*(opponentGameStat['tower'] / 100);
                     document.getElementById("opponentWallVal").innerHTML = opponentGameStat['wall'];
                     document.getElementById("opponentMagic").innerHTML = opponentGameStat['magic'];
                     document.getElementById("opponentGems").innerHTML = opponentGameStat['gems'];
@@ -156,7 +163,7 @@ if( verifyCookie() ) {
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     response = xmlhttp.responseText;
-                    
+
                     if (response.indexOf("Error:") !== -1) {
                         alert(response.substr(7));
                     }
@@ -245,7 +252,7 @@ if( verifyCookie() ) {
                         </br>
                     </b>
                 </span>
-                <img id="tower1" src="Images/towe_trans.gif" alt="tower1" width="100" height="200" style="position: relative; bottom: -80px;" draggable="false" />
+                <img id="myTowerImg" src="Images/towe_trans.gif" alt="tower1" width="100" height="250" style="position: relative; bottom: -80px;" draggable="false" />
                 <img id="wall1" src="Images/wall_trans.gif" alt="wall1" width="250" height="80" style="position: relative;" draggable="false"/>
             </td>
 
@@ -272,7 +279,7 @@ if( verifyCookie() ) {
                         </br>
                     </b>
                 </span>
-                <img id="tower2" src="Images/towe_trans.gif" alt="tower2" width="100" height="200" style="position: relative; bottom: -80px;" draggable="false"/>
+                <img id="opponentTowerImg" src="Images/towe_trans.gif" alt="tower2" width="100" height="250" style="position: relative; bottom: -80px;" draggable="false"/>
                 <img id="wall2" src="Images/wall_trans.gif" alt="wall2" width="250" height="80" style="position: relative;" draggable="false" />
             </td>
 
