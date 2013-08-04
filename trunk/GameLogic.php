@@ -150,7 +150,8 @@ function end_game($end_result)
             num_surrender_wins = '$user_num_surrender_wins', 
             num_resources_wins = '$user_num_resources_wins', 
             num_tower_wins = '$user_num_tower_wins', 
-            num_destroy_wins = '$user_num_destroy_wins' 
+            num_destroy_wins = '$user_num_destroy_wins', 
+            last_game_result = '$user_result' 
             WHERE nickname = '$nickname'";
 
         // Setup Opponent's query
@@ -159,7 +160,8 @@ function end_game($end_result)
             num_surrender_loses = '$opponent_num_surrender_loses', 
             num_resources_loses = '$opponent_num_resources_loses', 
             num_tower_loses = '$opponent_num_tower_loses', 
-            num_destroy_loses = '$opponent_num_destroy_loses' 
+            num_destroy_loses = '$opponent_num_destroy_loses', 
+            last_game_result = '$opponent_result' 
             WHERE nickname = '$opponent_nickname'";
     }
     
@@ -211,7 +213,8 @@ function end_game($end_result)
             num_surrender_loses = '$user_num_surrender_loses', 
             num_resources_loses = '$user_num_resources_loses', 
             num_tower_loses = '$user_num_tower_loses', 
-            num_destroy_loses = '$user_num_destroy_loses' 
+            num_destroy_loses = '$user_num_destroy_loses', 
+            last_game_result = '$user_result'  
             WHERE nickname = '$nickname'";
 
         // Setup Opponent's query
@@ -220,7 +223,8 @@ function end_game($end_result)
             num_surrender_wins = '$opponent_num_surrender_wins', 
             num_resources_wins = '$opponent_num_resources_wins', 
             num_tower_wins = '$opponent_num_tower_wins', 
-            num_destroy_wins = '$opponent_num_destroy_wins' 
+            num_destroy_wins = '$opponent_num_destroy_wins', 
+            last_game_result = '$opponent_result' 
             WHERE nickname = '$opponent_nickname'";
     }
 

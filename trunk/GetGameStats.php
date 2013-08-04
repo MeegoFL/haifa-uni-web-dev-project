@@ -30,5 +30,5 @@ if (!$result) echo "Get user information SQL failed: (" . $mysqli->errno . ") " 
 $my_user_stat = $result->fetch_array();
 
 // Return variable with list of user's values
-echo "var userGameStat = " .json_encode($my_user_stat). ";\nvar result = $user_result;";
+echo json_encode($my_user_stat);
 ?>

@@ -14,118 +14,107 @@ if (verifyCookie()) {
         body {background-image: url('Images/Arcomage_title.jpg'); background-size: 100%;background-repeat: no-repeat; opacity: 0.9;}
     </style>
     <script>
-            var nickname1;
-            var nickname2;
-            function getCookie(c_name) {
-                var c_value = document.cookie;
-                var c_start = c_value.indexOf(" " + c_name + "=");
-                if (c_start == -1) {
-                    c_start = c_value.indexOf(c_name + "=");
-                }
-
-                if (c_start == -1) {
-                    c_value = null;
-                }
-
-                else {
-                    c_start = c_value.indexOf("=", c_start) + 1;
-                    var c_end = c_value.indexOf(";", c_start);
-                    if (c_end == -1) {
-                        c_end = c_value.length;
-                    }
-                    c_value = unescape(c_value.substring(c_start, c_end));
-                }
-                return c_value;
+        var nickname1;
+        var nickname2;
+        function getCookie(c_name) {
+            var c_value = document.cookie;
+            var c_start = c_value.indexOf(" " + c_name + "=");
+            if (c_start == -1) {
+                c_start = c_value.indexOf(c_name + "=");
             }
-
-            function SubmitChatText(input) {
-                var cookie = getCookie("ArcomageCookie");
-                var nickName = cookie.substring(0, cookie.indexOf("|"));
-                document.getElementById("chatbox").innerHTML += nickName + ": " + input + "<br>";
-                document.getElementById("chatfield").value = "";
+            if (c_start == -1) {
+                c_value = null;
             }
-
-            function InitGame() {
-                // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
-                xmlhttp = new XMLHttpRequest();
-
-                // Wait for response
-                xmlhttp.onreadystatechange = function () {
-                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                        response = xmlhttp.responseText;
-                        eval(response);
-                    }
+            else {
+                c_start = c_value.indexOf("=", c_start) + 1;
+                var c_end = c_value.indexOf(";", c_start);
+                if (c_end == -1) {
+                    c_end = c_value.length;
                 }
-                // Ready the values and POST the request
-                var str = "?nickname=" + window.nickname1;
-                xmlhttp.open("POST", "InitGame.php" + str, true);
-                xmlhttp.send();
+                c_value = unescape(c_value.substring(c_start, c_end));
             }
-
-            function ChangeState() {
-                // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
-                xmlhttp = new XMLHttpRequest();
-
-                // Wait for response
-                xmlhttp.onreadystatechange = function () {
-                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                        response = xmlhttp.responseText;
-                        RefreshUsers();
-                    }
+            return c_value;
+        }
+        function SubmitChatText(input) {
+            var cookie = getCookie("ArcomageCookie");
+            var nickName = cookie.substring(0, cookie.indexOf("|"));
+            document.getElementById("chatbox").innerHTML += nickName + ": " + input + "<br>";
+            document.getElementById("chatfield").value = "";
+        }
+        function InitGame() {
+            // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+            // Wait for response
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    response = xmlhttp.responseText;
+                    if (response == "GAME_START") window.location.href = 'Game.php';
+                    else alert("Error Initlizing Game!");
                 }
-                // Ready the values and POST the request
-                var cookie = getCookie("ArcomageCookie");
-                var nickName = cookie.substring(0, cookie.indexOf("|"));
-                var str = "?nickname=" + nickName; // + "&nickname2=" + user2;
-                xmlhttp.open("POST", "ChangeState.php" + str, true);
-                xmlhttp.send();
             }
-
-            function RefreshUsers() {
-                // Initialize missingvalue flag and clean error messages
-                document.getElementById("userlist").innerHTML = "";
-
-                // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
-                xmlhttp = new XMLHttpRequest();
-
-                // Wait for response
-                xmlhttp.onreadystatechange = function () {
-                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                        response = xmlhttp.responseText;
-                        eval(response);
-                        var cookie = getCookie("ArcomageCookie");
-                        var nickName = cookie.substring(0, cookie.indexOf("|"));
-
-                        for (var i = 0; i < userList.length; i++) {
-                            if (userList[i][0] == nickName && userList[i][1] == 0) {
-                                document.getElementById("userlist").innerHTML += "<b>" + userList[i][0] + " -> You Are Currently: </b>" + " <input type=\"button\" value=\"Busy\" style=\"color: red;\" onclick=\"ChangeState()\"><br>";
-                            }
-
-                            else if (userList[i][0] == nickName && userList[i][1] == 1) {
-                                document.getElementById("userlist").innerHTML += "<b>" + userList[i][0] + " -> You Are Currently: </b>" + " <input type=\"button\" value=\"Free To Play\" style=\"color: green;\" onclick=\"ChangeState()\"><br>";
-                            }
-
-                            else if (userList[i][1] == 0) {
-                                document.getElementById("userlist").innerHTML += userList[i][0] + "<br>";
-                            }
-                            else if (userList[i][1] == 1) {
-                                window.nickname1 = userList[i][0];
-                                document.getElementById("userlist").innerHTML += userList[i][0] + " <input type=\"button\" value=\"Invite To Play\" onclick=\"InitGame()\"><br>";
-                            }
+            // Ready the values and POST the request
+            var str = "?nickname=" + window.nickname1;
+            xmlhttp.open("POST", "InitGame.php" + str, true);
+            xmlhttp.send();
+        }
+        function ChangeState() {
+            // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+            // Wait for response
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    response = xmlhttp.responseText;
+                    RefreshUsers();
+                }
+            }
+            // Ready the values and POST the request
+            var cookie = getCookie("ArcomageCookie");
+            var nickName = cookie.substring(0, cookie.indexOf("|"));
+            var str = "?nickname=" + nickName; // + "&nickname2=" + user2;
+            xmlhttp.open("POST", "ChangeState.php" + str, true);
+            xmlhttp.send();
+        }
+        function RefreshUsers() {
+            // Initialize missingvalue flag and clean error messages
+            document.getElementById("userlist").innerHTML = "";
+            // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+            // Wait for response
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    response = xmlhttp.responseText;
+                    if (response == "GAME_START") window.location.href = 'Game.php';
+                    else userList = JSON.parse(response);
+                    
+                    var cookie = getCookie("ArcomageCookie");
+                    var nickName = cookie.substring(0, cookie.indexOf("|"));
+                    
+                    for (var i = 0; i < userList.length; i++) {
+                        if (userList[i][0] == nickName && userList[i][1] == 0) {
+                            document.getElementById("userlist").innerHTML += "<b>" + userList[i][0] + " -> You Are Currently: </b>" + " <input type=\"button\" value=\"Busy\" style=\"color: red;\" onclick=\"ChangeState()\"><br>";
                         }
-
-                        setTimeout('RefreshUsers()', 3000);
+                        else if (userList[i][0] == nickName && userList[i][1] == 1) {
+                            document.getElementById("userlist").innerHTML += "<b>" + userList[i][0] + " -> You Are Currently: </b>" + " <input type=\"button\" value=\"Free To Play\" style=\"color: green;\" onclick=\"ChangeState()\"><br>";
+                        }
+                        else if (userList[i][1] == 0) {
+                            document.getElementById("userlist").innerHTML += userList[i][0] + "<br>";
+                        }
+                        else if (userList[i][1] == 1) {
+                            window.nickname1 = userList[i][0];
+                            document.getElementById("userlist").innerHTML += userList[i][0] + " <input type=\"button\" value=\"Invite To Play\" onclick=\"InitGame()\"><br>";
+                        }
                     }
+                    setTimeout('RefreshUsers()', 3000);
                 }
-
-                // Ready the values and POST the request
-                xmlhttp.open("POST", "GetActiveUsers.php", true);
-                xmlhttp.send();
             }
-            window.onload = function () {
-                //setTimeout('RefreshUsers()', 10000);
-                RefreshUsers();
-            }
+            // Ready the values and POST the request
+            xmlhttp.open("POST", "GetActiveUsers.php", true);
+            xmlhttp.send();
+        }
+        window.onload = function () {
+            //setTimeout('RefreshUsers()', 10000);
+            RefreshUsers();
+        }
     </script>
 </head>
 <body>
