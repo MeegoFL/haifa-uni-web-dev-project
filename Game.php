@@ -170,13 +170,11 @@ if( verifyCookie() ) {
                     }
 
                     else if (response == "GameOver") {
-                        RefreshView();
                     }
 
                     else if (response != "") {
                         alert(response);
                     }
-                    RefreshView();
                 }
             }
 

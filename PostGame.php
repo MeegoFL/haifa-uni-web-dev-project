@@ -38,7 +38,7 @@ if( verifyCookie() ) {
 
                     document.getElementById("games_played").innerHTML = userGameStat['games_played'];
 
-                    document.getElementById("game_time").innerHTML = userGameStat['game_time'];
+                    document.getElementById("game_time").innerHTML = userGameStat['game_time'] / 60 + " min";
                     document.getElementById("cards_played").innerHTML = userGameStat['cards_played'];
                     
                     document.getElementById("games_won").innerHTML = userGameStat['games_won'];
