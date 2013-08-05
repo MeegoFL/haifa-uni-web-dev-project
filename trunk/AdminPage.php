@@ -1,7 +1,7 @@
 <?php
 include 'verifyCookie.php';
-if (verifyCookie()) {
-    session_start();
+session_start();
+if (verifyCookie() && ($_SESSION['nickname'] == "admin")) {
 ?>
 
 <!DOCTYPE html>
@@ -71,6 +71,9 @@ if (verifyCookie()) {
 
 <?php
 } else {
-    //    header('Location: Login.html');
+        echo "<script type='text/javascript'>
+                window.alert('You are not Administrator');
+                window.location.href='index.html';
+                </script>";
 }
 ?>
