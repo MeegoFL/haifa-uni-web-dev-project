@@ -12,11 +12,22 @@ if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->conn
 
 // Update last_active time for user
 $currentTime = time();
-$mysqli->query("UPDATE users SET last_active = '$currentTime' WHERE nickname = '$nickname'");
-$mysqli->query("UPDATE games SET last_active = '$currentTime' WHERE game_id = '$game_id'");
+$stmt = $mysqli->prepare("UPDATE users SET last_active = ? WHERE nickname = ?;");
+$stmt->bind_param('is', $currentTime, $nickname);
+$stmt->execute();
+$stmt->close();
+
+$stmt = $mysqli->prepare("UPDATE games SET last_active = ? WHERE game_id = ?;");
+$stmt->bind_param('is', $currentTime, $game_id);
+$stmt->execute();
+$stmt->close();
 
 // Get the player's game stat for current game
-$result = $mysqli->query("SELECT * FROM games WHERE game_id = '$game_id'");
+$stmt = $mysqli->prepare("SELECT * FROM games WHERE game_id = ?;");
+$stmt->bind_param('i', $game_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$stmt->close();
 
 $GameStat[0] = $result->fetch_array();
 if ($GameStat[0]['nickname'] == $nickname) {

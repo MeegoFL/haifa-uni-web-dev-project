@@ -22,30 +22,29 @@ $mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], 
 if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 
 // Check if username already exist
-$sql = "SELECT * FROM users WHERE username = '".$username."'";
-$result = mysqli_query($con,$sql);
+$stmt = $mysqli->prepare("SELECT * FROM users WHERE username = ?");
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$result = $stmt->get_result();
 
 // If username exist return error
-if(mysqli_num_rows($result) != 0)
-{
-    die("<p style=\"color:red\">Username already exist, please choose another</p>");
-}
+if($result->num_rows != 0) die("<p style=\"color:red\">Username already exist, please choose another</p>");
 
-// Check if nickname already exist
-$sql = "SELECT * FROM users WHERE nickname = '".$nickname."'";
-$result = mysqli_query($con,$sql);
+$stmt = $mysqli->prepare("SELECT * FROM users WHERE username = ?");
+$stmt->bind_param('s', $nickname);
+$stmt->execute();
+$result = $stmt->get_result();
 
 // If nickname exist return error
-if(mysqli_num_rows($result) > 0)
-{
-    die("<p style=\"color:red\">Nickname already in use, please choose another</p>");
-}
+if($result->num_rows != 0) die("<p style=\"color:red\">Nickname already exist, please choose another</p>");
 
 // If we got here insert the user details to Database
 else
 {
-    $sql = "INSERT INTO users (username, password, nickname) VALUES ('".$username."','".$password."','".$nickname."')";
-    $result = mysqli_query($con,$sql);
+    $stmt = $mysqli->prepare("INSERT INTO users (username, password, nickname) VALUES (?, ?, ?)");
+    $stmt->bind_param('sss', $username, $password, $nickname);
+    $stmt->execute();
+    $stmt->close();
 
     //set cookie:
 	$expiration = time() + 7200; // 2 hours
@@ -69,5 +68,5 @@ else
 }
 
 // Close the connection
-mysqli_close($con);
+$mysqli->close();
 ?>

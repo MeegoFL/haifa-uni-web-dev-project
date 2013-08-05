@@ -64,17 +64,14 @@ if (verifyCookie()) {
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                     response = xmlhttp.responseText;
-                    RefreshUsers();
+                    RefreshUsers(false);
                 }
             }
             // Ready the values and POST the request
-            var cookie = getCookie("ArcomageCookie");
-            var nickName = cookie.substring(0, cookie.indexOf("|"));
-            var str = "?nickname=" + nickName; // + "&nickname2=" + user2;
-            xmlhttp.open("POST", "ChangeState.php" + str, true);
+            xmlhttp.open("POST", "ChangeState.php", true);
             xmlhttp.send();
         }
-        function RefreshUsers() {
+        function RefreshUsers(infinite) {
             // Initialize missingvalue flag and clean error messages
             document.getElementById("userlist").innerHTML = "";
             // We assume we work on: IE7+, Firefox, Chrome, Opera, Safari
@@ -104,7 +101,7 @@ if (verifyCookie()) {
                             document.getElementById("userlist").innerHTML += userList[i][0] + " <input type=\"button\" value=\"Invite To Play\" onclick=\"InitGame()\"><br>";
                         }
                     }
-                    setTimeout('RefreshUsers()', 3000);
+                    if (infinite) setTimeout('RefreshUsers(true)', 3000);
                 }
             }
             // Ready the values and POST the request
@@ -112,7 +109,7 @@ if (verifyCookie()) {
             xmlhttp.send();
         }
         window.onload = function () {
-            RefreshUsers();
+            RefreshUsers(true);
         }
     </script>
 </head>

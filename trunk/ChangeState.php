@@ -1,6 +1,6 @@
 <?php
-// Get the values and check for XSS or SQL injection
-preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["nickname"]) ? $nickname = $_REQUEST["nickname"] : exit('XSS is detected!');
+// Get the current user nickname from session
+$nickname = explode('|', $_COOKIE["ArcomageCookie"])[0];
 
 // Connect to Database
 $db_ini = parse_ini_file('Arcomage.ini');
@@ -8,17 +8,21 @@ $mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], 
 if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 
 // Check if username exists
-$result = $mysqli->query("SELECT * FROM users WHERE nickname = '$nickname'");
+$stmt = $mysqli->prepare("SELECT * FROM users WHERE nickname = ? ");
+$stmt->bind_param('s', $nickname);
+$stmt->execute();
+$result = $stmt->get_result();
+$stmt->close();
 
 // If username doesn't exist return error
-if($result->num_rows == 0)
-{
-    exit("User Name wasn't found!");
-}
+if($result->num_rows == 0) exit("User Name wasn't found!");
 
-$result->data_seek(0);
-$row = $result->fetch_assoc();
+$row = $result->fetch_array();
 ($row['free_to_play'] == "0") ? $newState = "1" : $newState = "0";
 
-$result = $mysqli->query("UPDATE users SET free_to_play = '".$newState."' WHERE nickname = '$nickname'");
+$stmt = $mysqli->prepare("UPDATE users SET free_to_play = ?  WHERE nickname = ? ");
+$stmt->bind_param('is', $newState, $nickname);
+$stmt->execute();
+$stmt->close();
+$mysqli->close();
 ?>

@@ -13,45 +13,66 @@ if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->conn
 
 // Clear Game sessions not active for last 2hr
 $deleteLastActive = time() - 120;
-$mysqli->query("DELETE FROM games WHERE last_active < '$deleteLastActive'");
+$stmt = $mysqli->prepare("DELETE FROM games WHERE last_active < ?;");
+$stmt->bind_param('i', $deleteLastActive);
+$stmt->execute();
+if ($stmt->errno) exit("Clear Game sessions SQL failed: (" . $stmt->errno . ") " . $stmt->error);
+$stmt->close();
 
-$time   = time() - 60;
+
 // Check if username exists
-$result = $mysqli->query("SELECT * FROM users WHERE nickname = '$my_nickname' AND last_active > '$time'");
+$time   = time() - 60;
+$stmt = $mysqli->prepare("SELECT * FROM users WHERE nickname = ? AND last_active > ?;");
+$stmt->bind_param('si', $my_nickname, $time);
+$stmt->execute();
+if ($stmt->errno) exit("Check username SQL failed: (" . $stmt->errno . ") " . $stmt->error);
+$result = $stmt->get_result();
 
 // If username doesn't exist return error
-if ($result->num_rows == 0) {
-    exit("window.alert('Suspicious Activity, access denied');\nwindow.location.href='index.html';");
-}
+if ($result->num_rows == 0) exit('Suspicious Activity, access denied');
 
 // Set users as busy since they going into a game
-$mysqli->query("UPDATE users SET free_to_play = 0 WHERE nickname = '$my_nickname' OR nickname = '$opponent_nickname'");
+$stmt = $mysqli->prepare("UPDATE users SET free_to_play = 0 WHERE nickname = ? OR nickname = ?;");
+$stmt->bind_param('ss', $my_nickname, $opponent_nickname);
+$stmt->execute();
+if ($stmt->errno) exit("Set users as busy SQL failed: (" . $stmt->errno . ") " . $stmt->error);
+$stmt->close();
 
-for ($i = 1, $game_id = 0; $game_id == 0; $i++) {
-    $result = $mysqli->query("SELECT * FROM games WHERE game_id = '$i'");
-    if ($result->num_rows == 0) {
-        $game_id = $i;
-    }
+$stmt = $mysqli->prepare("SELECT * FROM games WHERE game_id = ?;");
+$stmt->bind_param('i', $game_id);
+for ($i = 1, $game_id = 0; $game_id == 0; $i++)
+{
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result->num_rows == 0) $game_id = $i;
 }
+$stmt->close();
 
+// Initilze the new game parmeters for player who init the game
 $_SESSION['game_id'] = $game_id;
 $_SESSION['nickname'] = $my_nickname;
 $_SESSION['cards_played'] = 0;
 
 $time = time();
+
+// Draw who has first turn
 $first_turn = $time % 2;
 $opponent_turn = !$first_turn;
-sleep(1); // for some unknown reason somtimes opponent_turn gets null value -> might need to wait for function to end.
 
-if (!$mysqli->query("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active)
-        VALUES ('$game_id', '$my_nickname', '$first_turn', " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " .$time. ")")) {
-    echo "Connect 1 failed: (" . $mysqli->errno . ") " . $mysqli->error;
-}
+$stmt = $mysqli->prepare("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active)
+        VALUES (?, ?, ?, " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", ?);");
+$stmt->bind_param('isii', $game_id, $my_nickname, $first_turn, $time);
+$stmt->execute();
+if($stmt->errno) echo "Connect 1 failed: (" . $stmt->errno . ") " . $stmt->error;
+$stmt->close();
 
-if(!$mysqli->query("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active)
-        VALUES ('$game_id', '$opponent_nickname', '$opponent_turn', " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " .$time. ")")) {
-    echo "Connect 2 failed: (" . $mysqli->errno . ") " . $mysqli->error;
-}
+$stmt = $mysqli->prepare("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active)
+        VALUES (?, ?, ?, " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", ?);");
+$stmt->bind_param('isii', $game_id, $opponent_nickname, $opponent_turn, $time);
+$stmt->execute();
+if($stmt->errno) echo "Connect 1 failed: (" . $stmt->errno . ") " . $stmt->error;
+$stmt->close();
 
 echo "GAME_START";
+$mysqli->close();
 ?>
