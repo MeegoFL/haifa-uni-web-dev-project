@@ -13,7 +13,7 @@
     </style>
     <script type="text/javascript">
         function addUser(name, pass, repeat_pass, nick) {
-            // Initialize missingvalue flag and clean error messages
+            // Initialize missing value flag and clean error messages
             missingValue = 0;
             document.getElementById("result").innerHTML = "";
             document.getElementById("missingName").innerHTML = "";
@@ -87,11 +87,12 @@
                     <input type="password" name="password" id="password" placeholder="" required="true">
                     <b style="color: red" id="missingPass"></b>
                 </div>
-                    <div>
+                <div>
                     <label for="repeat_password">
                         Repeat Password:
                     </label>
-                    <input type="password" name="repeat_password" id="repeat_password" placeholder="" required="true">
+                    <input type="password" name="repeat_password" id="repeat_password" placeholder=""
+                        required="true">
                     <b style="color: red" id="missingRepeatPass"></b>
                 </div>
                 <div>

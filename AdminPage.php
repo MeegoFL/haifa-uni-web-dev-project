@@ -1,6 +1,9 @@
 <?php
-include 'verifyCookie.php';
+// Start a Session to get nickname of user if exists
 session_start();
+
+// Verify existing cookie for user to be able to see / use the page
+include 'verifyCookie.php';
 if (verifyCookie() && ($_SESSION['nickname'] == "admin")) {
 ?>
 
@@ -26,8 +29,8 @@ if (verifyCookie() && ($_SESSION['nickname'] == "admin")) {
                     response = xmlhttp.responseText;
                     if (response == "EMPTY") document.getElementById("gameslist").innerHTML = "No Live Games";
                     else gamesList = JSON.parse(response);
-                    
-                    for (var i = 0; i < gamesList.length; i++) 
+
+                    for (var i = 0; i < gamesList.length; i++)
                     {
                             document.getElementById("gameslist").innerHTML += "Game id-><b>" + gamesList[i][0] + "</b>: <b style = \"color: #0026ff;\">" + gamesList[i][1] + "</b> VS. <b style = \"color: #f00;\">" + gamesList[i][2] + "</b><br>";
                     }
@@ -70,8 +73,12 @@ if (verifyCookie() && ($_SESSION['nickname'] == "admin")) {
 </html>
 
 <?php
-} else {
-        echo "<script type='text/javascript'>
+} 
+
+// User not allowed Throw OUT
+else 
+{
+    echo "<script type='text/javascript'>
                 window.alert('You are not Administrator');
                 window.location.href='index.html';
                 </script>";

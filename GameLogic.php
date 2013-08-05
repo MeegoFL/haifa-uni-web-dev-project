@@ -19,12 +19,13 @@ $opponent_game_stat = get_enemy_game_stat();
 function main()
 {
     global $mysqli, $game_id, $my_game_stat, $opponent_game_stat, $played_card;
-    
+
     // Check if player's turn
     if ($my_game_stat['current_flag'] == false) {
         die("Error: Not Your Turn!");
     }
 
+    // Create subset of my cards and check if played card is in array
     $my_cards = array($my_game_stat['card1_id'],  $my_game_stat['card2_id'], $my_game_stat['card3_id'], $my_game_stat['card4_id'], $my_game_stat['card5_id'], $my_game_stat['card6_id']);
     if (in_array($played_card, $my_cards))
     {
@@ -35,14 +36,18 @@ function main()
         $stmt->bind_param('si', $played_card, $game_id);
         $stmt->execute();
         $stmt->close();
-        $_SESSION['cards_played'] += 1; 
+
+        // Update played cards so far
+        $_SESSION['cards_played'] += 1;
 
         // Check if anyone wins after played card
         check_for_win();
 
+        // Get new cards instead of one played
         get_new_card();
 
-        switch ($play_card_result) 
+        // Check play results
+        switch ($play_card_result)
         {
             case 0: // Card Discarded
                 echo "Your Card Will be Discarded!";
@@ -83,35 +88,36 @@ function end_game($end_result)
 
     // Get the current statistics for both player
     $statistics = get_users_statistics();
-    
+
     // Put the results in correct user array
     ($statistics[0]['nickname'] == $nickname) ? $user_statistics = $statistics[0] : $user_statistics = $statistics[1];
     ($statistics[0]['nickname'] != $nickname) ? $opponent_statistics = $statistics[0] : $opponent_statistics = $statistics[1];
-    
+
     // Set the nickname of opponent and games played for both users
     $opponent_nickname = $opponent_statistics['nickname'];
     $user_games_played = $user_statistics['games_played'] + 1;
     $opponent_games_played = $opponent_statistics['games_played'] + 1;
 
+    // If player win
     if ( ($end_result >= 1) && ($end_result <= 3) )
     {
         $user_result = "1";
         $opponent_result = "2";
-        
+
         // User's new statistics
         $user_games_won = $user_statistics['games_won'] + 1;
-        $user_num_surrender_wins = $user_statistics['num_surrender_wins']; 
+        $user_num_surrender_wins = $user_statistics['num_surrender_wins'];
         $user_num_resources_wins = $user_statistics['num_resources_wins'];
         $user_num_tower_wins = $user_statistics['num_tower_wins'];
         $user_num_destroy_wins = $user_statistics['num_destroy_wins'];
 
         // Opponents new statistics
         $opponent_games_lost = $opponent_statistics['games_lost'] + 1;
-        $opponent_num_surrender_loses = $opponent_statistics['num_surrender_loses']; 
+        $opponent_num_surrender_loses = $opponent_statistics['num_surrender_loses'];
         $opponent_num_resources_loses = $opponent_statistics['num_resources_loses'];
         $opponent_num_tower_loses = $opponent_statistics['num_tower_loses'];
         $opponent_num_destroy_loses = $opponent_statistics['num_destroy_loses'];
-        
+
         switch ($end_result)
         {
             case 1: // resources win
@@ -135,55 +141,56 @@ function end_game($end_result)
         ($_SESSION['cards_played'] < $user_statistics['win_min_cards']) ? $min_cards_played = $_SESSION['cards_played'] : $min_cards_played = $user_statistics['win_min_cards'];
 
         // Setup User's query
-        $stmt = $mysqli->prepare("UPDATE users SET games_won = ?,   
-                                        games_played = ?, 
-                                        num_surrender_wins = ?, 
-                                        num_resources_wins = ?, 
-                                        num_tower_wins = ?, 
-                                        num_destroy_wins = ?, 
-                                        win_max_cards = ?, 
-                                        win_min_cards = ?, 
-                                        last_game_result = ? 
+        $stmt = $mysqli->prepare("UPDATE users SET games_won = ?,
+                                        games_played = ?,
+                                        num_surrender_wins = ?,
+                                        num_resources_wins = ?,
+                                        num_tower_wins = ?,
+                                        num_destroy_wins = ?,
+                                        win_max_cards = ?,
+                                        win_min_cards = ?,
+                                        last_game_result = ?
                                         WHERE nickname = ?;");
-        $stmt->bind_param('iiiiiiiiis', $user_games_won, $user_games_played, $user_num_surrender_wins, $user_num_resources_wins, $user_num_tower_wins, 
+        $stmt->bind_param('iiiiiiiiis', $user_games_won, $user_games_played, $user_num_surrender_wins, $user_num_resources_wins, $user_num_tower_wins,
                                         $user_num_destroy_wins, $max_cards_played, $min_cards_played, $user_result, $nickname);
         $stmt->execute();
         $stmt->close();
 
         // Setup Opponent's query
-        $stmt = $mysqli->prepare("UPDATE users SET games_lost = ?,   
-                                                    games_played = ?, 
-                                                    num_surrender_loses = ?, 
-                                                    num_resources_loses = ?, 
-                                                    num_tower_loses = ?, 
-                                                    num_destroy_loses = ?, 
-                                                    last_game_result = ? 
+        $stmt = $mysqli->prepare("UPDATE users SET games_lost = ?,
+                                                    games_played = ?,
+                                                    num_surrender_loses = ?,
+                                                    num_resources_loses = ?,
+                                                    num_tower_loses = ?,
+                                                    num_destroy_loses = ?,
+                                                    last_game_result = ?
                                                     WHERE nickname = ?");
-        $stmt->bind_param('iiiiiiis', $opponent_games_lost, $opponent_games_played, $opponent_num_surrender_loses, $opponent_num_resources_loses, $opponent_num_tower_loses, 
+        $stmt->bind_param('iiiiiiis', $opponent_games_lost, $opponent_games_played, $opponent_num_surrender_loses, $opponent_num_resources_loses, $opponent_num_tower_loses,
                                         $opponent_num_destroy_loses, $opponent_result, $opponent_nickname);
         $stmt->execute();
         $stmt->close();
     }
-    
+
+    // If player lose or surrender
     else if ( ($end_result == 0) || (($end_result >= 4) && ($end_result <= 6)) )
     {
         $user_result = "2";
         $opponent_result = "1";
-        
+
         // User's new statistics
         $user_games_lost = $user_statistics['games_lost'] + 1;
-        $user_num_surrender_loses = $user_statistics['num_surrender_loses']; 
+        $user_num_surrender_loses = $user_statistics['num_surrender_loses'];
         $user_num_resources_loses = $user_statistics['num_resources_loses'];
         $user_num_tower_loses = $user_statistics['num_tower_loses'];
         $user_num_destroy_loses = $user_statistics['num_destroy_loses'];
 
         // Opponents new statistics
         $opponent_games_won = $opponent_statistics['games_won'] + 1;
-        $opponent_num_surrender_wins = $opponent_statistics['num_surrender_wins']; 
+        $opponent_num_surrender_wins = $opponent_statistics['num_surrender_wins'];
         $opponent_num_resources_wins = $opponent_statistics['num_resources_wins'];
         $opponent_num_tower_wins = $opponent_statistics['num_tower_wins'];
         $opponent_num_destroy_wins = $opponent_statistics['num_destroy_wins'];
-        
+
         switch ($end_result)
         {
             case 0: // surrender lose
@@ -208,36 +215,37 @@ function end_game($end_result)
         }
 
         // Setup User's query
-        $stmt = $mysqli->prepare("UPDATE users SET games_lost = ?, 
-                                                games_played = ?,  
-                                                num_surrender_loses = ?, 
-                                                num_resources_loses = ?, 
-                                                num_tower_loses = ?, 
-                                                num_destroy_loses = ?, 
-                                                last_game_result = ?  
+        $stmt = $mysqli->prepare("UPDATE users SET games_lost = ?,
+                                                games_played = ?,
+                                                num_surrender_loses = ?,
+                                                num_resources_loses = ?,
+                                                num_tower_loses = ?,
+                                                num_destroy_loses = ?,
+                                                last_game_result = ?
                                                 WHERE nickname = ?");
-        $stmt->bind_param('iiiiiiis', $user_games_lost, $user_games_played, $user_num_surrender_loses, $user_num_resources_loses, $user_num_tower_loses, 
+        $stmt->bind_param('iiiiiiis', $user_games_lost, $user_games_played, $user_num_surrender_loses, $user_num_resources_loses, $user_num_tower_loses,
                                     $user_num_destroy_loses, $user_result, $nickname);
         $stmt->execute();
         $stmt->close();
 
         // Setup Opponent's query
-         $stmt = $mysqli->prepare("UPDATE users SET games_won = ?,   
-                                                    games_played = ?, 
-                                                    num_surrender_wins = ?, 
-                                                    num_resources_wins = ?, 
-                                                    num_tower_wins = ?, 
-                                                    num_destroy_wins = ?, 
-                                                    last_game_result = ? 
+        $stmt = $mysqli->prepare("UPDATE users SET games_won = ?,
+                                                    games_played = ?,
+                                                    num_surrender_wins = ?,
+                                                    num_resources_wins = ?,
+                                                    num_tower_wins = ?,
+                                                    num_destroy_wins = ?,
+                                                    last_game_result = ?
                                                     WHERE nickname = ?");
-        $stmt->bind_param('iiiiiiis', $opponent_games_won, $opponent_games_played, $opponent_num_surrender_wins, $opponent_num_resources_wins, $opponent_num_tower_wins, 
+        $stmt->bind_param('iiiiiiis', $opponent_games_won, $opponent_games_played, $opponent_num_surrender_wins, $opponent_num_resources_wins, $opponent_num_tower_wins,
                             $opponent_num_destroy_wins, $opponent_result, $opponent_nickname);
         $stmt->execute();
         $stmt->close();
     }
 
     else return; // No such option
-    
+
+    // Update game end status for players
     $stmt = $mysqli->prepare("UPDATE games SET game_end_status = ? WHERE game_id = ? AND nickname = ?;");
     $stmt->bind_param('iis', $user_result, $game_id, $nickname);
     $stmt->execute();
@@ -252,45 +260,54 @@ function get_my_game_stat()
 {
     global $mysqli, $game_id, $nickname;
 
+    // Get all the game status of the player for use in game logic
     $stmt = $mysqli->prepare("SELECT * FROM games WHERE game_id = ? AND nickname = ?;");
     $stmt->bind_param('is', $game_id, $nickname);
     $stmt->execute();
+
     if ($stmt->errno) echo "get_my_game_stat SQL failed: (" . $stmt->errno . ") " . $stmt->error;
+
     $my_result = $stmt->get_result();
     $stmt->close();
+
     return $my_result->fetch_array();
 }
 
 function get_enemy_game_stat()
 {
     global $mysqli, $game_id, $nickname;
-    
+
+    // Get all the game status of the opponent for use in game logic
     $stmt = $mysqli->prepare("SELECT * FROM games WHERE game_id = ? AND nickname <> ?;");
     $stmt->bind_param('is', $game_id, $nickname);
     $stmt->execute();
+
     if ($stmt->errno) echo "get_enemy_game_stat SQL failed: (" . $stmt->errno . ") " . $stmt->error;
+
     $opponent_result = $stmt->get_result();
     $stmt->close();
+
     return $opponent_result->fetch_array();
 }
 
 function get_users_statistics()
 {
     global $mysqli, $nickname, $opponent_game_stat;
-    
+
     $result_arr = array();
     $opponent_nickname = $opponent_game_stat['nickname'];
-    
+
+    // Get all the users statistics for update at games end
     $stmt = $mysqli->prepare("SELECT * FROM users WHERE nickname = ? OR nickname = ?;");
     $stmt->bind_param('ss', $nickname, $opponent_nickname);
     $stmt->execute();
     if ($stmt->errno) echo "get_users_statistics SQL failed: (" . $stmt->errno . ") " . $stmt->error;
     $result = $stmt->get_result();
     $stmt->close();
-    
+
     $result_arr[] = $result->fetch_array();
     $result_arr[] = $result->fetch_array();
-    
+
     return $result_arr;
 }
 
@@ -305,7 +322,7 @@ function get_new_card()
     $stmt->execute();
     if ($stmt->errno) echo "get_new_card SQL failed: (" . $stmt->errno . ") " . $stmt->error;
     $stmt->close();
-    
+
     $my_game_stat[$card_location] = $new_card;
 }
 
@@ -334,6 +351,7 @@ function check_for_win()
 function update_resources($resource, $player, $amount)
 {
     global $mysqli, $game_id, $nickname, $my_game_stat, $opponent_game_stat;
+
     switch($player) {
 
         case 0: //update current player
@@ -346,7 +364,7 @@ function update_resources($resource, $player, $amount)
                     $new_tower = $new_tower + $new_wall;
                     $new_wall = 0;
                 }
-                
+
                 $stmt = $mysqli->prepare("UPDATE games SET wall = ?, tower = ? WHERE game_id = ? AND nickname = ?;");
                 $stmt->bind_param('iiis', $new_wall, $new_tower, $game_id, $nickname);
                 $stmt->execute();
@@ -354,9 +372,9 @@ function update_resources($resource, $player, $amount)
                 $stmt->close();
                 return;
             }
-            
+
             $new_value = max(0, $my_game_stat[$resource] + $amount);
-            
+
             $stmt = $mysqli->prepare("UPDATE games SET $resource = ? WHERE game_id = ? AND nickname = ?;");
             $stmt->bind_param('iis', $new_value, $game_id, $nickname);
             $stmt->execute();
@@ -377,14 +395,14 @@ function update_resources($resource, $player, $amount)
                     $new_tower = $new_tower + $new_wall;
                     $new_wall = 0;
                 }
-                
-                
+
+
                 $stmt = $mysqli->prepare("UPDATE games SET wall = ?, tower = ? WHERE game_id = ? AND nickname='" .$opponent_game_stat['nickname']. "';");
                 $stmt->bind_param('iii', $new_wall, $new_tower, $game_id);
                 $stmt->execute();
                 if ($stmt->errno) echo "update enemy SQL failed: (" . $stmt->errno . ") " . $stmt->error;
                 $stmt->close();
-                
+
                 return;
             }
 
@@ -418,13 +436,13 @@ function resources_cost($resource, $amount)
 
     else
     {
-        
+
         $stmt = $mysqli->prepare("UPDATE games SET $resource = ? WHERE game_id = ? AND nickname = ?;");
         $stmt->bind_param('iis', $new_value, $game_id, $nickname);
         $stmt->execute();
         if ($stmt->errno) echo "resources_cost SQL failed: (" . $stmt->errno . ") " . $stmt->error;
         $stmt->close();
-        
+
         $my_game_stat[$resource] = $new_value;
         return 1;
     }
@@ -727,7 +745,7 @@ function play_card($played_card)
             return 0;
 
         case 33: //Rock Launcher
-            if(resources_cost("gems", 18)) 
+            if(resources_cost("gems", 18))
             {
                 update_resources('wall', 0, 6);
                 update_resources('damage', 1, -10);
@@ -736,7 +754,7 @@ function play_card($played_card)
             return 0;
 
         case 34: //Dragon's Heart
-            if(resources_cost("gems" ,24)) 
+            if(resources_cost("gems" ,24))
             {
                 update_resources('wall', 0, 20);
                 update_resources('tower', 0, 8);
@@ -819,7 +837,7 @@ function play_card($played_card)
             return 0;
 
         case 44: //Power Burn
-            if(resources_cost("bricks", 3)) 
+            if(resources_cost("bricks", 3))
             {
                 update_resources('tower', 0, -5);
                 update_resources('magic', 0, 2);
@@ -828,7 +846,7 @@ function play_card($played_card)
             return 0;
 
         case 45: //Solar Flare
-            if(resources_cost("bricks", 4)) 
+            if(resources_cost("bricks", 4))
             {
                 update_resources('tower', 0, 2);
                 update_resources('tower', 1, -2);
@@ -837,7 +855,7 @@ function play_card($played_card)
             return 0;
 
         case 46: //Gem Spear
-            if(resources_cost("bricks", 4)) 
+            if(resources_cost("bricks", 4))
             {
                 update_resources('tower', 1, -5);
                 return 1;
@@ -845,7 +863,7 @@ function play_card($played_card)
             return 0;
 
         case 47: //Quarry's Help
-            if(resources_cost("bricks", 4)) 
+            if(resources_cost("bricks", 4))
             {
                 update_resources('tower', 0, 7);
                 update_resources('bricks', 0, -10);
@@ -854,7 +872,7 @@ function play_card($played_card)
             return 0;
 
         case 48: //Lodestone
-            if(resources_cost("bricks", 5)) 
+            if(resources_cost("bricks", 5))
             {
                 update_resources('tower', 0, 3); // TODO: !!!!!!!!!!!!!!!! can't be discarded!!!!!!!!
                 return 1;
@@ -862,7 +880,7 @@ function play_card($played_card)
             return 0;
 
         case 49: //Discord
-            if(resources_cost("bricks", 5)) 
+            if(resources_cost("bricks", 5))
             {
                 update_resources('tower', 2, -7);
                 update_resources('magic', 2, -1);
@@ -871,7 +889,7 @@ function play_card($played_card)
             return 0;
 
         case 50: //Apprentice
-            if(resources_cost("bricks",5)) 
+            if(resources_cost("bricks",5))
             {
                 update_resources('tower', 0, 4);
                 update_resources('recruits', 0, -3);
@@ -881,7 +899,7 @@ function play_card($played_card)
             return 0;
 
         case 51: //Crystal Matrix
-            if(resources_cost("bricks", 6)) 
+            if(resources_cost("bricks", 6))
             {
                 update_resources('magic', 0, 2);
                 update_resources('tower', 0, 3);
@@ -891,7 +909,7 @@ function play_card($played_card)
             return 0;
 
         case 52: //Emerald
-            if(resources_cost("bricks", 6)) 
+            if(resources_cost("bricks", 6))
             {
                 update_resources('tower', 0, 8);
                 return 1;
@@ -899,7 +917,7 @@ function play_card($played_card)
             return 0;
 
         case 53: //Harmonic Vibe
-            if(resources_cost("bricks", 7)) 
+            if(resources_cost("bricks", 7))
             {
                 update_resources('magic', 0, 1);
                 update_resources('tower', 0, 3);
@@ -909,13 +927,13 @@ function play_card($played_card)
             return 0;
 
         case 54: //Parity
-            if(resources_cost("bricks", 7)) 
+            if(resources_cost("bricks", 7))
             {
-                if($my_game_stat['magic'] < $opponent_game_stat['magic']) 
+                if($my_game_stat['magic'] < $opponent_game_stat['magic'])
                 {
                     update_resources('magic', 0, $opponent_game_stat['magic'] - $my_game_stat['magic'] );
                 }
-                else 
+                else
                 {
                     update_resources('magic', 1, $my_game_stat['magic'] - $opponent_game_stat['magic'] );
                 }
@@ -924,7 +942,7 @@ function play_card($played_card)
             return 0;
 
         case 55: //Crumblestone
-            if(resources_cost("bricks", 7)) 
+            if(resources_cost("bricks", 7))
             {
                 update_resources('tower', 0, 5);
                 update_resources('bricks', 1, -6);
@@ -933,7 +951,7 @@ function play_card($played_card)
             return 0;
 
         case 56: //Shatterer
-            if(resources_cost("bricks", 8)) 
+            if(resources_cost("bricks", 8))
             {
                 update_resources('magic', 0, -1);
                 update_resources('tower', 1, -9);
@@ -942,7 +960,7 @@ function play_card($played_card)
             return 0;
 
         case 57: //Crystallize
-            if(resources_cost("bricks", 8)) 
+            if(resources_cost("bricks", 8))
             {
                 update_resources('tower', 0, 11);
                 update_resources('wall', 0, -6);
@@ -951,7 +969,7 @@ function play_card($played_card)
             return 0;
 
         case 58: //Pearl Of Wisdom
-            if(resources_cost("bricks", 9)) 
+            if(resources_cost("bricks", 9))
             {
                 update_resources('tower', 0, 5);
                 update_resources('magic', 0, 1);
@@ -960,7 +978,7 @@ function play_card($played_card)
             return 0;
 
         case 59: //Sapphire
-            if(resources_cost("bricks", 10)) 
+            if(resources_cost("bricks", 10))
             {
                 update_resources('tower', 0, 11);
                 return 1;
@@ -968,13 +986,13 @@ function play_card($played_card)
             return 0;
 
         case 60: //Lightning Shard
-            if(resources_cost("bricks", 11)) 
+            if(resources_cost("bricks", 11))
             {
-                if($my_game_stat['tower'] > $opponent_game_stat['wall']) 
+                if($my_game_stat['tower'] > $opponent_game_stat['wall'])
                 {
                     update_resources('tower', 1, -8);
                 }
-                else 
+                else
                 {
                     update_resources('damage', 1, -8);
                 }
@@ -983,7 +1001,7 @@ function play_card($played_card)
             return 0;
 
         case 61: //Crystal Shield
-            if(resources_cost("bricks", 12)) 
+            if(resources_cost("bricks", 12))
             {
                 update_resources('tower', 0, 8);
                 update_resources('wall', 0, 3);
@@ -992,7 +1010,7 @@ function play_card($played_card)
             return 0;
 
         case 62: //Fire Ruby
-            if(resources_cost("bricks", 12)) 
+            if(resources_cost("bricks", 12))
             {
                 update_resources('tower', 0, 6);
                 update_resources('tower', 1, -4);
@@ -1001,7 +1019,7 @@ function play_card($played_card)
             return 0;
 
         case 63: //Empathy Gem
-            if(resources_cost("bricks", 14)) 
+            if(resources_cost("bricks", 14))
             {
                 update_resources('tower', 0, 8);
                 update_resources('dungeon', 0, 1);
@@ -1010,7 +1028,7 @@ function play_card($played_card)
             return 0;
 
         case 64: //Sanctuary
-            if(resources_cost("bricks", 15)) 
+            if(resources_cost("bricks", 15))
             {
                 update_resources('tower', 0, 10);
                 update_resources('wall', 0, 5);
@@ -1020,7 +1038,7 @@ function play_card($played_card)
             return 0;
 
         case 65: //Diamond
-            if(resources_cost("bricks", 16)) 
+            if(resources_cost("bricks", 16))
             {
                 update_resources('tower', 0, 15);
                 return 1;
@@ -1028,7 +1046,7 @@ function play_card($played_card)
             return 0;
 
         case 66: //Lava Jewel
-            if(resources_cost("bricks", 17)) 
+            if(resources_cost("bricks", 17))
             {
                 update_resources('tower', 0, 12);
                 update_resources('damage', 1, -6);
@@ -1037,7 +1055,7 @@ function play_card($played_card)
             return 0;
 
         case 67: //Phase Jewel
-            if(resources_cost("bricks", 18)) 
+            if(resources_cost("bricks", 18))
             {
                 update_resources('tower', 0, 13);
                 update_resources('recruits', 0, 6);
@@ -1047,7 +1065,7 @@ function play_card($played_card)
             return 0;
 
         case 68: //Dragon's Eye
-            if(resources_cost("bricks", 21)) 
+            if(resources_cost("bricks", 21))
             {
                 update_resources('tower', 0, 20);
                 return 1;
@@ -1067,7 +1085,7 @@ function play_card($played_card)
             return 1;
 
         case 71: //Faerie
-            if(resources_cost("recruits", 1)) 
+            if(resources_cost("recruits", 1))
             {
                 update_resources('damage', 1, -2);
                 return 2;
@@ -1075,7 +1093,7 @@ function play_card($played_card)
             return 0;
 
         case 72: //Moody Goblins
-            if(resources_cost("recruits", 1)) 
+            if(resources_cost("recruits", 1))
             {
                 update_resources('damage', 1, -4);
                 update_resources('gems', 0, -3);
@@ -1084,20 +1102,20 @@ function play_card($played_card)
             return 0;
 
         case 73: //Elven Scout
-            if(resources_cost("recruits", 2)) 
+            if(resources_cost("recruits", 2))
             {
                 return 2;
             }
             return 0;
 
         case 74: //Spearman
-            if(resources_cost("recruits", 2)) 
+            if(resources_cost("recruits", 2))
             {
-                if($my_game_stat['wall'] > $opponent_game_stat['wall']) 
+                if($my_game_stat['wall'] > $opponent_game_stat['wall'])
                 {
                     update_resources('damage', 1, -3);
                 }
-                else 
+                else
                 {
                     update_resources('damage', 1, -2);
                 }
@@ -1106,7 +1124,7 @@ function play_card($played_card)
             return 0;
 
         case 75: //Gnome
-            if(resources_cost("recruits", 2)) 
+            if(resources_cost("recruits", 2))
             {
                 update_resources('damage', 1, -3);
                 update_resources('gems', 0, 1);
@@ -1115,7 +1133,7 @@ function play_card($played_card)
             return 0;
 
         case 76: //Minotaur
-            if(resources_cost("recruits", 3)) 
+            if(resources_cost("recruits", 3))
             {
                 update_resources('dungeon', 0, 1);
                 return 1;
@@ -1123,7 +1141,7 @@ function play_card($played_card)
             return 0;
 
         case 77: //Goblin Mob
-            if(resources_cost("recruits", 3)) 
+            if(resources_cost("recruits", 3))
             {
                 update_resources('damage', 1, -6);
                 update_resources('damage', 0, -3);
@@ -1132,7 +1150,7 @@ function play_card($played_card)
             return 0;
 
         case 78: //Orc
-            if(resources_cost("recruits", 3)) 
+            if(resources_cost("recruits", 3))
             {
                 update_resources('damage', 1, -5);
                 return 1;
@@ -1140,7 +1158,7 @@ function play_card($played_card)
             return 0;
 
         case 79: //Goblin Archers
-            if(resources_cost("recruits", 4)) 
+            if(resources_cost("recruits", 4))
             {
                 update_resources('tower', 1, -3);
                 update_resources('damage', 0, -1);
@@ -1149,7 +1167,7 @@ function play_card($played_card)
             return 0;
 
         case 80: //Berserker
-            if(resources_cost("recruits", 4)) 
+            if(resources_cost("recruits", 4))
             {
                 update_resources('damage', 1, -8);
                 update_resources('tower', 0, -3);
@@ -1158,7 +1176,7 @@ function play_card($played_card)
             return 0;
 
         case 81: //Dwarves
-            if(resources_cost("recruits", 5)) 
+            if(resources_cost("recruits", 5))
             {
                 update_resources('damage', 1, -4);
                 update_resources('wall', 0, 3);
@@ -1167,7 +1185,7 @@ function play_card($played_card)
             return 0;
 
         case 82: //Slasher
-            if(resources_cost("recruits", 5)) 
+            if(resources_cost("recruits", 5))
             {
                 update_resources('damage', 1, -6);
                 return 1;
@@ -1175,7 +1193,7 @@ function play_card($played_card)
             return 0;
 
         case 83: //Imp
-            if(resources_cost("recruits", 5)) 
+            if(resources_cost("recruits", 5))
             {
                 update_resources('damage', 1, -6);
                 update_resources('bricks', 2, -5);
@@ -1186,7 +1204,7 @@ function play_card($played_card)
             return 0;
 
         case 84: //Shadow Faerie
-            if(resources_cost("recruits", 6)) 
+            if(resources_cost("recruits", 6))
             {
                 update_resources('tower', 1, -2);
                 return 2;
@@ -1194,7 +1212,7 @@ function play_card($played_card)
             return 0;
 
         case 85: //Little Snakes
-            if(resources_cost("recruits", 6)) 
+            if(resources_cost("recruits", 6))
             {
                 update_resources('tower', 1, -4);
                 return 1;
@@ -1202,7 +1220,7 @@ function play_card($played_card)
             return 0;
 
         case 86: //Ogre
-            if(resources_cost("recruits", 6)) 
+            if(resources_cost("recruits", 6))
             {
                 update_resources('damage', 1, -7);
                 return 1;
@@ -1210,7 +1228,7 @@ function play_card($played_card)
             return 0;
 
         case 87: //Rabid Sheep
-            if(resources_cost("recruits", 6)) 
+            if(resources_cost("recruits", 6))
             {
                 update_resources('damage', 1, -6);
                 update_resources('recruits', 1, -3);
@@ -1219,7 +1237,7 @@ function play_card($played_card)
             return 0;
 
         case 88: //Troll Trainer
-            if(resources_cost("recruits", 7)) 
+            if(resources_cost("recruits", 7))
             {
                 update_resources('dungeon', 0, 2);
                 return 1;
@@ -1227,7 +1245,7 @@ function play_card($played_card)
             return 0;
 
         case 89: //Tower Gremlin
-            if(resources_cost("recruits", 8)) 
+            if(resources_cost("recruits", 8))
             {
                 update_resources('damage', 1, -2);
                 update_resources('wall', 0, 4);
@@ -1237,13 +1255,13 @@ function play_card($played_card)
             return 0;
 
         case 90: //Spizzer
-            if(resources_cost("recruits", 8)) 
+            if(resources_cost("recruits", 8))
             {
-                if($opponent_game_stat['wall'] == 0) 
+                if($opponent_game_stat['wall'] == 0)
                 {
                     update_resources('damage', 1, -10);
                 }
-                else 
+                else
                 {
                     update_resources('damage', 1, -6);
                 }
@@ -1252,7 +1270,7 @@ function play_card($played_card)
             return 0;
 
         case 91: //Werewolf
-            if(resources_cost("recruits", 9)) 
+            if(resources_cost("recruits", 9))
             {
                 update_resources('damage', 1, -9);
                 return 1;
@@ -1260,9 +1278,9 @@ function play_card($played_card)
             return 0;
 
         case 92: //Unicorn
-            if(resources_cost("recruits", 9)) 
+            if(resources_cost("recruits", 9))
             {
-                if($my_game_stat['magic'] > $opponent_game_stat['magic']) 
+                if($my_game_stat['magic'] > $opponent_game_stat['magic'])
                 {
                     update_resources('damage', 1, -12);
                 }
@@ -1275,9 +1293,9 @@ function play_card($played_card)
             return 0;
 
         case 93: //Elven Archers
-            if(resources_cost("recruits", 10)) 
+            if(resources_cost("recruits", 10))
             {
-                if($my_game_stat['wall'] > $opponent_game_stat['wall']) 
+                if($my_game_stat['wall'] > $opponent_game_stat['wall'])
                 {
                     update_resources('tower', 1, -6);
                 }
@@ -1291,7 +1309,7 @@ function play_card($played_card)
         case 94: //Corrosion Clouds
             if(resources_cost("recruits", 11))
             {
-                if($opponent_game_stat['wall'] > 0) 
+                if($opponent_game_stat['wall'] > 0)
                 {
                     update_resources('damage', 1, -10);
                 }
@@ -1303,7 +1321,7 @@ function play_card($played_card)
             return 0;
 
         case 95: //Rock Stompers
-            if(resources_cost("recruits", 11)) 
+            if(resources_cost("recruits", 11))
             {
                 update_resources('damage', 1, -8);
                 update_resources('quarry', 1, -1);
@@ -1312,7 +1330,7 @@ function play_card($played_card)
             return 0;
 
         case 96: //Thief
-            if(resources_cost("recruits", 12)) 
+            if(resources_cost("recruits", 12))
             {
                 update_resources('gems', 1, -10);
                 update_resources('bricks', 1, -5);
@@ -1323,7 +1341,7 @@ function play_card($played_card)
             return 0;
 
         case 97: //Warlord
-            if(resources_cost("recruits", 13)) 
+            if(resources_cost("recruits", 13))
             {
                 update_resources('damage', 1, -13);
                 update_resources('gems', 0, -3);
@@ -1332,7 +1350,7 @@ function play_card($played_card)
             return 0;
 
         case 98: //Succubus
-            if(resources_cost("recruits", 14)) 
+            if(resources_cost("recruits", 14))
             {
                 update_resources('tower', 1, -5);
                 update_resources('recruits', 1, -8);
@@ -1341,7 +1359,7 @@ function play_card($played_card)
             return 0;
 
         case 99: //Stone Giant
-            if(resources_cost("recruits", 15)) 
+            if(resources_cost("recruits", 15))
             {
                 update_resources('damage', 1, -10);
                 update_resources('wall', 0, 4);
@@ -1350,7 +1368,7 @@ function play_card($played_card)
             return 0;
 
         case 100: //Vampire
-            if(resources_cost("recruits", 17)) 
+            if(resources_cost("recruits", 17))
             {
                 update_resources('damage', 1, -10);
                 update_resources('recruits', 1, -5);
@@ -1360,7 +1378,7 @@ function play_card($played_card)
             return 0;
 
         case 101: //Pegasus Lancer
-            if(resources_cost("recruits", 18)) 
+            if(resources_cost("recruits", 18))
             {
                 update_resources('tower', 1, -12);
                 return 1;
@@ -1368,7 +1386,7 @@ function play_card($played_card)
             return 0;
 
         case 102: //Dragon
-            if(resources_cost("recruits", 25)) 
+            if(resources_cost("recruits", 25))
             {
                 update_resources('damage', 1, -20);
                 update_resources('gems', 1, -10);
