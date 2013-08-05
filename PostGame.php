@@ -83,6 +83,16 @@ if( verifyCookie() ) {
                 <h1 id="game_result">Win/Lose</h1>
             </td>
         </tr>
+        <tr style="background-color: #b200ff; font-size: 20px; font-weight: 900;">
+            <td style="text-align: justify; width: fit-content;">
+                <div>Total Game Time</div>
+                <div>Total Number of Moves</div>
+            </td>
+            <td style="text-align: left;">
+                <div id="game_time"></div>
+                <div id="cards_played"></div>
+            </td>
+        </tr>
         <tr style="background-color: #0094ff; font-size: 20px; font-weight: 900;">
             <td style="text-align: justify; width: fit-content;">
                 <div>Total Games Played</div>
