@@ -11,13 +11,13 @@ $mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], 
 if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 
 // Get user's game result from table
-$stmt = $mysqli->prepare("SELECT game_end_status FROM games WHERE nickname = ?;");
+$stmt = $mysqli->prepare("SELECT * FROM games WHERE nickname = ?;");
 $stmt->bind_param('s', $mynickname);
 $stmt->execute();
 if ($stmt->errno) exit("User's game result SQL failed: (" . $stmt->errno . ") " . $stmt->error);
 $result = $stmt->get_result();
 $stmt->close();
-$user_result = $result->fetch_array()[0];
+$game_data = $result->fetch_array();
 
 // If we got here it means the game has ended successfully - remove it from table
 $stmt = $mysqli->prepare("DELETE FROM games WHERE nickname = ? AND game_end_status != '0';");
@@ -35,6 +35,11 @@ if ($stmt->errno) exit("Get user information SQL failed: (" . $stmt->errno . ") 
 $result = $stmt->get_result();
 $stmt->close();
 $my_user_stat = $result->fetch_array();
+
+if (!isset($_SESSION['game_time'])) $_SESSION['game_time'] = $game_data['last_active'] - $game_data['start_time'];
+
+$my_user_stat['game_time'] =  $_SESSION['game_time'];
+$my_user_stat['cards_played'] = $_SESSION['cards_played'];
 
 // Return variable with list of user's values
 echo json_encode($my_user_stat);

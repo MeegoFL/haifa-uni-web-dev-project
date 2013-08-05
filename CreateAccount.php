@@ -1,8 +1,8 @@
 <?php
 // Get the values and check for XSS or SQL injection
 preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["username"]) ? $username = $_REQUEST["username"] : exit('XSS is detected!'); //Check why $_POST didn't work
-preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["password"]) ? $password = ($_REQUEST["password"]) : exit('XSS is detected!');
-preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["repeat_password"]) ? $repeat_password = ($_REQUEST["repeat_password"]) : exit('XSS is detected!');
+preg_match('/^[a-zA-Z0-9_!@#$%^&]+$/',$_REQUEST["password"]) ? $password = ($_REQUEST["password"]) : exit('XSS is detected!');
+preg_match('/^[a-zA-Z0-9_!@#$%^&]+$/',$_REQUEST["repeat_password"]) ? $repeat_password = ($_REQUEST["repeat_password"]) : exit('XSS is detected!');
 preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["nickname"]) ? $nickname = $_REQUEST["nickname"] : exit('XSS is detected!');
 
 session_start();
@@ -11,10 +11,12 @@ $db_ini = parse_ini_file('Arcomage.ini');
 
 // Check password strength
 $error = NULL;
-if( strlen($password) < 6 ) { $error .= "Password too short!<br>";}
+if( strlen($password) < 8 ) { $error .= "Password too short!<br>";}
 if( !preg_match("#[0-9]+#", $password) ) {$error .= "Password must include at least one number!<br>";}
 if( !preg_match("#[a-z]+#", $password) ) {$error .= "Password must include at least one letter!<br>";}
 if( !preg_match("#[A-Z]+#", $password) ) {$error .= "Password must include at least one CAPS!<br>";}
+if( !preg_match("#\W+#", $password) ) {$error .= "Password must include at least one symbol!";}
+
 
 // Exit on weak password repeat password mismatch, else update password to md5 if strong enough
 if($error) exit("<br><b style=\"color:red\">Weak Password:<br>$error</b>");
