@@ -15,7 +15,6 @@ if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->conn
 // Get the player game stat and played card
 $my_game_stat = get_my_game_stat();
 $opponent_game_stat = get_enemy_game_stat();
-$played_card = $my_game_stat[$card_location];
 
 function main()
 {
@@ -1387,7 +1386,10 @@ function play_card($played_card)
 
 //********************* MAIN*************************//
 if ($card_location == "surrender" | $card_location == "surrender_id") end_game(0);
-else main();
+else {
+    $played_card = $my_game_stat[$card_location];
+    main();
+}
 
 $mysqli->close();
 ?>

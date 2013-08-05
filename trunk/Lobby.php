@@ -123,7 +123,7 @@ if (verifyCookie()) {
             </td>
 
             <td>
-                <h1 style="text-align: center;">Chat</h1>
+                <h1 style="text-align: center;">Chat (N/A)</h1>
             </td>
             <tr>
                 <td style="width: 50%;">
@@ -131,10 +131,10 @@ if (verifyCookie()) {
                 </td>
                 <td>
                     <div id="chatbox" style="height: 500px; overflow-y: scroll; overflow-x: hidden;"></div>
-                    <form>
+                    <!--<form>
                         <input type="text" id="chatfield" style="width: 80%;" />
                         <input type="button" value="enter" style="width: fill-available;" onclick="SubmitChatText(this.form.chatfield.value)" />
-                    </form>
+                    </form>-->
                 </td>
             </tr>
         </tr>
