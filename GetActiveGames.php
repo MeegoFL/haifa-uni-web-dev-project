@@ -10,8 +10,8 @@ if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->conn
 
 // Get list of active games (in last one min)
 $time = time()-60;
-$stmt = $mysqli->prepare("SELECT * FROM games WHERE last_active > ?)");
-$stmt->bind_param('s', $time);
+$stmt = $mysqli->prepare("SELECT * FROM games WHERE last_active > ?");
+$stmt->bind_param('i', $time);
 $stmt->execute();
 $result = $stmt->get_result();
 
