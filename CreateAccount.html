@@ -12,12 +12,13 @@
         }
     </style>
     <script type="text/javascript">
-        function addUser(name, pass, nick) {
+        function addUser(name, pass, repeat_pass, nick) {
             // Initialize missingvalue flag and clean error messages
             missingValue = 0;
             document.getElementById("result").innerHTML = "";
             document.getElementById("missingName").innerHTML = "";
             document.getElementById("missingPass").innerHTML = "";
+            document.getElementById("missingRepeatPass").innerHTML = "";
             document.getElementById("missingNick").innerHTML = "";
 
             // Check for each of the fields if missing value and print error
@@ -27,6 +28,10 @@
             }
             if (pass == "") {
                 document.getElementById("missingPass").innerHTML = " This is a required field";
+                missingValue = 1;
+            }
+            if (repeat_pass == "") {
+                document.getElementById("missingRepeatPass").innerHTML = " This is a required field";
                 missingValue = 1;
             }
             if (nick == "") {
@@ -53,7 +58,7 @@
             }
 
             // Ready the values and POST the request
-            var str = "?username=" + name + "&password=" + pass + "&nickname=" + nick;
+            var str = "?username=" + name + "&password=" + pass + "&repeat_password=" + repeat_pass + "&nickname=" + nick;
             xmlhttp.open("POST", "CreateAccount.php" + str, true);
             xmlhttp.send();
         }
@@ -82,6 +87,13 @@
                     <input type="password" name="password" id="password" placeholder="" required="true">
                     <b style="color: red" id="missingPass"></b>
                 </div>
+                    <div>
+                    <label for="repeat_password">
+                        Repeat Password:
+                    </label>
+                    <input type="password" name="repeat_password" id="repeat_password" placeholder="" required="true">
+                    <b style="color: red" id="missingRepeatPass"></b>
+                </div>
                 <div>
                     <label for="nickname">
                         Nickname:
@@ -90,7 +102,7 @@
                     <b style="color: red" id="missingNick"></b>
                 </div>
                 <div style="margin-left: 100px;">
-                    <input type="button" value="Submit" onclick="addUser(this.form.username.value, this.form.password.value, this.form.nickname.value)"></div>
+                    <input type="button" value="Submit" onclick="addUser(this.form.username.value, this.form.password.value, this.form.repeat_password.value, this.form.nickname.value)"></div>
                 <div id="result">
                 </div>
                 </form>
