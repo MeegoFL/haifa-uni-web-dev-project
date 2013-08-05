@@ -7,7 +7,10 @@ preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["nickname"]) ? $nickname = $_REQUEST["ni
 
 session_start();
 
+$db_ini = parse_ini_file('Arcomage.ini');
+
 // Check password strength
+$error = NULL;
 if( strlen($password) < 6 ) { $error .= "Password too short!<br>";}
 if( !preg_match("#[0-9]+#", $password) ) {$error .= "Password must include at least one number!<br>";}
 if( !preg_match("#[a-z]+#", $password) ) {$error .= "Password must include at least one letter!<br>";}
@@ -19,10 +22,9 @@ else if( $password != $repeat_password ) {
     $error .= "Password must match Repeat Password!<br>";
     exit("<br><b style=\"color:red\">Repeat Password mismatch:<br>$error</b>");
     }
-else $password = md5($password);
+else $password = sha1($db_ini['hash_key'].$password);
 
 // Connect to Database
-$db_ini = parse_ini_file('Arcomage.ini');
 $mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], $db_ini['db']);
 if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 
