@@ -1,14 +1,14 @@
 <?php
-include 'verifyCookie.php';
-verifyCookie();
 
 $db_ini = parse_ini_file('Arcomage.ini');
 $mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], $db_ini['db']);
 if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 
 // Drop existing table and start a new
-if(!$mysqli->query("DROP TABLE IF EXISTS users") || !$mysqli->query($query)) echo "Table drop failed: (" . $mysqli->errno . ") " . $mysqli->error;
-if(!$mysqli->query("DROP TABLE IF EXISTS games") || !$mysqli->query($query)) echo "Table drop failed: (" . $mysqli->errno . ") " . $mysqli->error;
+$mysqli->query("DROP TABLE IF EXISTS users");
+if($mysqli->errno) echo "Table drop failed: (" . $mysqli->errno . ") " . $mysqli->error;
+$mysqli->query("DROP TABLE IF EXISTS games"); 
+if($mysqli->errno) echo "Table drop failed: (" . $mysqli->errno . ") " . $mysqli->error;
 
 // Create Table users
 $query = "CREATE TABLE users(
@@ -68,7 +68,7 @@ $query = "CREATE TABLE games(
 if(!$mysqli->query($query)) echo "Table creation failed: (" . $mysqli->errno . ") " . $mysqli->error;
 
 // Add the administraor user
-$password = md5('alpine');
+$password = sha1("TalRan".alpine);
 $query = "INSERT INTO users (username, password, nickname) VALUES ('administrator','" .$password. "', 'admin');";
 
 //Use this to safely create a table while testing
