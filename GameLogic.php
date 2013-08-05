@@ -16,13 +16,11 @@ if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->conn
 $my_game_stat = get_my_game_stat();
 $opponent_game_stat = get_enemy_game_stat();
 $played_card = $my_game_stat[$card_location];
-// Start new query array to execute at end of script
-$query = array();
 
 function main()
 {
-    global $query, $my_game_stat, $opponent_game_stat, $played_card;
-
+    global $mysqli, $game_id, $my_game_stat, $opponent_game_stat, $played_card;
+    
     // Check if player's turn
     if ($my_game_stat['current_flag'] == false) {
         die("Error: Not Your Turn!");
@@ -34,7 +32,10 @@ function main()
         // Play the card
         $play_card_result = play_card($played_card);
 
-        $query[] = "UPDATE games SET last_played_card ='" .$played_card. "' WHERE game_id='" .$my_game_stat['game_id']. "'";
+        $stmt = $mysqli->prepare("UPDATE games SET last_played_card = ? WHERE game_id = ?;");
+        $stmt->bind_param('si', $played_card, $game_id);
+        $stmt->execute();
+        $stmt->close();
         $_SESSION['cards_played'] += 1; 
 
         // Check if anyone wins after played card
@@ -55,7 +56,6 @@ function main()
                 update_resources('gems', 0, $my_game_stat['magic']);
                 update_resources('bricks', 0, $my_game_stat['quarry']);
                 update_resources('recruits', 0, $my_game_stat['dungeon']);
-                execute_query();
                 exit("You have another Turn");
                 break;
         }
@@ -71,9 +71,6 @@ function main()
         // Switch Turns
         update_resources('current_flag', 0, -1);
         update_resources('current_flag', 1, 1);
-        
-        // Perform actual update to database
-        execute_query();
     }
     else
     {
@@ -81,20 +78,9 @@ function main()
     }
 }
 
-function execute_query()
-{
-    global $mysqli, $query;
-    foreach ($query as $key => $value) {
-        $my_result = $mysqli->query($value);
-        if (!$my_result) {
-            echo "execute_query SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
-        }
-    }
-}
-
 function end_game($end_result)
 {
-    global $query, $game_id, $nickname;
+    global $mysqli, $game_id, $nickname;
 
     // Get the current statistics for both player
     $statistics = get_users_statistics();
@@ -150,26 +136,34 @@ function end_game($end_result)
         ($_SESSION['cards_played'] < $user_statistics['win_min_cards']) ? $min_cards_played = $_SESSION['cards_played'] : $min_cards_played = $user_statistics['win_min_cards'];
 
         // Setup User's query
-        $query[] = "UPDATE users SET games_won = '$user_games_won',   
-            games_played = '$user_games_played', 
-            num_surrender_wins = '$user_num_surrender_wins', 
-            num_resources_wins = '$user_num_resources_wins', 
-            num_tower_wins = '$user_num_tower_wins', 
-            num_destroy_wins = '$user_num_destroy_wins', 
-            win_max_cards = '$max_cards_played', 
-            win_min_cards = '$min_cards_played', 
-            last_game_result = '$user_result' 
-            WHERE nickname = '$nickname'";
+        $stmt = $mysqli->prepare("UPDATE users SET games_won = ?,   
+                                        games_played = ?, 
+                                        num_surrender_wins = ?, 
+                                        num_resources_wins = ?, 
+                                        num_tower_wins = ?, 
+                                        num_destroy_wins = ?, 
+                                        win_max_cards = ?, 
+                                        win_min_cards = ?, 
+                                        last_game_result = ? 
+                                        WHERE nickname = ?;");
+        $stmt->bind_param('iiiiiiiiis', $user_games_won, $user_games_played, $user_num_surrender_wins, $user_num_resources_wins, $user_num_tower_wins, 
+                                        $user_num_destroy_wins, $max_cards_played, $min_cards_played, $user_result, $nickname);
+        $stmt->execute();
+        $stmt->close();
 
         // Setup Opponent's query
-        $query[] = "UPDATE users SET games_lost = '$opponent_games_lost',   
-            games_played = '$opponent_games_played', 
-            num_surrender_loses = '$opponent_num_surrender_loses', 
-            num_resources_loses = '$opponent_num_resources_loses', 
-            num_tower_loses = '$opponent_num_tower_loses', 
-            num_destroy_loses = '$opponent_num_destroy_loses', 
-            last_game_result = '$opponent_result' 
-            WHERE nickname = '$opponent_nickname'";
+        $stmt = $mysqli->prepare("UPDATE users SET games_lost = ?,   
+                                                    games_played = ?, 
+                                                    num_surrender_loses = ?, 
+                                                    num_resources_loses = ?, 
+                                                    num_tower_loses = ?, 
+                                                    num_destroy_loses = ?, 
+                                                    last_game_result = ? 
+                                                    WHERE nickname = ?");
+        $stmt->bind_param('iiiiiiis', $opponent_games_lost, $opponent_games_played, $opponent_num_surrender_loses, $opponent_num_resources_loses, $opponent_num_tower_loses, 
+                                        $opponent_num_destroy_loses, $opponent_result, $opponent_nickname);
+        $stmt->execute();
+        $stmt->close();
     }
     
     else if ( ($end_result == 0) || (($end_result >= 4) && ($end_result <= 6)) )
@@ -215,63 +209,85 @@ function end_game($end_result)
         }
 
         // Setup User's query
-        $query[] = "UPDATE users SET games_lost = '$user_games_lost', 
-            games_played = '$user_games_played',  
-            num_surrender_loses = '$user_num_surrender_loses', 
-            num_resources_loses = '$user_num_resources_loses', 
-            num_tower_loses = '$user_num_tower_loses', 
-            num_destroy_loses = '$user_num_destroy_loses', 
-            last_game_result = '$user_result'  
-            WHERE nickname = '$nickname'";
+        $stmt = $mysqli->prepare("UPDATE users SET games_lost = ?, 
+                                                games_played = ?,  
+                                                num_surrender_loses = ?, 
+                                                num_resources_loses = ?, 
+                                                num_tower_loses = ?, 
+                                                num_destroy_loses = ?, 
+                                                last_game_result = ?  
+                                                WHERE nickname = ?");
+        $stmt->bind_param('iiiiiiis', $user_games_lost, $user_games_played, $user_num_surrender_loses, $user_num_resources_loses, $user_num_tower_loses, 
+                                    $user_num_destroy_loses, $user_result, $nickname);
+        $stmt->execute();
+        $stmt->close();
 
         // Setup Opponent's query
-        $query[] = "UPDATE users SET games_won = '$opponent_games_won',   
-            games_played = '$opponent_games_played', 
-            num_surrender_wins = '$opponent_num_surrender_wins', 
-            num_resources_wins = '$opponent_num_resources_wins', 
-            num_tower_wins = '$opponent_num_tower_wins', 
-            num_destroy_wins = '$opponent_num_destroy_wins', 
-            last_game_result = '$opponent_result' 
-            WHERE nickname = '$opponent_nickname'";
+         $stmt = $mysqli->prepare("UPDATE users SET games_won = ?,   
+                                                    games_played = ?, 
+                                                    num_surrender_wins = ?, 
+                                                    num_resources_wins = ?, 
+                                                    num_tower_wins = ?, 
+                                                    num_destroy_wins = ?, 
+                                                    last_game_result = ? 
+                                                    WHERE nickname = ?");
+        $stmt->bind_param('iiiiiiis', $opponent_games_won, $opponent_games_played, $opponent_num_surrender_wins, $opponent_num_resources_wins, $opponent_num_tower_wins, 
+                            $opponent_num_destroy_wins, $opponent_result, $opponent_nickname);
+        $stmt->execute();
+        $stmt->close();
     }
 
     else return; // No such option
+    
+    $stmt = $mysqli->prepare("UPDATE games SET game_end_status = ? WHERE game_id = ? AND nickname = ?;");
+    $stmt->bind_param('iis', $user_result, $game_id, $nickname);
+    $stmt->execute();
+    $stmt->bind_param('iis', $opponent_result, $game_id, $opponent_nickname);
+    $stmt->execute();
+    $stmt->close();
 
-    $query[] = "UPDATE games SET game_end_status = '$user_result' WHERE game_id = '$game_id' AND nickname = '$nickname'";
-    $query[] = "UPDATE games SET game_end_status = '$opponent_result' WHERE game_id = '$game_id' AND nickname != '$nickname';";
-
-    execute_query();
     exit("GameOver");
 }
 
 function get_my_game_stat()
 {
     global $mysqli, $game_id, $nickname;
-    $my_result = $mysqli->query("SELECT * FROM games WHERE game_id = '$game_id' AND nickname = '$nickname'");
-    if (!$my_result){
-        echo "get_my_game_stat SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
-    }
+
+    $stmt = $mysqli->prepare("SELECT * FROM games WHERE game_id = ? AND nickname = ?;");
+    $stmt->bind_param('is', $game_id, $nickname);
+    $stmt->execute();
+    if ($stmt->errno) echo "get_my_game_stat SQL failed: (" . $stmt->errno . ") " . $stmt->error;
+    $my_result = $stmt->get_result();
+    $stmt->close();
     return $my_result->fetch_array();
 }
 
 function get_enemy_game_stat()
 {
     global $mysqli, $game_id, $nickname;
-    $enemy_result = $mysqli->query("SELECT * FROM games WHERE game_id = '$game_id' AND nickname <> '$nickname'");
-    if (!$enemy_result){
-        echo "get_enemy_game_stat SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
-    }
-    return $enemy_result->fetch_array();
+    
+    $stmt = $mysqli->prepare("SELECT * FROM games WHERE game_id = ? AND nickname <> ?;");
+    $stmt->bind_param('is', $game_id, $nickname);
+    $stmt->execute();
+    if ($stmt->errno) echo "get_enemy_game_stat SQL failed: (" . $stmt->errno . ") " . $stmt->error;
+    $opponent_result = $stmt->get_result();
+    $stmt->close();
+    return $opponent_result->fetch_array();
 }
 
 function get_users_statistics()
 {
     global $mysqli, $nickname, $opponent_game_stat;
+    
     $result_arr = array();
     $opponent_nickname = $opponent_game_stat['nickname'];
     
-    $result = $mysqli->query("SELECT * FROM users WHERE nickname = '$nickname' OR nickname = '$opponent_nickname'");
-    if (!$result) echo "get_users_statistics SQL failed: (" . $mysqli->errno . ") " . $mysqli->error;
+    $stmt = $mysqli->prepare("SELECT * FROM users WHERE nickname = ? OR nickname = ?;");
+    $stmt->bind_param('ss', $nickname, $opponent_nickname);
+    $stmt->execute();
+    if ($stmt->errno) echo "get_users_statistics SQL failed: (" . $stmt->errno . ") " . $stmt->error;
+    $result = $stmt->get_result();
+    $stmt->close();
     
     $result_arr[] = $result->fetch_array();
     $result_arr[] = $result->fetch_array();
@@ -281,10 +297,16 @@ function get_users_statistics()
 
 function get_new_card()
 {
-    global $query, $game_id, $nickname, $card_location, $my_game_stat;
+    global $mysqli, $game_id, $nickname, $card_location, $my_game_stat;
 
     $new_card = rand(1,102);
-    $query[] = ("UPDATE games SET $card_location = '$new_card' WHERE game_id = '$game_id' AND nickname = '$nickname'");
+
+    $stmt = $mysqli->prepare("UPDATE games SET $card_location = ? WHERE game_id = ? AND nickname = ?;");
+    $stmt->bind_param('iis', $new_card, $game_id, $nickname);
+    $stmt->execute();
+    if ($stmt->errno) echo "get_new_card SQL failed: (" . $stmt->errno . ") " . $stmt->error;
+    $stmt->close();
+    
     $my_game_stat[$card_location] = $new_card;
 }
 
@@ -312,7 +334,7 @@ function check_for_win()
 
 function update_resources($resource, $player, $amount)
 {
-    global $query, $game_id, $nickname, $my_game_stat, $opponent_game_stat;
+    global $mysqli, $game_id, $nickname, $my_game_stat, $opponent_game_stat;
     switch($player) {
 
         case 0: //update current player
@@ -325,12 +347,23 @@ function update_resources($resource, $player, $amount)
                     $new_tower = $new_tower + $new_wall;
                     $new_wall = 0;
                 }
-                $query[] = "UPDATE games SET wall = '$new_wall', tower = '$new_tower' WHERE game_id='" .$game_id. "' AND nickname='" .$nickname. "'";
+                
+                $stmt = $mysqli->prepare("UPDATE games SET wall = ?, tower = ? WHERE game_id = ? AND nickname = ?;");
+                $stmt->bind_param('iiis', $new_wall, $new_tower, $game_id, $nickname);
+                $stmt->execute();
+                if ($stmt->errno) echo "update_resources SQL failed: (" . $stmt->errno . ") " . $stmt->error;
+                $stmt->close();
                 return;
             }
             
             $new_value = max(0, $my_game_stat[$resource] + $amount);
-            $query[] = "UPDATE games SET $resource = '$new_value' WHERE game_id='" .$game_id. "' AND nickname='" .$nickname. "'";
+            
+            $stmt = $mysqli->prepare("UPDATE games SET $resource = ? WHERE game_id = ? AND nickname = ?;");
+            $stmt->bind_param('iis', $new_value, $game_id, $nickname);
+            $stmt->execute();
+            if ($stmt->errno) echo "update_resources SQL failed: (" . $stmt->errno . ") " . $stmt->error;
+            $stmt->close();
+
             $my_game_stat[$resource] = $new_value;
             //if($resource == 'wall' && $my_game_stat['wall'] + $amount < 0) update_resources('tower', 0, $my_game_stat['wall'] + $amount);
             return;
@@ -345,12 +378,25 @@ function update_resources($resource, $player, $amount)
                     $new_tower = $new_tower + $new_wall;
                     $new_wall = 0;
                 }
-                $query[] = "UPDATE games SET wall = '$new_wall', tower = '$new_tower' WHERE game_id='" .$game_id. "' AND nickname='" .$opponent_game_stat['nickname']. "'";
+                
+                
+                $stmt = $mysqli->prepare("UPDATE games SET wall = ?, tower = ? WHERE game_id = ? AND nickname='" .$opponent_game_stat['nickname']. "';");
+                $stmt->bind_param('iii', $new_wall, $new_tower, $game_id);
+                $stmt->execute();
+                if ($stmt->errno) echo "update enemy SQL failed: (" . $stmt->errno . ") " . $stmt->error;
+                $stmt->close();
+                
                 return;
             }
 
             $new_value = max(0, $opponent_game_stat[$resource] + $amount);
-            $query[] = "UPDATE games SET $resource ='$new_value' WHERE game_id='" .$opponent_game_stat['game_id']. "' AND nickname='" .$opponent_game_stat['nickname']. "'";
+
+            $stmt = $mysqli->prepare("UPDATE games SET $resource = ? WHERE game_id = ? AND nickname = '" .$opponent_game_stat['nickname']. "'");
+            $stmt->bind_param('ii', $new_value, $game_id);
+            $stmt->execute();
+            if ($stmt->errno) echo "update enemy SQL failed: (" . $stmt->errno . ") " . $stmt->error;
+            $stmt->close();
+
             $opponent_game_stat[$resource] = $new_value;
             //if($resource=='wall' && $opponent_game_stat['wall'] + $amount < 0) update_resources('tower', 1, $opponent_game_stat['wall'] + $amount);
             return;
@@ -364,7 +410,7 @@ function update_resources($resource, $player, $amount)
 
 function resources_cost($resource, $amount)
 {
-    global $query, $game_id, $nickname, $my_game_stat;
+    global $mysqli, $game_id, $nickname, $my_game_stat;
 
     $new_value = $my_game_stat[$resource] - $amount;
 
@@ -373,7 +419,13 @@ function resources_cost($resource, $amount)
 
     else
     {
-        $query[] = "UPDATE games SET $resource ='$new_value' WHERE game_id='$game_id' AND nickname='$nickname'";
+        
+        $stmt = $mysqli->prepare("UPDATE games SET $resource = ? WHERE game_id = ? AND nickname = ?;");
+        $stmt->bind_param('iis', $new_value, $game_id, $nickname);
+        $stmt->execute();
+        if ($stmt->errno) echo "resources_cost SQL failed: (" . $stmt->errno . ") " . $stmt->error;
+        $stmt->close();
+        
         $my_game_stat[$resource] = $new_value;
         return 1;
     }
