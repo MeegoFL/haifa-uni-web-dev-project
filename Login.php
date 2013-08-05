@@ -1,12 +1,12 @@
 <?php
+$db_ini = parse_ini_file('Arcomage.ini');
 // Get the values and check for XSS or SQL injection
 preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["username"]) ? $username = $_REQUEST["username"] : exit('XSS is detected!');
-preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["password"]) ? $password = md5($_REQUEST["password"]) : exit('XSS is detected!');
+preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["password"]) ? $password = sha1($db_ini['hash_key'].$_REQUEST["password"]) : exit('XSS is detected!');
 
 session_start();
 
 // Connect to Database
-$db_ini = parse_ini_file('Arcomage.ini');
 $mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], $db_ini['db']);
 if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 
