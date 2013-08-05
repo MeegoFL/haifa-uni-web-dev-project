@@ -6,12 +6,9 @@ session_start();
 $nickname = $_SESSION['nickname'];
 $game_id = $_SESSION['game_id'];
 
-$mysqli = new mysqli("localhost", "root", "12345", "test");
-
-// Check connection
-if (mysqli_connect_errno()) {
-    echo "Failed to connect to MySQL: " . mysqli_connect_error();
-}
+$db_ini = parse_ini_file('Arcomage.ini');
+$mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], $db_ini['db']);
+if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 
 // Update last_active time for user
 $currentTime = time();

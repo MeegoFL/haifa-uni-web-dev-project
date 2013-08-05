@@ -3,11 +3,9 @@
 preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["nickname"]) ? $nickname = $_REQUEST["nickname"] : exit('XSS is detected!');
 
 // Connect to Database
-$mysqli = new mysqli("localhost", "root", "12345", "test");
-if ($mysqli->connect_errno)
-{
-    echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
-}
+$db_ini = parse_ini_file('Arcomage.ini');
+$mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], $db_ini['db']);
+if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 
 // Check if username exists
 $result = $mysqli->query("SELECT * FROM users WHERE nickname = '$nickname'");

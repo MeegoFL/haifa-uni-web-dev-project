@@ -7,12 +7,9 @@ session_start();
 // Get the current user nickname from session
 $mynickname = $_SESSION['nickname'];
 
-// Connect to Database
-$mysqli = new mysqli("localhost", "root", "12345", "test");
-if ($mysqli->connect_errno)
-{
-    echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
-}
+$db_ini = parse_ini_file('Arcomage.ini');
+$mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], $db_ini['db']);
+if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 
 // Get user's game result from table
 $result = $mysqli->query("SELECT game_end_status FROM games WHERE nickname = '$mynickname';");
