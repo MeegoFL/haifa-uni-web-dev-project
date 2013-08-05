@@ -31,11 +31,9 @@ function verifyCookie() {
     }
 
     // Connect to Database to keep the last active time
-    $con = mysqli_connect('localhost','root','12345','test');
-    if (!$con)
-    {
-        die('Could not connect: ' . mysqli_error($con));
-    }
+    $db_ini = parse_ini_file('Arcomage.ini');
+    $mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], $db_ini['db']);
+    if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 
     $lastactive = $_SERVER['REQUEST_TIME'];
 

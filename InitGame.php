@@ -7,11 +7,9 @@ session_start();
 preg_match('/^[a-zA-Z0-9]+$/', $_REQUEST["nickname"]) ? $opponent_nickname = $_REQUEST["nickname"] : exit('XSS is detected!');
 $my_nickname = explode('|', $_COOKIE["ArcomageCookie"])[0];
 
-$mysqli = new mysqli("localhost", "root", "12345", "test");
-// Check connection
-if (mysqli_connect_errno()) {
-    echo "Failed to connect to MySQL: " . mysqli_connect_error();
-}
+$db_ini = parse_ini_file('Arcomage.ini');
+$mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], $db_ini['db']);
+if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 
 // Clear Game sessions not active for last 2hr
 $deleteLastActive = time() - 120;

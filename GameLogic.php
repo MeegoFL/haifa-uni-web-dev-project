@@ -8,9 +8,9 @@ $game_id = $_SESSION['game_id'];
 $nickname = $_SESSION['nickname'];
 
 // Connect to the database of users and games
-$mysqli = new mysqli("localhost", "root", "12345", "test");
-// Check connection and echo if error on connection
-if (mysqli_connect_errno()) echo "Failed to connect to MySQL: " . mysqli_connect_error();
+$db_ini = parse_ini_file('Arcomage.ini');
+$mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], $db_ini['db']);
+if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 
 // Get the player game stat and played card
 $my_game_stat = get_my_game_stat();
