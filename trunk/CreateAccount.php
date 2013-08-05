@@ -1,21 +1,32 @@
 <?php
 // Get the values and check for XSS or SQL injection
-preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["username"]) ? $username = $_REQUEST["username"] : exit('XSS is detected!'); //Check why $_POST didn't work
-preg_match('/^[a-zA-Z0-9_!@#$%^&]+$/',$_REQUEST["password"]) ? $password = ($_REQUEST["password"]) : exit('XSS is detected!');
-preg_match('/^[a-zA-Z0-9_!@#$%^&]+$/',$_REQUEST["repeat_password"]) ? $repeat_password = ($_REQUEST["repeat_password"]) : exit('XSS is detected!');
-preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["nickname"]) ? $nickname = $_REQUEST["nickname"] : exit('XSS is detected!');
+preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["username"]) ? $username = $_REQUEST["username"] : exit('Attack detected!'); //Check why $_POST didn't work
+preg_match('/^[a-zA-Z0-9_!@#$%^&]+$/',$_REQUEST["password"]) ? $password = ($_REQUEST["password"]) : exit('Attack is detected!');
+preg_match('/^[a-zA-Z0-9_!@#$%^&]+$/',$_REQUEST["repeat_password"]) ? $repeat_password = ($_REQUEST["repeat_password"]) : exit('Attack is detected!');
+preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["nickname"]) ? $nickname = $_REQUEST["nickname"] : exit('Attack is detected!');
 
 session_start();
 
+// Parse ini file for datbase data
 $db_ini = parse_ini_file('Arcomage.ini');
 
 // Check password strength
 $error = NULL;
-if( strlen($password) < 8 ) { $error .= "Password too short!<br>";}
-if( !preg_match("#[0-9]+#", $password) ) {$error .= "Password must include at least one number!<br>";}
-if( !preg_match("#[a-z]+#", $password) ) {$error .= "Password must include at least one letter!<br>";}
-if( !preg_match("#[A-Z]+#", $password) ) {$error .= "Password must include at least one CAPS!<br>";}
-if( !preg_match("#\W+#", $password) ) {$error .= "Password must include at least one symbol!";}
+if( strlen($password) < 8 ) {
+    $error .= "Password too short!<br>";
+}
+if( !preg_match("#[0-9]+#", $password) ) {
+    $error .= "Password must include at least one number!<br>";
+}
+if( !preg_match("#[a-z]+#", $password) ) {
+    $error .= "Password must include at least one letter!<br>";
+}
+if( !preg_match("#[A-Z]+#", $password) ) {
+    $error .= "Password must include at least one CAPS!<br>";
+}
+if( !preg_match("#\W+#", $password) ) {
+    $error .= "Password must include at least one symbol!";
+}
 
 
 // Exit on weak password repeat password mismatch, else update password to md5 if strong enough
@@ -23,8 +34,8 @@ if($error) exit("<br><b style=\"color:red\">Weak Password:<br>$error</b>");
 else if( $password != $repeat_password ) {
     $error .= "Password must match Repeat Password!<br>";
     exit("<br><b style=\"color:red\">Repeat Password mismatch:<br>$error</b>");
-    }
-else $password = sha1($db_ini['hash_key'].$password);
+}
+else $password = sha1($db_ini['hash_key'].$password); //Create encrypted password with salt from ini
 
 // Connect to Database
 $mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], $db_ini['db']);
@@ -55,24 +66,21 @@ else
     $stmt->execute();
     $stmt->close();
 
-    //set cookie:
+    // set cookie:
 	$expiration = time() + 7200; // 2 hours
-        
-    //generate cookie:
+
+    // generate cookie:
     $key = hash_hmac( 'md5', $nickname . $expiration, 'TalRan' );
     $hash = hash_hmac( 'md5', $nickname . $expiration, $key );
     $cookie = $nickname . '|' . $expiration . '|' . $hash;
-	    
-    //if ( !setcookie( "ArcomageCookie", $cookie, $expiration, COOKIE_PATH, COOKIE_DOMAIN, false, true ) ) {
-    //TODO: need the rest of the parameters?
-        
+
     if ( !setcookie( 'ArcomageCookie', $cookie, $expiration ) ) {
 		exit('Error: Unable to set cookie');
 	}
 
-    // store session data
+    // store session data for later use
     $_SESSION['nickname'] = $nickname;
-    
+
     echo "SUCCESS";
 }
 

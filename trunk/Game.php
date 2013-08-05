@@ -1,7 +1,10 @@
 <?php
+// Start a Session to get nickname of user if exists
+session_start();
+
+// Verify existing cookie for user to be able to see / use the page
 include 'verifyCookie.php';
-if( verifyCookie() ) {
-    session_start();
+if (verifyCookie()) {
 ?>
 
 <!DOCTYPE html>
@@ -75,7 +78,7 @@ if( verifyCookie() ) {
                     opponentGameStat = gameStat[1];
 
 
-                    if (userGameStat['game_end_status'] != 0) 
+                    if (userGameStat['game_end_status'] != 0)
                     {
                         refreshInterval = 10000;
                         EndGame(userGameStat['game_end_status']);
@@ -84,7 +87,7 @@ if( verifyCookie() ) {
                     // Update player's game stat on screen
                     document.getElementById("myTowerImg").height = 100+250*(userGameStat['tower'] / 100);
                     document.getElementById("myWallImg").height = 100+150*(userGameStat['wall'] / 100);
-                    
+
                     document.getElementById("player_name").innerHTML = userGameStat['nickname'];
                     document.getElementById("myTowerVal").innerHTML = userGameStat['tower'];
                     document.getElementById("myWallVal").innerHTML = userGameStat['wall'];
@@ -133,7 +136,7 @@ if( verifyCookie() ) {
                     // Update opponent's game stat on screen
                     document.getElementById("opponentTowerImg").height = 100+250*(opponentGameStat['tower'] / 100);
                     document.getElementById("opponentWallImg").height = 100+150*(opponentGameStat['wall'] / 100);
-                    
+
                     document.getElementById("opponent_name").innerHTML = opponentGameStat['nickname'];
                     document.getElementById("opponentTowerVal").innerHTML = opponentGameStat['tower'];
                     document.getElementById("opponentWallVal").innerHTML = opponentGameStat['wall'];
@@ -193,8 +196,10 @@ if( verifyCookie() ) {
 <body style="background-image: url(Images/game-background.jpg);background-repeat:no-repeat;background-size:cover;">
     <audio id="audio" autoplay="" loop="">
         <source src="Media/GOT_Soundtrack.ogg" type="audio/ogg">
-        <source src="Media/GOT_Soundtrack.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
+            <source src="Media/GOT_Soundtrack.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </source>
+        </source>
     </audio>
     <div>
         <button onclick="document.getElementById('audio').play()">Play the Audio</button>
@@ -238,27 +243,39 @@ if( verifyCookie() ) {
 
             <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center; width: 250px;">
                 <span style="background-color: #ffd800; position: relative; bottom: 0px;">
-                    <br><b>tower: </b><b id="myTowerVal"></b></br>
-                        <br><b>wall: </b><b id="myWallVal"></b></br>
+                    <br>
+                        <b>tower: </b>
+                        <b id="myTowerVal"></b>
+                    </br>
+                    <br>
+                        <b>wall: </b>
+                        <b id="myWallVal"></b>
+                    </br>
                 </span>
                 <img id="myTowerImg" src="Images/towe_trans.gif" alt="tower1" width="100" height="250" style="position: relative; bottom: -80px;" draggable="false" />
-                <img id="myWallImg" src="Images/wall_trans.gif" alt="wall1" width="250" height="80" style="position: relative;" draggable="false"/>
+                <img id="myWallImg" src="Images/wall_trans.gif" alt="wall1" width="250" height="80" style="position: relative;" draggable="false" />
             </td>
 
             <td>
-                <img id="deck" src="Images/back.jpg" alt="deck" width="120" height="180" draggable="false"/>
+                <img id="deck" src="Images/back.jpg" alt="deck" width="120" height="180" draggable="false" />
             </td>
 
             <td style="height:180px;width:120px;">
-                <img id="played_card" title="" src="Images/0.png" alt="card1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="EndMove()" width="120" height="180" draggable="false"/>
+                <img id="played_card" title="" src="Images/0.png" alt="card1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="EndMove()" width="120" height="180" draggable="false" />
             </td>
 
             <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center; width: 250px;">
                 <span style="background-color: #ffd800 ; position: relative; bottom: 0px;">
-                        <br><b>tower: </b><b id="opponentTowerVal"></b></br>
-                        <br><b>wall: </b><b id="opponentWallVal"></b></br>
+                    <br>
+                        <b>tower: </b>
+                        <b id="opponentTowerVal"></b>
+                    </br>
+                    <br>
+                        <b>wall: </b>
+                        <b id="opponentWallVal"></b>
+                    </br>
                 </span>
-                <img id="opponentTowerImg" src="Images/towe_trans.gif" alt="tower2" width="100" height="250" style="position: relative; bottom: -80px;" draggable="false"/>
+                <img id="opponentTowerImg" src="Images/towe_trans.gif" alt="tower2" width="100" height="250" style="position: relative; bottom: -80px;" draggable="false" />
                 <img id="opponentWallImg" src="Images/wall_trans.gif" alt="wall2" width="250" height="80" style="position: relative;" draggable="false" />
             </td>
 

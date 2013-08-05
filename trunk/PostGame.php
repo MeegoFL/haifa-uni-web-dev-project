@@ -19,7 +19,7 @@ if( verifyCookie() ) {
             background-repeat: no-repeat;
         }
     </style>
-    <script>
+    <script>d
         function LoadGameStat() {
             // Init
 
@@ -88,7 +88,7 @@ if( verifyCookie() ) {
             </td>
         </tr>
         <tr style="background-color: #b200ff; font-size: 20px; font-weight: 900;">
-            <td style="text-align: justify; width: fit-content;">
+            <td style="text-align: left; width: fit-content;">
                 <div>Total Game Time</div>
                 <div>Total Number of Moves</div>
             </td>
@@ -98,7 +98,7 @@ if( verifyCookie() ) {
             </td>
         </tr>
         <tr style="background-color: #0094ff; font-size: 20px; font-weight: 900;">
-            <td style="text-align: justify; width: fit-content;">
+            <td style="text-align: left; width: fit-content;">
                 <div>Total Games Played</div>
             </td>
             <td style="text-align: left;">
@@ -106,7 +106,7 @@ if( verifyCookie() ) {
             </td>
         </tr>
         <tr style="background-color: #b6ff00; font-size: 20px; font-weight: 900;">
-            <td style="text-align: justify; width: fit-content;">
+            <td style="text-align: left; width: fit-content;">
                 <div>Games Won</div>
                 <div>Win Precentage</div>
                 <div>Win Max Cards Used</div>
@@ -128,7 +128,7 @@ if( verifyCookie() ) {
             </td>
         </tr>
         <tr style="background-color: #f00;  font-size: 20px; font-weight: 900;">
-            <td style="text-align: justify; width: fit-content;">
+            <td style="text-align: left; width: fit-content;">
                 <div>Games Lost</div>
                 <div>Tower Loses</div>
                 <div>Resources Loses</div>

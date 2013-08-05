@@ -82,12 +82,12 @@ if (verifyCookie()) {
                     response = xmlhttp.responseText;
                     if (response == "GAME_START") window.location.href = 'Game.php';
                     else userList = JSON.parse(response);
-                    
+
                     var cookie = getCookie("ArcomageCookie");
                     var nickName = cookie.substring(0, cookie.indexOf("|"));
-                    
+
                     for (var i = 0; i < userList.length; i++) {
-                        if (userList[i][0] == "admin") continue;                        
+                        if (userList[i][0] == "admin") continue;
                         if (userList[i][0] == nickName && userList[i][1] == 0) {
                             document.getElementById("userlist").innerHTML += "<b>" + userList[i][0] + " -> You Are Currently: </b>" + " <input type=\"button\" value=\"Busy\" style=\"color: red;\" onclick=\"ChangeState()\"><br>";
                         }

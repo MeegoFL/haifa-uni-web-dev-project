@@ -2,7 +2,7 @@
 $db_ini = parse_ini_file('Arcomage.ini');
 // Get the values and check for XSS or SQL injection
 preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["username"]) ? $username = $_REQUEST["username"] : exit('XSS is detected!');
-preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["password"]) ? $password = sha1($db_ini['hash_key'].$_REQUEST["password"]) : exit('XSS is detected!');
+preg_match('/^[a-zA-Z0-9_!@#$%^&]+$/',$_REQUEST["password"]) ? $password = sha1($db_ini['hash_key'].$_REQUEST["password"]) : exit('XSS is detected!');
 
 session_start();
 
