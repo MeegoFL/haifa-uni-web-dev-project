@@ -11,7 +11,7 @@ if (verifyCookie()) {
     <meta charset="utf-8" />
     <title>Admin Page</title>
     <style type="text/css">
-        body {background-image: url('Images/Arcomage_title.jpg'); background-size: 100%;background-repeat: no-repeat; opacity: 0.9;}
+        body {background-image: url('Images/Arcomage_title.jpg'); background-size: 100%;background-repeat: no-repeat; opacity: 0.1;}
     </style>
     <script>
 
