@@ -2,6 +2,7 @@
 // Get the values and check for XSS or SQL injection
 preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["username"]) ? $username = $_REQUEST["username"] : exit('XSS is detected!'); //Check why $_POST didn't work
 preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["password"]) ? $password = ($_REQUEST["password"]) : exit('XSS is detected!');
+preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["repeat_password"]) ? $repeat_password = ($_REQUEST["repeat_password"]) : exit('XSS is detected!');
 preg_match('/^[a-zA-Z0-9]+$/',$_REQUEST["nickname"]) ? $nickname = $_REQUEST["nickname"] : exit('XSS is detected!');
 
 session_start();
@@ -12,8 +13,12 @@ if( !preg_match("#[0-9]+#", $password) ) {$error .= "Password must include at le
 if( !preg_match("#[a-z]+#", $password) ) {$error .= "Password must include at least one letter!<br>";}
 if( !preg_match("#[A-Z]+#", $password) ) {$error .= "Password must include at least one CAPS!<br>";}
 
-// Exit on weak password or update password to md5 if strong enough
+// Exit on weak password repeat password mismatch, else update password to md5 if strong enough
 if($error) exit("<br><b style=\"color:red\">Weak Password:<br>$error</b>");
+else if( $password != $repeat_password ) {
+    $error .= "Password must match Repeat Password!<br>";
+    exit("<br><b style=\"color:red\">Repeat Password mismatch:<br>$error</b>");
+    }
 else $password = md5($password);
 
 // Connect to Database
