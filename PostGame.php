@@ -85,7 +85,7 @@ if( verifyCookie() ) {
                 <div>Total Games Played</div>
             </td>
             <td style="text-align: left;">
-                <div id="games_played">num</div>
+                <div id="games_played"></div>
             </td>
         </tr>
         <tr style="background-color: #b6ff00; font-size: 20px; font-weight: 900;">
@@ -100,14 +100,14 @@ if( verifyCookie() ) {
                 <div>Opponent Surrender Wins</div>
             </td>
             <td style="text-align: left;">
-                <div id="games_won">num</div>
-                <div id="win_precentage">num</div>
-                <div id="win_max_cards">num</div>
-                <div id="win_min_cards">num</div>
-                <div id="num_tower_wins">num</div>
-                <div id="num_resources_wins">num</div>
-                <div id="num_destroy_wins">num</div>
-                <div id="num_surrender_wins">num</div>
+                <div id="games_won"></div>
+                <div id="win_precentage"></div>
+                <div id="win_max_cards"></div>
+                <div id="win_min_cards"></div>
+                <div id="num_tower_wins"></div>
+                <div id="num_resources_wins"></div>
+                <div id="num_destroy_wins"></div>
+                <div id="num_surrender_wins"></div>
             </td>
         </tr>
         <tr style="background-color: #f00;  font-size: 20px; font-weight: 900;">
@@ -119,11 +119,11 @@ if( verifyCookie() ) {
                 <div>Surrendered Loses  </div>
             </td>
             <td style="text-align: left;">
-                <div id="games_lost">num</div>
-                <div id="num_tower_loses">num</div>
-                <div id="num_resources_loses">num</div>
-                <div id="num_destroy_loses">num</div>
-                <div id="num_surrender_loses">num</div>
+                <div id="games_lost"></div>
+                <div id="num_tower_loses"></div>
+                <div id="num_resources_loses"></div>
+                <div id="num_destroy_loses"></div>
+                <div id="num_surrender_loses"></div>
             </td>
         </tr>
         <tr>
