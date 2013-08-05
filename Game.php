@@ -221,27 +221,27 @@ if( verifyCookie() ) {
                     vertical-align: top;padding-top: 70px;white-space: nowrap;">
                 <b>
                     <br>
-                        <b id="myGems">num</b>
+                        <b id="myGems"></b>
                         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +
-                        <b id="myMagic">num</b>
+                        <b id="myMagic"></b>
                     </br>
                     <br style="line-height: 95px;">
-                        <b id="myBricks">num</b>
+                        <b id="myBricks"></b>
                         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +
-                        <b id="myQuarry">num</b>
+                        <b id="myQuarry"></b>
                     </br>
                     <br style="line-height: 95px;">
-                        <b id="myRecruits">num</b>
+                        <b id="myRecruits"></b>
                         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +
-                        <b id="myDungeon">num</b>
+                        <b id="myDungeon"></b>
                     </br>
                 </b>
             </td>
 
             <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center; width: 250px;">
                 <span style="background-color: #ffd800; position: relative; bottom: 0px;">
-                    <br><b>tower: </b><b id="myTowerVal">num</b></br>
-                        <br><b>wall: </b><b id="myWallVal">num</b></br>
+                    <br><b>tower: </b><b id="myTowerVal"></b></br>
+                        <br><b>wall: </b><b id="myWallVal"></b></br>
                 </span>
                 <img id="myTowerImg" src="Images/towe_trans.gif" alt="tower1" width="100" height="250" style="position: relative; bottom: -80px;" draggable="false" />
                 <img id="myWallImg" src="Images/wall_trans.gif" alt="wall1" width="250" height="80" style="position: relative;" draggable="false"/>
@@ -257,8 +257,8 @@ if( verifyCookie() ) {
 
             <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center; width: 250px;">
                 <span style="background-color: #ffd800 ; position: relative; bottom: 0px;">
-                        <br><b>tower: </b><b id="opponentTowerVal">num</b></br>
-                        <br><b>wall: </b><b id="opponentWallVal">num</b></br>
+                        <br><b>tower: </b><b id="opponentTowerVal"></b></br>
+                        <br><b>wall: </b><b id="opponentWallVal"></b></br>
                 </span>
                 <img id="opponentTowerImg" src="Images/towe_trans.gif" alt="tower2" width="100" height="250" style="position: relative; bottom: -80px;" draggable="false"/>
                 <img id="opponentWallImg" src="Images/wall_trans.gif" alt="wall2" width="250" height="80" style="position: relative;" draggable="false" />
@@ -269,19 +269,19 @@ if( verifyCookie() ) {
                     vertical-align: top;padding-top: 70px;white-space: nowrap;">
                 <b>
                     <br>
-                        <b id="opponentGems">num</b>
+                        <b id="opponentGems"></b>
                         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +
-                        <b id="opponentMagic">num</b>
+                        <b id="opponentMagic"></b>
                     </br>
                     <br style="line-height: 95px;">
-                        <b id="opponentBricks">num</b>
+                        <b id="opponentBricks"></b>
                         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +
-                        <b id="opponentQuarry">num</b>
+                        <b id="opponentQuarry"></b>
                     </br>
                     <br style="line-height: 95px;">
-                        <b id="opponentRecruits">num</b>
+                        <b id="opponentRecruits"></b>
                         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp +
-                        <b id="opponentDungeon">num</b>
+                        <b id="opponentDungeon"></b>
                     </br>
                 </b>
             </td>
