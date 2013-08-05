@@ -36,6 +36,11 @@ if( verifyCookie() ) {
                     if (userGameStat['last_game_result'] == 1) document.getElementById("game_result").innerHTML = "You've WON!";
                     else if (userGameStat['last_game_result'] == 2) document.getElementById("game_result").innerHTML = "You've LOST!";
 
+                    document.getElementById("games_played").innerHTML = userGameStat['games_played'];
+
+                    document.getElementById("game_time").innerHTML = userGameStat['game_time'];
+                    document.getElementById("cards_played").innerHTML = userGameStat['cards_played'];
+                    
                     document.getElementById("games_won").innerHTML = userGameStat['games_won'];
                     document.getElementById("games_lost").innerHTML = userGameStat['games_lost'];
                     document.getElementById("win_max_cards").innerHTML = userGameStat['win_max_cards'];
@@ -53,7 +58,6 @@ if( verifyCookie() ) {
                     document.getElementById("num_resources_loses").innerHTML = userGameStat['num_resources_loses'];
                     document.getElementById("num_destroy_loses").innerHTML = userGameStat['num_destroy_loses'];
                     document.getElementById("num_surrender_loses").innerHTML = userGameStat['num_surrender_loses'];
-                    document.getElementById("games_played").innerHTML = userGameStat['games_played'];
                     document.getElementById("win_precentage").innerHTML = Math.round((userGameStat['games_won'] / userGameStat['games_played']) * 100);
 
                 }

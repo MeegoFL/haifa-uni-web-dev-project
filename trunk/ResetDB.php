@@ -58,9 +58,10 @@ $query = "CREATE TABLE games(
     card6_id INT(10),
     last_played_card INT(10) DEFAULT 0,
     current_flag TINYINT(1) DEFAULT 0,
-    cards_played BIGINT(20) DEFAULT 0,
+    cards_played INT(10) DEFAULT 0,
     game_end_status INT(10) DEFAULT 0,
     last_active BIGINT(20) DEFAULT 0,
+    start_time BIGINT(20) DEFUALT 0,
     PRIMARY KEY (`nickname`)
 );";
 

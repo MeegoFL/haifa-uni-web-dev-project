@@ -59,16 +59,16 @@ $time = time();
 $first_turn = $time % 2;
 $opponent_turn = !$first_turn;
 
-$stmt = $mysqli->prepare("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active)
-        VALUES (?, ?, ?, " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", ?);");
-$stmt->bind_param('isii', $game_id, $my_nickname, $first_turn, $time);
+$stmt = $mysqli->prepare("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active, start_time)
+        VALUES (?, ?, ?, " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", ?, ?);");
+$stmt->bind_param('isiii', $game_id, $my_nickname, $first_turn, $time, $time);
 $stmt->execute();
 if($stmt->errno) echo "Connect 1 failed: (" . $stmt->errno . ") " . $stmt->error;
 $stmt->close();
 
-$stmt = $mysqli->prepare("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active)
-        VALUES (?, ?, ?, " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", ?);");
-$stmt->bind_param('isii', $game_id, $opponent_nickname, $opponent_turn, $time);
+$stmt = $mysqli->prepare("INSERT INTO games (game_id, nickname, current_flag, card1_id, card2_id, card3_id, card4_id, card5_id, card6_id, last_active, start_time)
+        VALUES (?, ?, ?, " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", " . rand(1, 102) . ", ?, ?);");
+$stmt->bind_param('isiii', $game_id, $opponent_nickname, $opponent_turn, $time, $time);
 $stmt->execute();
 if($stmt->errno) echo "Connect 1 failed: (" . $stmt->errno . ") " . $stmt->error;
 $stmt->close();

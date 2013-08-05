@@ -118,7 +118,6 @@ if( verifyCookie() ) {
                             cards[i].setAttribute("style", "opacity:1;");
                             cards[i].setAttribute("onclick", "StartMove(this.id)");
                         }
-                        refreshInterval = 60000;
                     }
                     else {
                         document.getElementById("userMessages").innerHTML = "Opponent's turn";
@@ -129,7 +128,6 @@ if( verifyCookie() ) {
                             cards[i].setAttribute("style", "opacity:0.6;");
                             cards[i].setAttribute("onclick", "");
                         }
-                        refreshInterval = 2000;
                     }
 
                     // Update opponent's game stat on screen
