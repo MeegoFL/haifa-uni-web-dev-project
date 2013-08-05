@@ -45,7 +45,10 @@ if( verifyCookie() ) {
                     document.getElementById("num_destroy_wins").innerHTML = userGameStat['num_destroy_wins'];
                     document.getElementById("num_surrender_wins").innerHTML = userGameStat['num_surrender_wins'];
                     document.getElementById("win_max_cards").innerHTML = userGameStat['win_max_cards'];
-                    document.getElementById("win_min_cards").innerHTML = userGameStat['win_min_cards'];
+                    if (userGameStat['win_min_cards'] == 1000)
+                        { document.getElementById("win_min_cards").innerHTML = "N\\A"; }
+                    else
+                        { document.getElementById("win_min_cards").innerHTML = userGameStat['win_min_cards']; }
                     document.getElementById("num_tower_loses").innerHTML = userGameStat['num_tower_loses'];
                     document.getElementById("num_resources_loses").innerHTML = userGameStat['num_resources_loses'];
                     document.getElementById("num_destroy_loses").innerHTML = userGameStat['num_destroy_loses'];
@@ -93,7 +96,7 @@ if( verifyCookie() ) {
                 <div>Games Won</div>
                 <div>Win Precentage</div>
                 <div>Win Max Cards Used</div>
-                <div>Win Min Cars Used</div>
+                <div>Win Min Cards Used</div>
                 <div>Tower Wins</div>
                 <div>Resources Wins</div>
                 <div>Destroy Wins</div>
