@@ -82,8 +82,8 @@ if( verifyCookie() ) {
                     }
 
                     // Update player's game stat on screen
-                    document.getElementById("myTowerImg").height = 100+200*(userGameStat['tower'] / 100);
-                    document.getElementById("myWallImg").height = 60+80*(userGameStat['wall'] / 100);
+                    document.getElementById("myTowerImg").height = 100+250*(userGameStat['tower'] / 100);
+                    document.getElementById("myWallImg").height = 100+150*(userGameStat['wall'] / 100);
                     
                     document.getElementById("player_name").innerHTML = userGameStat['nickname'];
                     document.getElementById("myTowerVal").innerHTML = userGameStat['tower'];
@@ -131,8 +131,8 @@ if( verifyCookie() ) {
                     }
 
                     // Update opponent's game stat on screen
-                    document.getElementById("opponentTowerImg").height = 50+200*(opponentGameStat['tower'] / 100);
-                    document.getElementById("opponentWallImg").height = 60+80*(opponentGameStat['wall'] / 100);
+                    document.getElementById("opponentTowerImg").height = 100+250*(opponentGameStat['tower'] / 100);
+                    document.getElementById("opponentWallImg").height = 100+150*(opponentGameStat['wall'] / 100);
                     
                     document.getElementById("opponent_name").innerHTML = opponentGameStat['nickname'];
                     document.getElementById("opponentTowerVal").innerHTML = opponentGameStat['tower'];
