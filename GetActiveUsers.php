@@ -1,5 +1,4 @@
 <?php
-
 include 'verifyCookie.php';
 if( !verifyCookie() ) exit("Error: Not Logged In!");
 session_start();
@@ -12,14 +11,22 @@ $mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], 
 if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 
 // Get list of active users (in last one hour)
-$time = time()-60;
-$result = $mysqli->query("SELECT * FROM users WHERE last_active > '".$time."'");
+$time = time() - 60;
+$stmt = $mysqli->prepare("SELECT * FROM users WHERE last_active > ?");
+$stmt->bind_param('i', $time);
+$stmt->execute();
+$users = $stmt->get_result();
+$stmt->close();
 
 // Check if nickname is in games list meaning he was invited to a game
-$invites = $mysqli->query("SELECT * FROM games WHERE nickname = '$mynickname'");
+$stmt = $mysqli->prepare("SELECT * FROM games WHERE nickname = ?");
+$stmt->bind_param('s', $mynickname);
+$stmt->execute();
+$invites = $stmt->get_result();
+$stmt->close();
 
 // If no users are active return message
-if($result->num_rows == 0)
+if($users->num_rows == 0)
 {
     echo "No Online Users";
     exit();
@@ -39,7 +46,7 @@ if($invites->num_rows > 0 && ($last_active > time()-300))
 
 $userlist = array();
 $i = 0;
-while ($row = $result->fetch_array())
+while ($row = $users->fetch_array())
 {
     $nickname = $row['nickname'];
     $free2play = $row['free_to_play'];
@@ -48,4 +55,5 @@ while ($row = $result->fetch_array())
 }
 
 echo json_encode($userList);
+$mysqli->close();
 ?>

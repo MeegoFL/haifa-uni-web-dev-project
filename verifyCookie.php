@@ -45,9 +45,12 @@ function verifyCookie() {
     //return FALSE;
 
 
-    $sql = "UPDATE users SET last_active = '".$lastactive."' WHERE nickname = '".$nickname."'";
-    $result = mysqli_query($con,$sql);
+    $stmt = $mysqli->prepare("UPDATE users SET last_active = ? WHERE nickname = ?;");
+    $stmt->bind_param('is', $lastactive, $nickname);
+    $stmt->execute();
+    $stmt->close();
 
+    $mysqli->close();
     return TRUE;
 }
 ?>

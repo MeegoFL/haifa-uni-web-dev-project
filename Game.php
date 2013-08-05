@@ -47,10 +47,10 @@ if( verifyCookie() ) {
 
         function EndGame(result) {
             switch (result) {
-                case "1":
+                case 1:
                     alert("You WIN!");
                     break;
-                case "2":
+                case 2:
                     alert("You LOSE!");
                     break;
                 default:
@@ -194,7 +194,7 @@ if( verifyCookie() ) {
     </script>
 </head>
 
-<body onload="RefreshView();" style="background-image: url(Images/game-background.jpg);background-repeat:no-repeat;background-size:cover;">
+<body style="background-image: url(Images/game-background.jpg);background-repeat:no-repeat;background-size:cover;">
     <audio id="audio" autoplay="" loop="">
         <source src="Media/GOT_Soundtrack.ogg" type="audio/ogg">
         <source src="Media/GOT_Soundtrack.mp3" type="audio/mpeg">

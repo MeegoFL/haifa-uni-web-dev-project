@@ -11,7 +11,10 @@ $mysqli = new mysqli($db_ini['host'], $db_ini['username'], $db_ini['password'], 
 if ($mysqli->connect_errno) echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
 
 // Check if username exists
-$result = $mysqli->query("SELECT * FROM users WHERE username = '$username'");
+$stmt = $mysqli->prepare("SELECT * FROM users WHERE username = ?");
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$result = $stmt->get_result();
 
 // If username doesn't exist return error
 if($result->num_rows == 0)
@@ -22,8 +25,7 @@ if($result->num_rows == 0)
 // Get user password and compare
 else
 {
-    $result->data_seek(0);
-    $row = $result->fetch_assoc();
+    $row = $result->fetch_array();
 
     // Compare password and output error if wrong
     if ($password != $row['password'])
@@ -54,7 +56,7 @@ else
         // Redirect the user to lobby
         if($nickname == "administrator") echo "Location:AdminPage.php";
         else echo "Location:Lobby.php";
-        exit;
     }
 }
+$mysqli->close();
 ?>
