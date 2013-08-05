@@ -75,16 +75,18 @@ if( verifyCookie() ) {
                     opponentGameStat = gameStat[1];
 
 
-                    if (userGameStat['game_end_status'] != 0) EndGame(userGameStat['game_end_status']);
+                    if (userGameStat['game_end_status'] != 0) 
+                    {
+                        refreshInterval = 10000;
+                        EndGame(userGameStat['game_end_status']);
+                    }
 
                     // Update player's game stat on screen
-                    document.getElementById("player_name").innerHTML = userGameStat['nickname'];
-                    document.getElementById("myTowerVal").innerHTML = userGameStat['tower'];
-
-
                     document.getElementById("myTowerImg").height = 100+200*(userGameStat['tower'] / 100);
                     document.getElementById("myWallImg").height = 60+80*(userGameStat['wall'] / 100);
-
+                    
+                    document.getElementById("player_name").innerHTML = userGameStat['nickname'];
+                    document.getElementById("myTowerVal").innerHTML = userGameStat['tower'];
                     document.getElementById("myWallVal").innerHTML = userGameStat['wall'];
                     document.getElementById("myMagic").innerHTML = userGameStat['magic'];
                     document.getElementById("myGems").innerHTML = userGameStat['gems'];
@@ -131,12 +133,11 @@ if( verifyCookie() ) {
                     }
 
                     // Update opponent's game stat on screen
-                    document.getElementById("opponent_name").innerHTML = opponentGameStat['nickname'];
-                    document.getElementById("opponentTowerVal").innerHTML = opponentGameStat['tower'];
-
                     document.getElementById("opponentTowerImg").height = 50+200*(opponentGameStat['tower'] / 100);
                     document.getElementById("opponentWallImg").height = 60+80*(opponentGameStat['wall'] / 100);
-
+                    
+                    document.getElementById("opponent_name").innerHTML = opponentGameStat['nickname'];
+                    document.getElementById("opponentTowerVal").innerHTML = opponentGameStat['tower'];
                     document.getElementById("opponentWallVal").innerHTML = opponentGameStat['wall'];
                     document.getElementById("opponentMagic").innerHTML = opponentGameStat['magic'];
                     document.getElementById("opponentGems").innerHTML = opponentGameStat['gems'];
@@ -241,21 +242,11 @@ if( verifyCookie() ) {
 
             <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center; width: 250px;">
                 <span style="background-color: #ffd800; position: relative; bottom: 0px;">
-                    <b>
-                        <br>
-                            &nbsp tower:
-                            <b id="myTowerVal">num</b>
-                            &nbsp
-                        </br>
-                        <br>
-                            &nbsp wall:
-                            <b id="myWallVal">num</b>
-                            &nbsp
-                        </br>
-                    </b>
+                    <br><b>tower: </b><b id="myTowerVal">num</b></br>
+                        <br><b>wall: </b><b id="myWallVal">num</b></br>
                 </span>
                 <img id="myTowerImg" src="Images/towe_trans.gif" alt="tower1" width="100" height="250" style="position: relative; bottom: -80px;" draggable="false" />
-                <img id="mytWallImg" src="Images/wall_trans.gif" alt="wall1" width="250" height="80" style="position: relative;" draggable="false"/>
+                <img id="myWallImg" src="Images/wall_trans.gif" alt="wall1" width="250" height="80" style="position: relative;" draggable="false"/>
             </td>
 
             <td>
@@ -268,18 +259,8 @@ if( verifyCookie() ) {
 
             <td rowspan="2" colspan="2" style="vertical-align: bottom; text-align: center; width: 250px;">
                 <span style="background-color: #ffd800 ; position: relative; bottom: 0px;">
-                    <b>
-                        <br>
-                            &nbsp tower:
-                            <b id="opponentTowerVal">num</b>
-                            &nbsp
-                        </br>
-                        <br>
-                            &nbsp wall:
-                            <b id="opponentWallVal">num</b>
-                            &nbsp
-                        </br>
-                    </b>
+                        <br><b>tower: </b><b id="opponentTowerVal">num</b></br>
+                        <br><b>wall: </b><b id="opponentWallVal">num</b></br>
                 </span>
                 <img id="opponentTowerImg" src="Images/towe_trans.gif" alt="tower2" width="100" height="250" style="position: relative; bottom: -80px;" draggable="false"/>
                 <img id="opponentWallImg" src="Images/wall_trans.gif" alt="wall2" width="250" height="80" style="position: relative;" draggable="false" />
